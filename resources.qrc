@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/ico/add.png</file>
+        <file>res/ico/arrow-down.png</file>
+        <file>res/ico/earth.png</file>
+        <file>res/ico/error.png</file>
+        <file>res/ico/gear.png</file>
+        <file>res/ico/remove.png</file>
+        <file>res/ico/stop.png</file>
+        <file>res/ico/anonymous.png</file>
+        <file>res/ico/delete.png</file>
+        <file>res/loc/qutida_ru.qm</file>
+    </qresource>
+</RCC>
