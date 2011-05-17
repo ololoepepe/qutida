@@ -115,6 +115,8 @@ namespace Tr
         //action titles
         QString actAddText()
         {return QObject::tr("Add thread", "main window: action text");}
+        QString actBackupText()
+        {return QObject::tr("Backup", "main window: action text");}
         QString actExitText()
         {return QObject::tr("Exit", "main window: action text");}
         QString actParametersText()
@@ -179,6 +181,8 @@ namespace Tr
         QString dialogThreadParametersCaption()
         {return QObject::tr("Thread parameters",
                             "main window: dialog caption");}
+        QString dialogBackupCaption()
+        {return QObject::tr("Backup", "main window: dialog caption");}
     }
 
     namespace AT

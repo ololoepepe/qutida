@@ -51,6 +51,7 @@ public:
 public slots:
     void requestAddThread(const ImageboardThread::Parameters &param,
                           bool start);
+    void requestBackup(const QString &fileName);
     void requestRemoveThread(int index, bool del);
     void requestStartThread(int index);
     void requestStopThread(int index);

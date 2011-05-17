@@ -68,6 +68,7 @@ public:
 signals:
     void requestAddThread(const ImageboardThread::Parameters &param,
                           bool start);
+    void requestBackup(const QString fileName);
     void requestRemoveThread(int index, bool);
     void requestStartThread(int index);
     void requestStopThread(int index);
@@ -95,6 +96,8 @@ private:
     //menuBar()
       QMenu *menuFile;
         QAction *actAdd;
+        //separator
+        QAction *actBackup;
         //separator
         QAction *actExit;
       QMenu *menuEdit;
@@ -139,7 +142,7 @@ private:
     bool exitConfirmation;
     bool finalClose;
 
-    void retranslate();
+    void retranslate(bool initial = false);
     void readSettings();
     void writeSettings();
     int getCurrentIndex();
@@ -147,6 +150,7 @@ private:
 
 private slots:
     void addRequested();
+    void backupRequested();
     void exitRequested();
     void parametersRequested();
     void openDirRequested();

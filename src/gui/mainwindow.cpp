@@ -56,6 +56,9 @@
 #include <QRegExp>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QFileDialog>
+#include <QDateTime>
+#include <QDir>
 
 const QString MainWindow::GROUP_MAIN_WINDOW = "main_window";
   const QString MainWindow::KEY_GEOMETRY = "geometry";
@@ -132,6 +135,14 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
         //
         menuFile->addSeparator();
         //
+        actBackup = new QAction(QIcon(":/res/ico/database.png"),
+                                Tr::MW::actBackupText(), this);
+        connect( actBackup, SIGNAL( triggered() ),
+                 this, SLOT( backupRequested() ) );
+        menuFile->addAction(actBackup);
+        //
+        menuFile->addSeparator();
+        //
         actExit = new QAction(Tr::MW::actExitText(), this);
         connect( actExit, SIGNAL( triggered() ),
                  this, SLOT( exitRequested() ) );
@@ -159,12 +170,15 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
         //
         actStop = new QAction(QIcon(":/res/ico/stop.png"),
                           Tr::MW::actStopText(), this);
+
+        actStop->setEnabled(false);
         connect( actStop, SIGNAL( triggered() ),
                  this, SLOT( stopRequested() ) );
         menuThread->addAction(actStop);
         //
         actStart = new QAction(QIcon(":/res/ico/arrow-down.png"),
                           Tr::MW::actStartText(), this);
+        actStart->setEnabled(false);
         connect( actStart, SIGNAL( triggered() ),
                  this, SLOT( startRequested() ) );
         menuThread->addAction(actStart);
@@ -182,6 +196,7 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
         //
         actRemove = new QAction(QIcon(":/res/ico/remove.png"),
                           Tr::MW::actRemoveText(), this);
+        actRemove->setEnabled(false);
         connect( actRemove, SIGNAL( triggered() ),
                  this, SLOT( removeRequested() ) );
         menuThread->addAction(actRemove);
@@ -303,7 +318,7 @@ void MainWindow::closeEvent(QCloseEvent *e)
 
 //
 
-void MainWindow::retranslate()
+void MainWindow::retranslate(bool initial)
 {
     qApp->removeTranslator(&translator);
     translator.load(Common::APP_NAME + "_" +
@@ -317,6 +332,7 @@ void MainWindow::retranslate()
     menuColumns->setTitle( Tr::MW::menuColumnsTitle() );
     menuHelp->setTitle( Tr::MW::menuHelpTitle() );
     actAdd->setText( Tr::MW::actAddText() );
+    actBackup->setText( Tr::MW::actBackupText() );
     actExit->setText( Tr::MW::actExitText() );
     actParameters->setText( Tr::MW::actParametersText() );
     actOpenDir->setText( Tr::MW::actOpenDirText() );
@@ -338,7 +354,8 @@ void MainWindow::retranslate()
                         static_cast<ImageboardThread::Info>(i) ) );
 
     toolBar->setWindowTitle( Tr::MW::actToolBarText() );
-    actShowHide->setText( Tr::MW::actShowHideText( this->isVisible() ) );
+    actShowHide->setText( Tr::MW::actShowHideText(
+                             initial ? true : this->isVisible() ) );
     emit requestRetranslate();
     infoWidget->retranslate();
 }
@@ -396,7 +413,7 @@ void MainWindow::readSettings()
       currentLanguage = settings.value(
                   ParametersDialog::KEY_LANGUAGE,
                   ParametersDialog::LANGUAGE_ENGLISH).toString();
-      this->retranslate();
+      this->retranslate(true);
       minimize = settings.value(ParametersDialog::KEY_MINIMIZE, true).toBool();
       exitConfirmation = settings.value(
                   ParametersDialog::KEY_EXIT_CONFIRMATION, false).toBool();
@@ -485,6 +502,18 @@ void MainWindow::addRequested()
                              headerThreads->sortIndicatorOrder() );
 }
 
+void MainWindow::backupRequested()
+{
+    QString fileName =
+            QFileDialog::getSaveFileName(
+                this, Tr::MW::dialogBackupCaption(), QDir::currentPath() +
+                QDir::separator() + Common::APP_NAME + "-backup-" +
+                QDateTime::currentDateTime().toString("yyyy.MM.dd-hh.mm.ss") );
+
+    if ( !fileName.isEmpty() )
+        emit requestBackup(fileName);
+}
+
 void MainWindow::exitRequested()
 {
     finalClose = true;
@@ -506,7 +535,7 @@ void MainWindow::parametersRequested()
         if (language != currentLanguage)
         {
             currentLanguage = language;
-            this->retranslate();
+            this->retranslate(false);
         }
     }
 
@@ -640,7 +669,11 @@ void MainWindow::threadsSelectionChanged(const QItemSelection &selected,
     if (!infoWidget)
         return;
 
-    menuThread->setEnabled( !getSelectedIndexes().isEmpty() );
+    bool anySelection = !getSelectedIndexes().isEmpty();
+    menuThread->setEnabled(anySelection);
+    actRemove->setEnabled(anySelection);
+    actStop->setEnabled(anySelection);
+    actStart->setEnabled(anySelection);
 
     QModelIndexList indexes = selected.indexes();
 
@@ -799,8 +832,10 @@ void MainWindow::categoriesSelectionChanged(const QItemSelection &selected,
 
 void MainWindow::trayIconActivated(QSystemTrayIcon::ActivationReason reason)
 {
+#ifndef Q_OS_MAC
     if (QSystemTrayIcon::Trigger == reason)
         showHideRequested();
+#endif
 }
 
 void MainWindow::treeViewThreadsMenuRequested(const QPoint &point)

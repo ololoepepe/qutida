@@ -59,6 +59,8 @@ int main(int argc, char *argv[])
                 SIGNAL( requestAddThread(ImageboardThread::Parameters, bool) ),
                 &threadManager,
                 SLOT( requestAddThread(ImageboardThread::Parameters, bool) ) );
+    QObject::connect( mainWindow, SIGNAL( requestBackup(QString) ),
+                      &threadManager, SLOT( requestBackup(QString) ) );
     QObject::connect( mainWindow, SIGNAL( requestRemoveThread(int, bool) ),
                       &threadManager, SLOT( requestRemoveThread(int, bool) ) );
     QObject::connect( mainWindow, SIGNAL( requestStartThread(int) ),

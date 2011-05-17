@@ -48,6 +48,7 @@ namespace Tr
         QString menuHelpTitle();
         //action titles
         QString actAddText();
+        QString actBackupText();
         QString actExitText();
         QString actParametersText();
         QString actOpenDirText();
@@ -73,6 +74,7 @@ namespace Tr
         QString dialogParametersCaption();
         QString dialogRemoveCaption();
         QString dialogThreadParametersCaption();
+        QString dialogBackupCaption();
     }
 
     namespace AT

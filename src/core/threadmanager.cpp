@@ -33,6 +33,9 @@
 #include <QDesktopServices>
 #include <QDialog>
 #include <QModelIndex>
+#include <QFile>
+#include <QIODevice>
+#include <QTextStream>
 
 const QString ThreadManager::GROUP_THREADS = "threads";
 const QString ThreadManager::SUB_GROUP_DEFAULT = "default";
@@ -98,6 +101,28 @@ void ThreadManager::requestAddThread(const ImageboardThread::Parameters &param,
 
     if (start)
         thread->startDownload();
+}
+
+void ThreadManager::requestBackup(const QString &fileName)
+{
+    if ( threadList.isEmpty() )
+        return;
+
+    QFile file(fileName);
+
+    if ( file.exists() )
+        if ( !file.remove() )
+            return;
+
+    if ( !file.open(QIODevice::WriteOnly) )
+        return;
+
+    QTextStream out(&file);
+
+    for (int i = 0; i < threadList.count(); ++i)
+        out << threadList.at(i)->url() << "\n";
+
+    file.close();
 }
 
 void ThreadManager::requestRemoveThread(int index, bool del)
