@@ -20,7 +20,6 @@
 #ifndef TR_H
 #define TR_H
 
-#include "src/common.h"
 #include "src/core/imageboardthread.h"
 
 #include <QObject>
@@ -58,6 +57,7 @@ namespace Tr
         QString actThreadParametersText();
         QString actRemoveText();
         QString actToolBarText();
+        QString actHomepageText();
         QString actAboutText();
         QString actAboutQtText();
         QString actShowHideText(bool visible);
@@ -77,18 +77,30 @@ namespace Tr
 
     namespace AT
     {
+        //text edit tooltip
+        QString textEditUrlsTooltip();
         //label texts
         QString labelDirText();
         QString labelAttemptPageText();
         QString labelAttemptFileText();
         QString labelExtentionsText();
+        //tool button tooltip
+        QString tbuttonSearchDirTooltip();
         //check box texts
         QString checkBoxExternalText();
         QString checkBoxReplaceText();
         QString checkBoxRestartEnabledText();
         QString checkBoxStartText();
+        //check box tooltips
+        QString checkBoxExternalTooltip();
+        QString checkBoxReplaceTooltip();
+        QString checkBoxRestartEnabledTooltip();
+        //line edit tooltips
+        QString lineEditExtentionsTooltip();
         //button texts
         QString buttonResetExtentionsText();
+        //button tooltips
+        QString buttonResetExtentionsTooltip();
         //dialog captions
         QString dialogGetExistingDirectoryCaption();
     }

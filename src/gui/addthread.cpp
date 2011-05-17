@@ -55,6 +55,7 @@ AddThread::AddThread(QWidget *parent) :
 {
     vLayout = new QVBoxLayout(this);
       textEditUrls = new QTextEdit(this);
+      textEditUrls->setToolTip( Tr::AT::textEditUrlsTooltip() );
       vLayout->addWidget(textEditUrls);
       //
       hLayoutDir = new QHBoxLayout();
@@ -66,6 +67,7 @@ AddThread::AddThread(QWidget *parent) :
         //
         tbuttonSearchDir = new QToolButton(this);
         tbuttonSearchDir->setText("...");
+        tbuttonSearchDir->setToolTip( Tr::AT::tbuttonSearchDirTooltip() );
         connect( tbuttonSearchDir, SIGNAL( clicked() ),
                  this, SLOT( tbuttonSearchDirClicked() ) );
         hLayoutDir->addWidget(tbuttonSearchDir);
@@ -75,9 +77,11 @@ AddThread::AddThread(QWidget *parent) :
         hLayoutMode->addStretch();
         //
         checkBoxExternal = new QCheckBox(Tr::AT::checkBoxExternalText(), this);
+        checkBoxExternal->setToolTip( Tr::AT::checkBoxExternalTooltip() );
         hLayoutMode->addWidget(checkBoxExternal);
         //
         checkBoxReplace = new QCheckBox(Tr::AT::checkBoxReplaceText(), this);
+        checkBoxReplace->setToolTip( Tr::AT::checkBoxReplaceTooltip() );
         hLayoutMode->addWidget(checkBoxReplace);
       vLayout->addLayout(hLayoutMode);
       //
@@ -106,10 +110,13 @@ AddThread::AddThread(QWidget *parent) :
         hLayoutExtentions->addWidget(labelExtentions);
         //
         lineEditExtentions = new QLineEdit(this);
+        lineEditExtentions->setToolTip( Tr::AT::lineEditExtentionsTooltip() );
         hLayoutExtentions->addWidget(lineEditExtentions);
         //
         buttonResetExtentions =
                 new QPushButton(Tr::AT::buttonResetExtentionsText(), this);
+        buttonResetExtentions->setToolTip(
+                    Tr::AT::buttonResetExtentionsTooltip() );
         connect( buttonResetExtentions, SIGNAL( clicked() ),
                  this, SLOT( buttonResetExtentionsClicked() ) );
         hLayoutExtentions->addWidget(buttonResetExtentions);
@@ -120,6 +127,8 @@ AddThread::AddThread(QWidget *parent) :
         //
         checkBoxRestartEnabled =
                 new QCheckBox(Tr::AT::checkBoxRestartEnabledText(), this);
+        checkBoxRestartEnabled->setToolTip(
+                    Tr::AT::checkBoxRestartEnabledTooltip() );
         hLayoutRestart->addWidget(checkBoxRestartEnabled);
         //
         spinBoxRestartInterval = new QSpinBox(this);

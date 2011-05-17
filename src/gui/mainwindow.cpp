@@ -29,6 +29,7 @@
 #include "src/gui/threadparameters.h"
 #include "src/mv/progressbardelegate.h"
 #include "src/mv/categorymodel.h"
+#include "src/common.h"
 
 #include <QSplitter>
 #include <QTreeView>
@@ -53,6 +54,8 @@
 #include <QHeaderView>
 #include <QAbstractItemModel>
 #include <QRegExp>
+#include <QDesktopServices>
+#include <QUrl>
 
 const QString MainWindow::GROUP_MAIN_WINDOW = "main_window";
   const QString MainWindow::KEY_GEOMETRY = "geometry";
@@ -140,6 +143,7 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
                  this, SLOT( parametersRequested() ) );
         menuEdit->addAction(actParameters);
       menuThread = menuBar()->addMenu( Tr::MW::menuThreadTitle() );
+      menuThread->setEnabled(false);
         actOpenDir = new QAction(Tr::MW::actOpenDirText(), this);
         connect( actOpenDir, SIGNAL( triggered() ),
                  this, SLOT( openDirRequested() ) );
@@ -213,6 +217,13 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
         menuView->addMenu(menuColumns);
         //
       menuHelp = menuBar()->addMenu( Tr::MW::menuHelpTitle() );
+        actHomepage = new QAction(Tr::MW::actHomepageText(), this);
+        connect( actHomepage, SIGNAL( triggered() ),
+                 this, SLOT( homepageRequested() ) );
+        menuHelp->addAction(actHomepage);
+        //
+        menuHelp->addSeparator();
+        //
         actAbout = new QAction(QIcon(":/res/ico/anonymous.png"),
                                Tr::MW::actAboutText(), this);
         connect( actAbout, SIGNAL( triggered() ),
@@ -315,6 +326,7 @@ void MainWindow::retranslate()
     actThreadParameters->setText( Tr::MW::actThreadParametersText() );
     actRemove->setText( Tr::MW::actRemoveText() );
     actToolBar->setText( Tr::MW::actToolBarText() );
+    actHomepage->setText( Tr::MW::actHomepageText() );
     actAbout->setText( Tr::MW::actAboutText() );
     actAboutQt->setText( Tr::MW::actAboutQtText() );
     actShowHide->setText( Tr::MW::actShowHideText( this->isVisible() ) );
@@ -586,6 +598,11 @@ void MainWindow::columnRequested(int index)
                                       !actColumnList.at(index)->isChecked() );
 }
 
+void MainWindow::homepageRequested()
+{
+    QDesktopServices::openUrl( QUrl(Common::ORG_DOMAIN) );
+}
+
 void MainWindow::aboutRequested()
 {
     QMessageBox::about( this, Tr::MW::msgAboutTitle(),
@@ -613,6 +630,8 @@ void MainWindow::threadsSelectionChanged(const QItemSelection &selected,
 {
     if (!infoWidget)
         return;
+
+    menuThread->setEnabled( !getSelectedIndexes().isEmpty() );
 
     QModelIndexList indexes = selected.indexes();
 

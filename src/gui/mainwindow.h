@@ -116,6 +116,8 @@ private:
           QList<QAction*> actColumnList;
           QSignalMapper columnMapper;
       QMenu *menuHelp;
+        QAction *actHomepage;
+        //separator
         QAction *actAbout;
         QAction *actAboutQt;
     QToolBar *toolBar;
@@ -155,6 +157,7 @@ private slots:
     void removeRequested();
     void toolBarRequested(bool visible);
     void columnRequested(int index);
+    void homepageRequested();
     void aboutRequested();
     void aboutQtRequested();
     void showHideRequested();

@@ -19,6 +19,7 @@
 
 #include "src/tr.h"
 #include "src/core/imageboardthread.h"
+#include "src/common.h"
 
 #include <QString>
 #include <QObject>
@@ -135,6 +136,8 @@ namespace Tr
                             "main window: action text");}
         QString actToolBarText()
         {return QObject::tr("Toolbar", "main window: action text");}
+        QString actHomepageText()
+        {return QObject::tr("Homepage", "main window: action text");}
         QString actAboutText()
         {return QObject::tr("About", "main window: action text");}
         QString actAboutQtText()
@@ -180,6 +183,12 @@ namespace Tr
 
     namespace AT
     {
+        //text edit tooltip
+        QString textEditUrlsTooltip()
+        {return QObject::tr("Put thread URLs here, divided by "
+                            "one or more space symbols "
+                            "(whitespace, tabulation or endline)",
+                            "add thread: text edit tooltip");}
         //label texts
         QString labelDirText()
         {return QObject::tr("Directory", "add thread: label text") + ":";}
@@ -205,9 +214,41 @@ namespace Tr
         QString checkBoxStartText()
         {return QObject::tr("Start new threads after confirmation",
                             "add thread: check box text");}
+        //tool button tooltip
+        QString tbuttonSearchDirTooltip()
+        {return QObject::tr("Open the select directory dialog",
+                            "add thread: tool button tooltip");}
+        //check box tooltips
+        QString checkBoxExternalTooltip()
+        {return QObject::tr("If checked, links to another hosts, contained "
+                            "in the thread, will be added to download queue",
+                            "add thread: check box tooltip");}
+        QString checkBoxReplaceTooltip()
+        {return QObject::tr("If checked, existing files will be overwritten. "
+                            "Othrewise existing files will not be "
+                            "downloaded again",
+                            "add thread: check box tooltip");}
+        QString checkBoxRestartEnabledTooltip()
+        {return QObject::tr("If checked, the thread will be redownloaded. "
+                            "Redownloads will occure every time the "
+                            "specified interval expires",
+                            "add thread: check box tooltip");}
+        //line edit tooltips
+        QString lineEditExtentionsTooltip()
+        {return QObject::tr("Put the desired file extentions here, "
+                            "divided by one or more whitespace or "
+                            "tabulation symbols",
+                            "add thread: line edit tooltip");}
         //button texts
         QString buttonResetExtentionsText()
         {return QObject::tr("Default", "add thread: button text");}
+        //button tooltips
+        QString buttonResetExtentionsTooltip()
+        {return QObject::tr("Reset file extentions to the default value of",
+                            "add thread: button tooltip") + " \"" +
+                    Common::strFromList(
+                        ImageboardThread::DEF_EXTENTIONS_LIST, ", ") + "\"";}
+
         //dialog captions
         QString dialogGetExistingDirectoryCaption()
         {return QObject::tr("Select directory", "add thread: dialog caption");}
