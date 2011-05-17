@@ -450,7 +450,12 @@ QList<int> MainWindow::getSelectedIndexes()
     QList<int> selectedIndexes;
 
     for (int i = 0; i < selectedList.count(); ++i)
-        selectedIndexes << selectedList.at(i).row();
+    {
+        int row = selectedList.at(i).row();
+
+        if ( !selectedIndexes.contains(row) )
+            selectedIndexes << row;
+    }
 
     return selectedIndexes;
 }
@@ -467,6 +472,10 @@ void MainWindow::addRequested()
     {
         bool start = dialog->start();
         int count = dialog->parameters().count();
+
+        if (count > 0)
+            selectionModelThreads->clearSelection();
+
         for (int i = 0; i < count; ++i)
             emit requestAddThread(dialog->parameters().at(i), start);
     }
