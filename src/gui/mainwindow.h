@@ -24,6 +24,7 @@
 #include "src/mv/threadmodel.h"
 #include "src/gui/infowidget.h"
 #include "src/mv/categorymodel.h"
+#include "src/gui/parametersdialog.h"
 
 #include <QMainWindow>
 #include <QString>
@@ -137,9 +138,7 @@ private:
         //separator
         //actExit
     QTranslator translator;
-    QString currentLanguage;
-    bool minimize;
-    bool exitConfirmation;
+    ParametersDialog::CommonParameters commonParam;
     bool finalClose;
 
     void retranslate(bool initial = false);
@@ -147,6 +146,7 @@ private:
     void writeSettings();
     int getCurrentIndex();
     QList<int> getSelectedIndexes();
+    void trySetProxy(const ParametersDialog::ProxySettings &proxySettings);
 
 private slots:
     void addRequested();

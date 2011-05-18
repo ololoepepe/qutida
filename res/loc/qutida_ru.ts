@@ -432,133 +432,163 @@ imageboard content download.</source>
         <translation type="unfinished">Язык</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="281"/>
+        <location filename="../../src/tr.cpp" line="280"/>
+        <source>Host</source>
+        <comment>parameters dialog: label text</comment>
+        <translation type="unfinished">Сайт</translation>
+    </message>
+    <message>
+        <location filename="../../src/tr.cpp" line="282"/>
+        <source>Port</source>
+        <comment>parameters dialog: label text</comment>
+        <translation type="unfinished">Порт</translation>
+    </message>
+    <message>
+        <location filename="../../src/tr.cpp" line="284"/>
+        <source>User</source>
+        <comment>parameters dialog: label text</comment>
+        <translation type="unfinished">Пользователь</translation>
+    </message>
+    <message>
+        <location filename="../../src/tr.cpp" line="286"/>
+        <source>Password</source>
+        <comment>parameters dialog: label text</comment>
+        <translation type="unfinished">Пароль</translation>
+    </message>
+    <message>
+        <location filename="../../src/tr.cpp" line="290"/>
         <source>Ask confirmation on exit</source>
         <comment>parameters dialog: check box text</comment>
         <translation type="unfinished">Спрашивать подтверждение при выходе</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="284"/>
+        <location filename="../../src/tr.cpp" line="293"/>
         <source>Minimize to syztem tray on close</source>
         <comment>parameters dialog: check box text</comment>
         <translation type="unfinished">Сворачивать в трей при закрытии окна</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="292"/>
+        <location filename="../../src/tr.cpp" line="296"/>
+        <source>Enable proxy</source>
+        <comment>parameters dialog: check box text</comment>
+        <translation type="unfinished">Включить прокси</translation>
+    </message>
+    <message>
+        <location filename="../../src/tr.cpp" line="304"/>
         <source>Remove selected threads? This action is irreversible.</source>
         <comment>remove dialog: label text</comment>
         <translation type="unfinished">Удалить выбранные треды? Это действие нельзя отменить.</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="297"/>
+        <location filename="../../src/tr.cpp" line="309"/>
         <source>Remove threads and files</source>
         <comment>remove dialog: button text</comment>
         <translation type="unfinished">Удалить треды с файлами</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="300"/>
+        <location filename="../../src/tr.cpp" line="312"/>
         <source>Remove threads only</source>
         <comment>remove dialog: button text</comment>
         <translation type="unfinished">Удалить только треды</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="321"/>
+        <location filename="../../src/tr.cpp" line="333"/>
         <source>Restart (minutes left)</source>
         <comment>info widget: label text</comment>
         <translation type="unfinished">Перезапуск (осталось минут)</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="333"/>
+        <location filename="../../src/tr.cpp" line="345"/>
         <source>Enabled</source>
         <comment>info widget: label text</comment>
         <translation type="unfinished">Включен</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="338"/>
+        <location filename="../../src/tr.cpp" line="350"/>
         <source>Disabled</source>
         <comment>info widget: label text</comment>
         <translation type="unfinished">Выключен</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="342"/>
+        <location filename="../../src/tr.cpp" line="354"/>
         <source>Files total</source>
         <comment>info widget: label text</comment>
         <translation type="unfinished">Всего файлов</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="344"/>
+        <location filename="../../src/tr.cpp" line="356"/>
         <source>Files saved</source>
         <comment>info widget: label text</comment>
         <translation type="unfinished">Файлов сохранено</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="346"/>
+        <location filename="../../src/tr.cpp" line="358"/>
         <source>Files failed</source>
         <comment>info widget: label text</comment>
         <translation type="unfinished">Не удалось загрузить</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="352"/>
+        <location filename="../../src/tr.cpp" line="364"/>
         <source>Unknown</source>
         <comment>info widget: label text</comment>
         <translation type="unfinished">Неизвестно</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="360"/>
+        <location filename="../../src/tr.cpp" line="372"/>
         <source>Restart enabled</source>
         <comment>thread parameters: check box text</comment>
         <translation type="unfinished">Включить перезапуск</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="364"/>
+        <location filename="../../src/tr.cpp" line="376"/>
         <source>Restart interval</source>
         <comment>thread parameters: label text</comment>
         <translation type="unfinished">Интервал перезапуска</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="376"/>
+        <location filename="../../src/tr.cpp" line="388"/>
         <source>State</source>
         <comment>category model: category</comment>
         <translation type="unfinished">Состояние</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="378"/>
+        <location filename="../../src/tr.cpp" line="390"/>
         <source>Hosts</source>
         <comment>category model: category</comment>
         <translation type="unfinished">Сайты</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="380"/>
+        <location filename="../../src/tr.cpp" line="392"/>
         <source>Boards</source>
         <comment>category model: category</comment>
         <translation type="unfinished">Доски</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="391"/>
+        <location filename="../../src/tr.cpp" line="403"/>
         <source>All</source>
         <comment>category model: sub category</comment>
         <translation type="unfinished">Все</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="394"/>
+        <location filename="../../src/tr.cpp" line="406"/>
         <source>Active</source>
         <comment>category model: sub category</comment>
         <translation type="unfinished">Активные</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="397"/>
+        <location filename="../../src/tr.cpp" line="409"/>
         <source>Waiting</source>
         <comment>category model: sub category</comment>
         <translation type="unfinished">Ожидающие</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="400"/>
+        <location filename="../../src/tr.cpp" line="412"/>
         <source>Ready</source>
         <comment>category model: sub category</comment>
         <translation type="unfinished">Готовые</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="403"/>
+        <location filename="../../src/tr.cpp" line="415"/>
         <source>Error</source>
         <comment>category model: sub category</comment>
         <translation type="unfinished">С ошибкой</translation>

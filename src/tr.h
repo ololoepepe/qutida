@@ -115,9 +115,14 @@ namespace Tr
     {
         //label texts
         QString labelLanguageText();
+        QString labelHostText();
+        QString labelPortText();
+        QString labelUserText();
+        QString labelPasswordText();
         //check box texts
         QString checkBoxExitConfirmationText();
         QString checkBoxMinimizeText();
+        QString checkBoxProxyEnabledText();
     }
 
     namespace RD

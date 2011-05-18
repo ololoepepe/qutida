@@ -32,6 +32,8 @@
 #include <QLayout>
 #include <QSettings>
 #include <QPoint>
+#include <QFrame>
+#include <QLineEdit>
 
 const QString ParametersDialog::GROUP_PARAMETERS_DIALOG = "parameters_dialog";
 const QString ParametersDialog::KEY_POSITION = "position";
@@ -40,6 +42,13 @@ const QString ParametersDialog::GROUP_PARAMETERS = "parameters";
 const QString ParametersDialog::KEY_LANGUAGE = "language";
 const QString ParametersDialog::KEY_MINIMIZE = "minimize";
 const QString ParametersDialog::KEY_EXIT_CONFIRMATION = "exit_confirmation";
+
+const QString ParametersDialog::GROUP_PROXY = "proxy";
+  const QString ParametersDialog::KEY_ENABLED = "enabled";
+  const QString ParametersDialog::KEY_HOST = "host";
+  const QString ParametersDialog::KEY_PORT = "port";
+  const QString ParametersDialog::KEY_USER = "user";
+  const QString ParametersDialog::KEY_PASSWORD = "password";
 
 const QString ParametersDialog::LANGUAGE_ENGLISH = "English";
 const QString ParametersDialog::LANGUAGE_RUSSIAN = "Russian";
@@ -60,12 +69,51 @@ ParametersDialog::ParametersDialog(QWidget *parent) :
         hLayoutLanguage->addWidget(comboBoxLanguage);
       vLayout->addLayout(hLayoutLanguage);
       //
-      checkBoxMinimise = new QCheckBox(Tr::PD::checkBoxMinimizeText(), this);
-      vLayout->addWidget(checkBoxMinimise);
+      hLayoutWindow = new QHBoxLayout();
+        checkBoxMinimise = new QCheckBox(Tr::PD::checkBoxMinimizeText(), this);
+        hLayoutWindow->addWidget(checkBoxMinimise);
+        //
+        checkBoxExitConfirmation =
+                new QCheckBox(Tr::PD::checkBoxExitConfirmationText(), this);
+        hLayoutWindow->addWidget(checkBoxExitConfirmation);
+      vLayout->addLayout(hLayoutWindow);
       //
-      checkBoxExitConfirmation =
-              new QCheckBox(Tr::PD::checkBoxExitConfirmationText(), this);
-      vLayout->addWidget(checkBoxExitConfirmation);
+      frameProxy = new QFrame(this);
+      frameProxy->setFrameStyle(QFrame::StyledPanel | QFrame::Plain);
+        vLayoutProxy = new QVBoxLayout(frameProxy);
+          checkBoxProxyEnabled = new QCheckBox(
+                      Tr::PD::checkBoxProxyEnabledText(), frameProxy);
+          vLayoutProxy->addWidget(checkBoxProxyEnabled);
+          //
+          hLayoutProxy1 = new QHBoxLayout();
+            labelProxyHost = new QLabel(Tr::PD::labelHostText(), frameProxy);
+            hLayoutProxy1->addWidget(labelProxyHost);
+            //
+            lineEditProxyHost = new QLineEdit(frameProxy);
+            hLayoutProxy1->addWidget(lineEditProxyHost);
+            //
+            labelProxyPort = new QLabel(Tr::PD::labelPortText(), frameProxy);
+            hLayoutProxy1->addWidget(labelProxyPort);
+            //
+            lineEditProxyPort = new QLineEdit(frameProxy);
+            hLayoutProxy1->addWidget(lineEditProxyPort);
+          vLayoutProxy->addLayout(hLayoutProxy1);
+          //
+          hLayoutProxy2 = new QHBoxLayout();
+            labelProxyUser = new QLabel(Tr::PD::labelUserText(), frameProxy);
+            hLayoutProxy2->addWidget(labelProxyUser);
+            //
+            lineEditProxyUser = new QLineEdit(frameProxy);
+            hLayoutProxy2->addWidget(lineEditProxyUser);
+            //
+            labelProxyPassword = new QLabel(Tr::PD::labelPasswordText(),
+                                            frameProxy);
+            hLayoutProxy2->addWidget(labelProxyPassword);
+            //
+            lineEditProxyPassword = new QLineEdit(frameProxy);
+            hLayoutProxy2->addWidget(lineEditProxyPassword);
+          vLayoutProxy->addLayout(hLayoutProxy2);
+      vLayout->addWidget(frameProxy);
       //
       hLayoutActions = new QHBoxLayout();
         hLayoutActions->addStretch();
@@ -87,19 +135,15 @@ ParametersDialog::ParametersDialog(QWidget *parent) :
 
 //
 
-QString ParametersDialog::language() const
+
+ParametersDialog::CommonParameters ParametersDialog::commonParameters() const
 {
-    return currentLanguage;
+    return commonParam;
 }
 
-bool ParametersDialog::minimize() const
+ParametersDialog::ProxySettings ParametersDialog::proxy() const
 {
-    return checkBoxMinimise->isChecked();
-}
-
-bool ParametersDialog::exitConfirmation() const
-{
-    return checkBoxExitConfirmation->isChecked();
+    return proxySettings;
 }
 
 //
@@ -108,26 +152,24 @@ void ParametersDialog::readSettings()
 {
     QSettings settings;
     settings.beginGroup(GROUP_PARAMETERS_DIALOG);
-    QPoint point = settings.value(KEY_POSITION).toPoint();
+      QPoint point = settings.value(KEY_POSITION).toPoint();
+
+      if (QPoint() != point)
+          this->move(point);
+
     settings.endGroup();
-    settings.beginGroup(GROUP_PARAMETERS);
-    QString language = settings.value(KEY_LANGUAGE).toString();
-    checkBoxMinimise->setChecked(
-                settings.value(KEY_MINIMIZE, true).toBool() );
-    checkBoxExitConfirmation->setChecked(
-                settings.value(KEY_EXIT_CONFIRMATION, false).toBool() );
-    settings.endGroup();
-
-    if (QPoint() != point)
-        this->move(point);
-
-    if ( !language.isEmpty() )
-        currentLanguage = language;
-    else
-        currentLanguage = LANGUAGE_ENGLISH;
-
+    commonParam = readCommonParameters(settings);
     comboBoxLanguage->setCurrentIndex(
-                comboBoxLanguage->findText(currentLanguage) );
+                comboBoxLanguage->findText(commonParam.language) );
+    checkBoxMinimise->setChecked(commonParam.minimize);
+    checkBoxExitConfirmation->setChecked(commonParam.exitConfirmation);
+    proxySettings = readProxySettings(settings);
+    checkBoxProxyEnabled->setChecked(proxySettings.enabled);
+    lineEditProxyHost->setText(proxySettings.host);
+    quint16 port = proxySettings.port;
+    lineEditProxyPort->setText( (port > 1000) ? QString::number(port) : "" );
+    lineEditProxyUser->setText(proxySettings.user);
+    lineEditProxyPassword->setText(proxySettings.password);
 }
 
 void ParametersDialog::writeCommonSettings()
@@ -135,11 +177,11 @@ void ParametersDialog::writeCommonSettings()
     QSettings settings;
     settings.remove(GROUP_PARAMETERS);
     settings.beginGroup(GROUP_PARAMETERS);
-      settings.setValue(KEY_LANGUAGE, currentLanguage);
-      settings.setValue( KEY_MINIMIZE, checkBoxMinimise->isChecked() );
-      settings.setValue( KEY_EXIT_CONFIRMATION,
-                         checkBoxExitConfirmation->isChecked() );
+      settings.setValue(KEY_LANGUAGE, commonParam.language);
+      settings.setValue(KEY_MINIMIZE, commonParam.minimize);
+      settings.setValue(KEY_EXIT_CONFIRMATION, commonParam.exitConfirmation);
     settings.endGroup();
+    writeProxySettings(settings, proxySettings);
 }
 
 void ParametersDialog::writePrivateSettings()
@@ -161,7 +203,14 @@ void ParametersDialog::buttonCancelClicked()
 
 void ParametersDialog::buttonOkClicked()
 {
-    currentLanguage = comboBoxLanguage->currentText();
+    commonParam.language = comboBoxLanguage->currentText();
+    commonParam.minimize = checkBoxMinimise->isChecked();
+    commonParam.exitConfirmation = checkBoxExitConfirmation->isChecked();
+    proxySettings.enabled = checkBoxProxyEnabled->isChecked();
+    proxySettings.host = lineEditProxyHost->text();
+    proxySettings.port = (quint16) lineEditProxyPort->text().toUInt();
+    proxySettings.user = lineEditProxyUser->text();
+    proxySettings.password = lineEditProxyPassword->text();
     writePrivateSettings();
     writeCommonSettings();
     accept();

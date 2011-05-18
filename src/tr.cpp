@@ -276,12 +276,24 @@ namespace Tr
         QString labelLanguageText()
         {return QObject::tr("Language",
                             "parameters dialog: label text") + ":";}
+        QString labelHostText()
+        {return QObject::tr("Host", "parameters dialog: label text") + ":";}
+        QString labelPortText()
+        {return QObject::tr("Port", "parameters dialog: label text") + ":";}
+        QString labelUserText()
+        {return QObject::tr("User", "parameters dialog: label text") + ":";}
+        QString labelPasswordText()
+        {return QObject::tr("Password",
+                            "parameters dialog: label text") + ":";}
         //check box texts
         QString checkBoxExitConfirmationText()
         {return QObject::tr("Ask confirmation on exit",
                             "parameters dialog: check box text");}
         QString checkBoxMinimizeText()
         {return QObject::tr("Minimize to syztem tray on close",
+                            "parameters dialog: check box text");}
+        QString checkBoxProxyEnabledText()
+        {return QObject::tr("Enable proxy",
                             "parameters dialog: check box text");}
     }
 

@@ -30,6 +30,7 @@
 #include "src/mv/progressbardelegate.h"
 #include "src/mv/categorymodel.h"
 #include "src/common.h"
+#include "src/core/networkaccessmanager.h"
 
 #include <QSplitter>
 #include <QTreeView>
@@ -59,6 +60,7 @@
 #include <QFileDialog>
 #include <QDateTime>
 #include <QDir>
+#include <QNetworkProxy>
 
 const QString MainWindow::GROUP_MAIN_WINDOW = "main_window";
   const QString MainWindow::KEY_GEOMETRY = "geometry";
@@ -289,14 +291,14 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
 
 void MainWindow::closeEvent(QCloseEvent *e)
 {
-    if (minimize && !finalClose)
+    if (commonParam.minimize && !finalClose)
     {
         this->hide();
         e->ignore();
     }
     else
     {
-        if (exitConfirmation)
+        if (commonParam.exitConfirmation)
         {
             QMessageBox msgBox;
             msgBox.setWindowTitle( Tr::MW::msgExitConfirmationTitle() );
@@ -324,7 +326,7 @@ void MainWindow::retranslate(bool initial)
 {
     qApp->removeTranslator(&translator);
     translator.load(Common::APP_NAME + "_" +
-                    ParametersDialog::suffixForLanguage(currentLanguage),
+                    ParametersDialog::suffixForLanguage(commonParam.language),
                     ":/res/loc");
     qApp->installTranslator(&translator);
     menuFile->setTitle( Tr::MW::menuFileTitle() );
@@ -411,15 +413,11 @@ void MainWindow::readSettings()
         settings.endArray();
       settings.endGroup();
     settings.endGroup();
-    settings.beginGroup(ParametersDialog::GROUP_PARAMETERS);
-      currentLanguage = settings.value(
-                  ParametersDialog::KEY_LANGUAGE,
-                  ParametersDialog::LANGUAGE_ENGLISH).toString();
-      this->retranslate(true);
-      minimize = settings.value(ParametersDialog::KEY_MINIMIZE, true).toBool();
-      exitConfirmation = settings.value(
-                  ParametersDialog::KEY_EXIT_CONFIRMATION, false).toBool();
-    settings.endGroup();
+    commonParam = ParametersDialog::readCommonParameters(settings);
+    this->retranslate(true);
+    ParametersDialog::ProxySettings proxySettings =
+            ParametersDialog::readProxySettings(settings);
+    trySetProxy(proxySettings);
 }
 
 void MainWindow::writeSettings()
@@ -477,6 +475,23 @@ QList<int> MainWindow::getSelectedIndexes()
     }
 
     return selectedIndexes;
+}
+
+void MainWindow::trySetProxy(
+    const ParametersDialog::ProxySettings &proxySettings)
+{
+    QNetworkProxy proxy;
+
+    if (ParametersDialog::proxyIsValid(proxySettings) && proxySettings.enabled)
+    {
+        proxy.setType(QNetworkProxy::HttpCachingProxy);
+        proxy.setHostName(proxySettings.host);
+        proxy.setPort(proxySettings.port);
+        proxy.setUser(proxySettings.user);
+        proxy.setPassword(proxySettings.password);
+    }
+
+    NetworkAccessManager::instance()->setProxy(proxy);
 }
 
 //
@@ -541,15 +556,16 @@ void MainWindow::parametersRequested()
 
     if (dialog->result() == QDialog::Accepted)
     {
-        minimize = dialog->minimize();
-        exitConfirmation = dialog->exitConfirmation();
-        QString language = dialog->language();
+        QString previousLanguage = commonParam.language;
+        commonParam = dialog->commonParameters();
 
-        if (language != currentLanguage)
+        if (previousLanguage != commonParam.language)
         {
-            currentLanguage = language;
             this->retranslate(false);
         }
+
+        ParametersDialog::ProxySettings proxySettings = dialog->proxy();
+        trySetProxy(proxySettings);
     }
 
     dialog->deleteLater();
