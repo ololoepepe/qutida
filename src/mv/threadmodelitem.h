@@ -34,8 +34,6 @@ class ThreadModelItem : public TreeItem
 public:
     ThreadModelItem(const QList<QVariant> &data, TreeItem *parent = 0);
 
-    QVariant data(int column) const;
-
 public slots:
     void threadInfoChanged(ImageboardThread::Info key, const QVariant &data);
 

@@ -52,6 +52,7 @@ public:
         Error err;
         QStringList existingUrls;
         QStringList newUrls;
+        Download *download;
     };
 
     static const QString PARCE_PATTERN_BEG;

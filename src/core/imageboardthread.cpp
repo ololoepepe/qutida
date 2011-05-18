@@ -36,7 +36,7 @@ const QStringList ImageboardThread::DEF_EXTENTIONS_LIST =
 ImageboardThread::DEF_EXTENTIONS_PLAIN.split("|", QString::SkipEmptyParts);
 const ImageboardThread::Parameters ImageboardThread::DEF_PARAMETERS =
 {QString(), QDir::homePath(), ImageboardThread::DEF_EXTENTIONS_LIST,
- false, false, 1, 1, false, 20};
+ false, false, 1, 1, false, 20, false};
 
 const QString ImageboardThread::KEY_URL = "url";
 const QString ImageboardThread::KEY_DIRECTORY = "directory";
@@ -47,6 +47,7 @@ const QString ImageboardThread::KEY_ATTEMPT_PAGE = "attempt_page";
 const QString ImageboardThread::KEY_ATTEMPT_FILE = "attempt_file";
 const QString ImageboardThread::KEY_RESTART_ENABLED = "restart_enabled";
 const QString ImageboardThread::KEY_RESTART_INTERVAL = "restart_interval";
+const QString ImageboardThread::KEY_SAVE_PAGE = "save_page";
 
 //
 
@@ -243,15 +244,11 @@ void ImageboardThread::checkCompletion()
 {
     if (filesSaved + filesFailed >= filesTotal)
     {
+        threadState = ReadyState;
+        changeInfo(InfoStateExtended, ExtReadyCompleted);
+
         if (threadParameters.restartEnabled)
-        {
             setUpRestart();
-        }
-        else
-        {
-            threadState = ReadyState;
-            changeInfo(InfoStateExtended, ExtReadyCompleted);
-        }
     }
 }
 
@@ -348,6 +345,24 @@ void ImageboardThread::parceFinished(ParceTask::Result result)
     {
         filesSaved = result.existingUrls.count();
         filesTotal = filesSaved + result.newUrls.count();
+
+        if (threadParameters.savePage)
+        {
+            ++filesTotal;
+            SaveTask::Parameters param;
+            param.download = result.download;
+            param.dir = threadParameters.directory;
+            param.replace = true;
+            SaveTask *saveTask = new SaveTask(param);
+            connect( saveTask, SIGNAL( finished(SaveTask::Result) ),
+                     this, SLOT( saveFinished(SaveTask::Result) ) );
+            QThreadPool::globalInstance()->start(saveTask);
+        }
+        else
+        {
+            delete result.download;
+        }
+
         changeInfo(InfoFilesTotal, filesTotal);
         changeInfo(InfoFilesSaved, filesSaved);
         changeInfo( InfoProgress, progress() );
@@ -367,15 +382,10 @@ void ImageboardThread::parceFinished(ParceTask::Result result)
         }
         else
         {
+            threadState = ReadyState;
+            changeInfo(InfoStateExtended, ExtReadyNothing);
             if (threadParameters.restartEnabled)
-            {
                 setUpRestart();
-            }
-            else
-            {
-                threadState = ReadyState;
-                changeInfo(InfoStateExtended, ExtReadyNothing);
-            }
         }
     }
 }
@@ -393,6 +403,7 @@ void ImageboardThread::saveFinished(SaveTask::Result result)
         changeInfo(InfoFilesSaved, filesSaved);
     }
 
+    delete result.download;
     changeInfo( InfoProgress, progress() );
     checkCompletion();
 }

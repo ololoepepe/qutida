@@ -45,12 +45,12 @@ ParceTask::ParceTask(const Parameters &param) :
 void ParceTask::run()
 {
     Result result;
+    result.download = parameters.download;
 
     if ( parameters.download->data().isEmpty() )
     {
         result.err = DataError;
         emit finished(result);
-        Common::deleteObject(parameters.download);
         return;
     }
 
@@ -58,7 +58,6 @@ void ParceTask::run()
     {
         result.err = ExtentionsError;
         emit finished(result);
-        Common::deleteObject(parameters.download);
         return;
     }
 
@@ -164,6 +163,5 @@ void ParceTask::run()
 
     result.newUrls << urlList;
     result.err = NoError;
-    Common::deleteObject(parameters.download);
     emit finished(result);
 }

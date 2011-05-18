@@ -256,13 +256,19 @@
         <translation type="unfinished">Выход</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="163"/>
+        <location filename="../../src/tr.cpp" line="162"/>
+        <source>Nothing to backup</source>
+        <comment>main window: message box title</comment>
+        <translation type="unfinished">Нечего сохранять</translation>
+    </message>
+    <message>
+        <location filename="../../src/tr.cpp" line="166"/>
         <source>Do you really want to exit?</source>
         <comment>main window: message box text</comment>
         <translation type="unfinished">Вы действительно хотите выйти?</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="168"/>
+        <location filename="../../src/tr.cpp" line="171"/>
         <source>A piece of software for convenient
 imageboard content download.</source>
         <comment>main window: message box text</comment>
@@ -270,271 +276,289 @@ imageboard content download.</source>
 контента с имиджбордов.</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="176"/>
+        <location filename="../../src/tr.cpp" line="178"/>
+        <source>There are no threads to backup.</source>
+        <comment>main window: message box text</comment>
+        <translation type="unfinished">Нет тредов для резервного копирования.</translation>
+    </message>
+    <message>
+        <location filename="../../src/tr.cpp" line="182"/>
         <source>Add threads</source>
         <comment>main window: dialog caption</comment>
         <translation type="unfinished">Добавить треды</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="178"/>
+        <location filename="../../src/tr.cpp" line="184"/>
         <source>Parameters</source>
         <comment>main window: dialog caption</comment>
         <translation type="unfinished">Параметры</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="180"/>
+        <location filename="../../src/tr.cpp" line="186"/>
         <source>Remove threads</source>
         <comment>main window: dialog caption</comment>
         <translation type="unfinished">Удалить треды</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="182"/>
+        <location filename="../../src/tr.cpp" line="188"/>
         <source>Thread parameters</source>
         <comment>main window: dialog caption</comment>
         <translation type="unfinished">Настройки треда</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="185"/>
+        <location filename="../../src/tr.cpp" line="191"/>
         <source>Backup</source>
         <comment>main window: dialog caption</comment>
         <translation type="unfinished">Резервная копия</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="192"/>
+        <location filename="../../src/tr.cpp" line="198"/>
         <source>Put thread URLs here, divided by one or more space symbols (whitespace, tabulation or endline)</source>
         <comment>add thread: text edit tooltip</comment>
         <translation type="unfinished">Введите ссылки на треды, разделенные одним или несколькими пробельными символами (пробел, табуляция, или конец строки)</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="198"/>
+        <location filename="../../src/tr.cpp" line="204"/>
         <source>Directory</source>
         <comment>add thread: label text</comment>
         <translation type="unfinished">Папка</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="200"/>
+        <location filename="../../src/tr.cpp" line="206"/>
         <source>Attempt download page</source>
         <comment>add thread: label text</comment>
         <translation type="unfinished">Попыток загрузки страницы</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="203"/>
+        <location filename="../../src/tr.cpp" line="209"/>
         <source>Attempt download files</source>
         <comment>add thread: label text</comment>
         <translation type="unfinished">Попыток загрузки файлов</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="206"/>
+        <location filename="../../src/tr.cpp" line="212"/>
         <source>File extentions</source>
         <comment>add thread: label text</comment>
         <translation type="unfinished">Расширения файлов</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="210"/>
+        <location filename="../../src/tr.cpp" line="216"/>
+        <source>Save page</source>
+        <comment>add thread: check box text</comment>
+        <translation type="unfinished">Сохранять страницу</translation>
+    </message>
+    <message>
+        <location filename="../../src/tr.cpp" line="218"/>
         <source>Enable external links</source>
         <comment>add thread: check box text</comment>
         <translation type="unfinished">Разрешить внешние ссылки</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="213"/>
+        <location filename="../../src/tr.cpp" line="221"/>
         <source>Replace existing files</source>
         <comment>add thread: check box text</comment>
         <translation type="unfinished">Заменять существующие файлы</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="216"/>
+        <location filename="../../src/tr.cpp" line="224"/>
         <source>Restart automatically (interval in minutes)</source>
         <comment>add thread: check box text</comment>
         <translation type="unfinished">Перезапускать автоматически (интервал в минутах)</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="219"/>
+        <location filename="../../src/tr.cpp" line="227"/>
         <source>Start new threads after confirmation</source>
         <comment>add thread: check box text</comment>
         <translation type="unfinished">Запустить новые треды после добавления</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="223"/>
+        <location filename="../../src/tr.cpp" line="231"/>
         <source>Open the select directory dialog</source>
         <comment>add thread: tool button tooltip</comment>
         <translation type="unfinished">Открыть диалог выбора папки</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="227"/>
+        <location filename="../../src/tr.cpp" line="235"/>
+        <source>If checked, the page will be saved. The newer version will overwrite the previous one</source>
+        <comment>add thread: check box tooltip</comment>
+        <translation type="unfinished">Если выбрано, страница будет сохранена. Новая версия перезаписывается поверх старой</translation>
+    </message>
+    <message>
+        <location filename="../../src/tr.cpp" line="239"/>
         <source>If checked, links to another hosts, contained in the thread, will be added to download queue</source>
         <comment>add thread: check box tooltip</comment>
         <translation type="unfinished">Если выбрано, содержащиеся в треде ссылки на другие сайты будут добавлены в очередь загрузок</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="231"/>
+        <location filename="../../src/tr.cpp" line="243"/>
         <source>If checked, existing files will be overwritten. Othrewise existing files will not be downloaded again</source>
         <comment>add thread: check box tooltip</comment>
         <translation type="unfinished">Если выбрано, существующие файлы будут перезаписаны. В противном случае существущие файлы не будут повторно загружены</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="236"/>
+        <location filename="../../src/tr.cpp" line="248"/>
         <source>If checked, the thread will be redownloaded. Redownloads will occure every time the specified interval expires</source>
         <comment>add thread: check box tooltip</comment>
         <translation type="unfinished">Если выбрано, тред будет вновь загружен. Загрузка будет происходить каждый раз, когда истекает указанный интервал времени</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="242"/>
+        <location filename="../../src/tr.cpp" line="254"/>
         <source>Put the desired file extentions here, divided by one or more whitespace or tabulation symbols</source>
         <comment>add thread: line edit tooltip</comment>
         <translation type="unfinished">Введите сюда желаемые расширения файлов, разделенные одним или несолькими пробелами или символами табуляции</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="248"/>
+        <location filename="../../src/tr.cpp" line="260"/>
         <source>Default</source>
         <comment>add thread: button text</comment>
         <translation type="unfinished">По умолчанию</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="251"/>
+        <location filename="../../src/tr.cpp" line="263"/>
         <source>Reset file extentions to the default value of</source>
         <comment>add thread: button tooltip</comment>
         <translation type="unfinished">Вернуть расширения файлов по умолчанию</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="258"/>
+        <location filename="../../src/tr.cpp" line="270"/>
         <source>Select directory</source>
         <comment>add thread: dialog caption</comment>
         <translation type="unfinished">Выбор папки</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="265"/>
+        <location filename="../../src/tr.cpp" line="277"/>
         <source>Language</source>
         <comment>parameters dialog: label text</comment>
         <translation type="unfinished">Язык</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="269"/>
+        <location filename="../../src/tr.cpp" line="281"/>
         <source>Ask confirmation on exit</source>
         <comment>parameters dialog: check box text</comment>
         <translation type="unfinished">Спрашивать подтверждение при выходе</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="272"/>
+        <location filename="../../src/tr.cpp" line="284"/>
         <source>Minimize to syztem tray on close</source>
         <comment>parameters dialog: check box text</comment>
         <translation type="unfinished">Сворачивать в трей при закрытии окна</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="280"/>
+        <location filename="../../src/tr.cpp" line="292"/>
         <source>Remove selected threads? This action is irreversible.</source>
         <comment>remove dialog: label text</comment>
         <translation type="unfinished">Удалить выбранные треды? Это действие нельзя отменить.</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="285"/>
+        <location filename="../../src/tr.cpp" line="297"/>
         <source>Remove threads and files</source>
         <comment>remove dialog: button text</comment>
         <translation type="unfinished">Удалить треды с файлами</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="288"/>
+        <location filename="../../src/tr.cpp" line="300"/>
         <source>Remove threads only</source>
         <comment>remove dialog: button text</comment>
         <translation type="unfinished">Удалить только треды</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="309"/>
+        <location filename="../../src/tr.cpp" line="321"/>
         <source>Restart (minutes left)</source>
         <comment>info widget: label text</comment>
         <translation type="unfinished">Перезапуск (осталось минут)</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="321"/>
+        <location filename="../../src/tr.cpp" line="333"/>
         <source>Enabled</source>
         <comment>info widget: label text</comment>
         <translation type="unfinished">Включен</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="326"/>
+        <location filename="../../src/tr.cpp" line="338"/>
         <source>Disabled</source>
         <comment>info widget: label text</comment>
         <translation type="unfinished">Выключен</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="330"/>
+        <location filename="../../src/tr.cpp" line="342"/>
         <source>Files total</source>
         <comment>info widget: label text</comment>
         <translation type="unfinished">Всего файлов</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="332"/>
+        <location filename="../../src/tr.cpp" line="344"/>
         <source>Files saved</source>
         <comment>info widget: label text</comment>
         <translation type="unfinished">Файлов сохранено</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="334"/>
+        <location filename="../../src/tr.cpp" line="346"/>
         <source>Files failed</source>
         <comment>info widget: label text</comment>
         <translation type="unfinished">Не удалось загрузить</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="340"/>
+        <location filename="../../src/tr.cpp" line="352"/>
         <source>Unknown</source>
         <comment>info widget: label text</comment>
         <translation type="unfinished">Неизвестно</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="348"/>
+        <location filename="../../src/tr.cpp" line="360"/>
         <source>Restart enabled</source>
         <comment>thread parameters: check box text</comment>
         <translation type="unfinished">Включить перезапуск</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="352"/>
+        <location filename="../../src/tr.cpp" line="364"/>
         <source>Restart interval</source>
         <comment>thread parameters: label text</comment>
         <translation type="unfinished">Интервал перезапуска</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="364"/>
+        <location filename="../../src/tr.cpp" line="376"/>
         <source>State</source>
         <comment>category model: category</comment>
         <translation type="unfinished">Состояние</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="366"/>
+        <location filename="../../src/tr.cpp" line="378"/>
         <source>Hosts</source>
         <comment>category model: category</comment>
         <translation type="unfinished">Сайты</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="368"/>
+        <location filename="../../src/tr.cpp" line="380"/>
         <source>Boards</source>
         <comment>category model: category</comment>
         <translation type="unfinished">Доски</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="379"/>
+        <location filename="../../src/tr.cpp" line="391"/>
         <source>All</source>
         <comment>category model: sub category</comment>
         <translation type="unfinished">Все</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="382"/>
+        <location filename="../../src/tr.cpp" line="394"/>
         <source>Active</source>
         <comment>category model: sub category</comment>
         <translation type="unfinished">Активные</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="385"/>
+        <location filename="../../src/tr.cpp" line="397"/>
         <source>Waiting</source>
         <comment>category model: sub category</comment>
         <translation type="unfinished">Ожидающие</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="388"/>
+        <location filename="../../src/tr.cpp" line="400"/>
         <source>Ready</source>
         <comment>category model: sub category</comment>
         <translation type="unfinished">Готовые</translation>
     </message>
     <message>
-        <location filename="../../src/tr.cpp" line="391"/>
+        <location filename="../../src/tr.cpp" line="403"/>
         <source>Error</source>
         <comment>category model: sub category</comment>
         <translation type="unfinished">С ошибкой</translation>

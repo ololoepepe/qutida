@@ -66,9 +66,11 @@ namespace Tr
         QString msgAboutTitle();
         QString msgAboutQtTitle();
         QString msgExitConfirmationTitle();
+        QString msgNothingToBackupTitle();
         //message box texts
         QString msgExitConfirmationText();
         QString msgAboutText();
+        QString msgNothingToBackupText();
         //dialog captions
         QString dialogAddThreadCaption();
         QString dialogParametersCaption();
@@ -89,11 +91,13 @@ namespace Tr
         //tool button tooltip
         QString tbuttonSearchDirTooltip();
         //check box texts
+        QString checkBoxSavePageText();
         QString checkBoxExternalText();
         QString checkBoxReplaceText();
         QString checkBoxRestartEnabledText();
         QString checkBoxStartText();
         //check box tooltips
+        QString checkBoxSavePageTooltip();
         QString checkBoxExternalTooltip();
         QString checkBoxReplaceTooltip();
         QString checkBoxRestartEnabledTooltip();

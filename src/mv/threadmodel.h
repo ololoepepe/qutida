@@ -50,6 +50,7 @@ public:
     explicit ThreadModel(const QList<QVariant> &headerData,
                          QObject *parent = 0);
 
+    QVariant data(const QModelIndex &index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation,
                         int role) const;
     void sort(int column, Qt::SortOrder order);

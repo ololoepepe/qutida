@@ -36,6 +36,26 @@ ThreadModel::ThreadModel(const QList<QVariant> &headerData, QObject *parent) :
 
 //
 
+QVariant ThreadModel::data(const QModelIndex &index, int role) const
+{
+    if ( !index.isValid() )
+        return QVariant();
+
+    if (role != Qt::DisplayRole)
+        return QVariant();
+
+    TreeItem *item = static_cast<TreeItem*>( index.internalPointer() );
+
+    if ( ImageboardThread::InfoStateExtended == index.column() )
+        return Tr::IT::threadExtendedState(
+                    static_cast<ImageboardThread::ExtendedState>(
+                        item->data( index.column() ).toInt() ) );
+    else
+        return item->data( index.column() );
+
+    return item->data( index.column() );
+}
+
 QVariant ThreadModel::headerData(int section, Qt::Orientation orientation,
                                  int role) const
 {
@@ -117,20 +137,13 @@ void ThreadModel::retranslate()
 
 void ThreadModel::itemDataChanged(int row, int column)
 {
-    if ( row >= rootItem->childCount() )
+    if (row >= rootItem->childCount() || row < 0)
         return;
 
-    if ( column >= rootItem->columnCount() )
+    if (column >= rootItem->columnCount()  || column < 0)
         return;
 
-    TreeItem *item = rootItem->child(row);
-
-    if (!item)
-    {
-        return;
-    }
-
-    QModelIndex ind ( index( row, column, QModelIndex() ) );
+    QModelIndex ind( index(row, column) );
     emit dataChanged(ind, ind);
 }
 

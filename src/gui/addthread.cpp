@@ -76,6 +76,10 @@ AddThread::AddThread(QWidget *parent) :
       hLayoutMode = new QHBoxLayout();
         hLayoutMode->addStretch();
         //
+        checkBoxSavePage = new QCheckBox(Tr::AT::checkBoxSavePageText(), this);
+        checkBoxSavePage->setToolTip( Tr::AT::checkBoxSavePageTooltip() );
+        hLayoutMode->addWidget(checkBoxSavePage);
+        //
         checkBoxExternal = new QCheckBox(Tr::AT::checkBoxExternalText(), this);
         checkBoxExternal->setToolTip( Tr::AT::checkBoxExternalTooltip() );
         hLayoutMode->addWidget(checkBoxExternal);
@@ -194,6 +198,7 @@ void AddThread::readSettings()
                   Common::strFromList(defParam.extentions, " ") );
       checkBoxRestartEnabled->setChecked(defParam.restartEnabled);
       spinBoxRestartInterval->setValue(defParam.restartInterval);
+      checkBoxSavePage->setChecked(defParam.savePage);
       settings.endGroup();
     settings.endGroup();
 }
@@ -226,6 +231,7 @@ void AddThread::resetDefParam()
                 QRegExp("\\s+"), QString::SkipEmptyParts);
     defParam.restartEnabled = checkBoxRestartEnabled->isChecked();
     defParam.restartInterval = spinBoxRestartInterval->value();
+    defParam.savePage = checkBoxSavePage->isChecked();
 }
 
 QString AddThread::constructSubPath(const QString &url)

@@ -33,22 +33,10 @@ ThreadModelItem::ThreadModelItem(const QList<QVariant> &data,
 
 //
 
-QVariant ThreadModelItem::data(int column) const
-{
-    if (ImageboardThread::InfoStateExtended == column)
-        return Tr::IT::threadExtendedState(
-                    static_cast<ImageboardThread::ExtendedState>(
-                        itemData.at(column).toInt() ) );
-    else
-        return itemData.at(column);
-}
-
-//
-
 void ThreadModelItem::threadInfoChanged(ImageboardThread::Info key,
                                         const QVariant &data)
 {
-    if ( key >= itemData.count() )
+    if (key >= itemData.count() || key < 0)
         return;
 
     itemData.replace(key, data);

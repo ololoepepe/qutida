@@ -165,11 +165,10 @@ private slots:
     void aboutRequested();
     void aboutQtRequested();
     void showHideRequested();
+    void threadModelDataChanged(const QModelIndex &topLeft);
     void threadsSortIndicatorChanged(int column, Qt::SortOrder order);
-    void threadsSelectionChanged(const QItemSelection &selected,
-                                 const QItemSelection &deselected);
-    void categoriesSelectionChanged(const QItemSelection &selected,
-                                    const QItemSelection &deselected);
+    void threadsSelectionChanged(const QItemSelection &selected);
+    void categoriesSelectionChanged();
     void trayIconActivated(QSystemTrayIcon::ActivationReason reason);
     void treeViewThreadsMenuRequested(const QPoint &point);
     void headerViewThreadsMenuRequested(const QPoint &point);

@@ -337,14 +337,14 @@ void CategoryModel::threadInfoChanged(ImageboardThread::Info key,
     case ImageboardThread::InfoStateExtended:
     {
         ImageboardThread::ExtendedState state =
-                static_cast<ImageboardThread::ExtendedState>(data.toInt() );
+                static_cast<ImageboardThread::ExtendedState>( data.toInt() );
         checkState(state, true);
         break;
     }
     case ImageboardThread::InfoStateExtendedPrev:
     {
         ImageboardThread::ExtendedState state =
-                static_cast<ImageboardThread::ExtendedState>(data.toInt() );
+                static_cast<ImageboardThread::ExtendedState>( data.toInt() );
         checkState(state, false);
     }
     default:

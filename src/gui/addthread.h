@@ -58,6 +58,7 @@ private:
         QToolButton *tbuttonSearchDir;
       QHBoxLayout *hLayoutMode;
         //stretch
+        QCheckBox *checkBoxSavePage;
         QCheckBox *checkBoxExternal;
         QCheckBox *checkBoxReplace;
       QHBoxLayout *hLayoutAttempt;

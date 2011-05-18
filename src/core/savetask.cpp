@@ -34,12 +34,12 @@ SaveTask::SaveTask(const Parameters &param) :
 void SaveTask::run()
 {
     Result result;
+    result.download = parameters.download;
 
     if ( parameters.download->data().isEmpty() )
     {
         result.err = DataError;
         emit finished(result);
-        Common::deleteObject(parameters.download);
         return;
     }
 
@@ -54,7 +54,6 @@ void SaveTask::run()
             {
                 result.err = FileError;
                 emit finished(result);
-                Common::deleteObject(parameters.download);
                 return;
             }
         }
@@ -62,7 +61,6 @@ void SaveTask::run()
         {
             result.err = NoError;
             emit finished(result);
-            Common::deleteObject(parameters.download);
             return;
         }
     }
@@ -71,7 +69,6 @@ void SaveTask::run()
     {
         result.err = FileError;
         emit finished(result);
-        Common::deleteObject(parameters.download);
         return;
     }
 
@@ -80,12 +77,10 @@ void SaveTask::run()
         file.close();
         result.err = FileError;
         emit finished(result);
-        Common::deleteObject(parameters.download);
         return;
     }
 
     file.close();
     result.err = NoError;
     emit finished(result);
-    Common::deleteObject(parameters.download);
 }

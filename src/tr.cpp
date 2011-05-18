@@ -158,6 +158,9 @@ namespace Tr
         {return QObject::tr("About Qt", "main window: message box title");}
         QString msgExitConfirmationTitle()
         {return QObject::tr("Exit", "main window: message box title");}
+        QString msgNothingToBackupTitle()
+        {return QObject::tr("Nothing to backup",
+                            "main window: message box title");}
         //message box texts
         QString msgExitConfirmationText()
         {return QObject::tr("Do you really want to exit?",
@@ -171,6 +174,9 @@ namespace Tr
                     "Version: " + Common::APP_VERSION + "\n\n" +
                     "Copyright (c) " + Common::CR_YEARS + " " +
                     Common::ORG_NAME + "\n\n" + Common::ORG_DOMAIN;}
+        QString msgNothingToBackupText()
+        {return QObject::tr("There are no threads to backup.",
+                            "main window: message box text");}
         //dialog captions
         QString dialogAddThreadCaption()
         {return QObject::tr("Add threads", "main window: dialog caption");}
@@ -206,6 +212,8 @@ namespace Tr
         {return QObject::tr("File extentions",
                             "add thread: label text") + ":";}
         //check box texts
+        QString checkBoxSavePageText()
+        {return QObject::tr("Save page", "add thread: check box text");}
         QString checkBoxExternalText()
         {return QObject::tr("Enable external links",
                             "add thread: check box text");}
@@ -223,6 +231,10 @@ namespace Tr
         {return QObject::tr("Open the select directory dialog",
                             "add thread: tool button tooltip");}
         //check box tooltips
+        QString checkBoxSavePageTooltip()
+        {return QObject::tr("If checked, the page will be saved. The newer "
+                            "version will overwrite the previous one",
+                            "add thread: check box tooltip");}
         QString checkBoxExternalTooltip()
         {return QObject::tr("If checked, links to another hosts, contained "
                             "in the thread, will be added to download queue",

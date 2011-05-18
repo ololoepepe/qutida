@@ -50,6 +50,7 @@ public:
         int attemptFile;
         bool restartEnabled;
         int restartInterval;
+        bool savePage;
     };
 
     enum Info
@@ -106,6 +107,7 @@ public:
     static const QString KEY_ATTEMPT_FILE;
     static const QString KEY_RESTART_ENABLED;
     static const QString KEY_RESTART_INTERVAL;
+    static const QString KEY_SAVE_PAGE;
 
     static QMap<Info, QVariant> infoFromParameters(const Parameters &param)
     {
@@ -178,6 +180,8 @@ public:
         param.restartInterval =
                 settings.value(KEY_RESTART_INTERVAL,
                                defParam.restartInterval).toInt();
+        param.savePage = settings.value(KEY_SAVE_PAGE,
+                                        defParam.savePage).toBool();
         return param;
     }
 
@@ -193,6 +197,7 @@ public:
         settings.setValue(KEY_ATTEMPT_FILE, param.attemptFile);
         settings.setValue(KEY_RESTART_ENABLED, param.restartEnabled);
         settings.setValue(KEY_RESTART_INTERVAL, param.restartInterval);
+        settings.setValue(KEY_SAVE_PAGE, param.savePage);
     }
 
     ImageboardThread(const Parameters &param, QObject *parent = 0);

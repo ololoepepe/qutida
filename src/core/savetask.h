@@ -48,6 +48,7 @@ public:
     {
         QString url;
         Error err;
+        Download *download;
     };
 
     explicit SaveTask(const Parameters &param);

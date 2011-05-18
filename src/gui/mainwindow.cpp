@@ -90,12 +90,14 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
           connect( selectionModelCategories,
                    SIGNAL(selectionChanged( QItemSelection, QItemSelection) ),
                    this,
-                   SLOT( categoriesSelectionChanged(
-                            QItemSelection, QItemSelection) ) );
+                   SLOT( categoriesSelectionChanged() ) );
         treeViewCategories->expandAll();
         //
         treeViewThreads = new QTreeView(hSplitterTop);
         treeViewThreads->setModel(threadModel);
+          connect( threadModel,
+                   SIGNAL( dataChanged(QModelIndex, QModelIndex) ),
+                   this, SLOT( threadModelDataChanged(QModelIndex) ) );
         treeViewThreads->setItemDelegateForColumn(
                     ImageboardThread::InfoProgress,
                     new ProgressBarDelegate(threadModel) );
@@ -122,8 +124,7 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
           connect( selectionModelThreads,
                    SIGNAL( selectionChanged(QItemSelection, QItemSelection) ),
                    this,
-                   SLOT( threadsSelectionChanged(QItemSelection,
-                                                 QItemSelection) ) );
+                   SLOT( threadsSelectionChanged(QItemSelection) ) );
       infoWidget = new InfoWidget(vSplitter);
     //menuBar
       menuBar()->setNativeMenuBar(Qt::AA_DontUseNativeMenuBar);
@@ -312,6 +313,7 @@ void MainWindow::closeEvent(QCloseEvent *e)
         }
 
         writeSettings();
+        trayIcon->hide();
         e->accept();
     }
 }
@@ -504,6 +506,17 @@ void MainWindow::addRequested()
 
 void MainWindow::backupRequested()
 {
+    if (treeViewThreads->model()->rowCount() < 1)
+    {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle( Tr::MW::msgNothingToBackupTitle() );
+        msgBox.setText( Tr::MW::msgNothingToBackupText() );
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.exec();
+        return;
+    }
+
     QString fileName =
             QFileDialog::getSaveFileName(
                 this, Tr::MW::dialogBackupCaption(), QDir::currentPath() +
@@ -658,13 +671,18 @@ void MainWindow::showHideRequested()
     actShowHide->setText( Tr::MW::actShowHideText( this->isVisible() ) );
 }
 
+void MainWindow::threadModelDataChanged(const QModelIndex &topLeft)
+{
+    if (topLeft.column() == ImageboardThread::InfoStateExtended)
+        categoriesSelectionChanged();
+}
+
 void MainWindow::threadsSortIndicatorChanged(int column, Qt::SortOrder order)
 {
     emit requestSortThreads(column, order);
 }
 
-void MainWindow::threadsSelectionChanged(const QItemSelection &selected,
-                                         const QItemSelection &deselected)
+void MainWindow::threadsSelectionChanged(const QItemSelection &selected)
 {
     if (!infoWidget)
         return;
@@ -697,8 +715,7 @@ void MainWindow::threadsSelectionChanged(const QItemSelection &selected,
     }
 }
 
-void MainWindow::categoriesSelectionChanged(const QItemSelection &selected,
-                                            const QItemSelection &deselected)
+void MainWindow::categoriesSelectionChanged()
 {
     TreeModel *threadModel = dynamic_cast<TreeModel*>( treeViewThreads->model() );
     CategoryModel *categoryModel = dynamic_cast<CategoryModel*>( treeViewCategories->model() );
