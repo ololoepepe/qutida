@@ -77,6 +77,7 @@ namespace Tr
         QString dialogRemoveCaption();
         QString dialogThreadParametersCaption();
         QString dialogBackupCaption();
+        QString dialogAuthenticationCaption();
     }
 
     namespace AT

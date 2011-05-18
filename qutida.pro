@@ -20,7 +20,8 @@ HEADERS += \
     src/gui/removedialog.h \
     src/gui/infowidget.h \
     src/gui/threadparameters.h \
-    src/mv/progressbardelegate.h
+    src/mv/progressbardelegate.h \
+    src/gui/authentication.h
 
 SOURCES += \
     src/gui/mainwindow.cpp \
@@ -44,7 +45,8 @@ SOURCES += \
     src/gui/removedialog.cpp \
     src/gui/infowidget.cpp \
     src/gui/threadparameters.cpp \
-    src/mv/progressbardelegate.cpp
+    src/mv/progressbardelegate.cpp \
+    src/gui/authentication.cpp
 
 QT += \
     network

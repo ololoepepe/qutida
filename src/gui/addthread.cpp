@@ -53,6 +53,34 @@ const QString AddThread::KEY_START = "start";
 AddThread::AddThread(QWidget *parent) :
     QDialog(parent)
 {
+    initialize();
+}
+
+AddThread::AddThread(const QStringList &urlList, QWidget *parent) :
+    QDialog(parent)
+{
+    initialize();
+
+    for (int i = 0; i < urlList.count(); ++i)
+        textEditUrls->append( urlList.at(i) );
+}
+
+//
+
+const QList<ImageboardThread::Parameters> &AddThread::parameters() const
+{
+    return paramList;
+}
+
+bool AddThread::start() const
+{
+    return checkBoxStart->isChecked();
+}
+
+//
+
+void AddThread::initialize()
+{
     vLayout = new QVBoxLayout(this);
       textEditUrls = new QTextEdit(this);
       textEditUrls->setToolTip( Tr::AT::textEditUrlsTooltip() );
@@ -160,20 +188,6 @@ AddThread::AddThread(QWidget *parent) :
     //
     readSettings();
 }
-
-//
-
-const QList<ImageboardThread::Parameters> &AddThread::parameters() const
-{
-    return paramList;
-}
-
-bool AddThread::start() const
-{
-    return checkBoxStart->isChecked();
-}
-
-//
 
 void AddThread::readSettings()
 {

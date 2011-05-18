@@ -31,6 +31,7 @@
 #include "src/mv/categorymodel.h"
 #include "src/common.h"
 #include "src/core/networkaccessmanager.h"
+#include "src/gui/authentication.h"
 
 #include <QSplitter>
 #include <QTreeView>
@@ -61,6 +62,7 @@
 #include <QDateTime>
 #include <QDir>
 #include <QNetworkProxy>
+#include <QAuthenticator>
 
 const QString MainWindow::GROUP_MAIN_WINDOW = "main_window";
   const QString MainWindow::KEY_GEOMETRY = "geometry";
@@ -285,6 +287,34 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
     //
     readSettings();
     finalClose = false;
+    connect( NetworkAccessManager::instance(),
+             SIGNAL( proxyAuthenticationRequired(QNetworkProxy,
+                                                 QAuthenticator*) ),
+             this, SLOT( proxyAuthenticationRequired(QNetworkProxy,
+                                                     QAuthenticator*) ) );
+}
+
+void MainWindow::callAddThreadDialog(const QStringList &urlList)
+{
+    AddThread *dialog = new AddThread(urlList, this);
+    dialog->setWindowTitle( Tr::MW::dialogAddThreadCaption() );
+    dialog->exec();
+
+    if (dialog->result() == QDialog::Accepted)
+    {
+        bool start = dialog->start();
+        int count = dialog->parameters().count();
+
+        if (count > 0)
+            selectionModelThreads->clearSelection();
+
+        for (int i = 0; i < count; ++i)
+            emit requestAddThread(dialog->parameters().at(i), start);
+    }
+
+    dialog->deleteLater();
+    emit requestSortThreads( headerThreads->sortIndicatorSection(),
+                             headerThreads->sortIndicatorOrder() );
 }
 
 //
@@ -685,6 +715,22 @@ void MainWindow::showHideRequested()
 {
     this->setVisible( !this->isVisible() );
     actShowHide->setText( Tr::MW::actShowHideText( this->isVisible() ) );
+}
+
+void MainWindow::proxyAuthenticationRequired(const QNetworkProxy &proxy,
+                                             QAuthenticator *authenticator)
+{
+    Authentication *dialog = new Authentication(this);
+    dialog->setWindowTitle( Tr::MW::dialogAuthenticationCaption() );
+    dialog->exec();
+
+    if (dialog->result() == QDialog::Accepted)
+    {
+        authenticator->setUser( dialog->user() );
+        authenticator->setPassword( dialog->password() );
+    }
+
+    dialog->deleteLater();
 }
 
 void MainWindow::threadModelDataChanged(const QModelIndex &topLeft)

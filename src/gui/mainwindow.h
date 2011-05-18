@@ -45,6 +45,8 @@
 #include <QItemSelection>
 #include <QItemSelectionModel>
 #include <QPoint>
+#include <QAuthenticator>
+#include <QNetworkProxy>
 
 class MainWindow : public QMainWindow
 {
@@ -65,6 +67,8 @@ public:
 
     explicit MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
                         QWidget *parent = 0);
+
+    void callAddThreadDialog(const QStringList &urlList);
 
 signals:
     void requestAddThread(const ImageboardThread::Parameters &param,
@@ -165,6 +169,8 @@ private slots:
     void aboutRequested();
     void aboutQtRequested();
     void showHideRequested();
+    void proxyAuthenticationRequired (const QNetworkProxy &proxy,
+                                      QAuthenticator *authenticator);
     void threadModelDataChanged(const QModelIndex &topLeft);
     void threadsSortIndicatorChanged(int column, Qt::SortOrder order);
     void threadsSelectionChanged(const QItemSelection &selected);

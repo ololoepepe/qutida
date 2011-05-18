@@ -189,6 +189,8 @@ namespace Tr
                             "main window: dialog caption");}
         QString dialogBackupCaption()
         {return QObject::tr("Backup", "main window: dialog caption");}
+        QString dialogAuthenticationCaption()
+        {return QObject::tr("Authentication", "main window: dialog caption");}
     }
 
     namespace AT

@@ -35,6 +35,7 @@
 #include <QSpinBox>
 #include <QPushButton>
 #include <QList>
+#include <QStringList>
 
 class AddThread : public QDialog
 {
@@ -45,6 +46,7 @@ public:
     static const QString KEY_START;
 
     explicit AddThread(QWidget *parent = 0);
+    AddThread(const QStringList &urlList, QWidget *parent = 0);
 
     const QList<ImageboardThread::Parameters> &parameters() const;
     bool start() const;
@@ -84,6 +86,7 @@ private:
     ImageboardThread::Parameters defParam;
     QList<ImageboardThread::Parameters> paramList;
 
+    void initialize();
     void readSettings();
     void writeSettings();
     void resetDefParam();

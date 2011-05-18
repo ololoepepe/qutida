@@ -1,4 +1,4 @@
-This is qutida version 0.1.5.
+This is qutida version 0.1.6.
 
 qutida (Qt Imageboard Download Assistant) is a tool for downloading
 various content form imageboards. It is distributed under the terms
@@ -24,7 +24,29 @@ or later. Then type "cd <path_to_source_code>" in your terminal (command line)
 and put the command: qmake -o Makefile qutida.pro
 Then type "make" or "nmake" depending on the compiler you use.
 
-For Visual Studio users, qmake can also generate .dsp or .vcproj files, for example:
-qmake -tp vc qutida.pro
+For Visual Studio users, qmake can also generate .dsp or .vcproj files,
+for example: qmake -tp vc qutida.pro
 
 For more information, see http://doc.qt.nokia.com/4.7/qmake-tutorial.html
+
+USEFUL INFO
+
+qutida supports command line arguments, which may be passed to the application
+when it is launched. The list of arguments with descriptions is given below.
+
+"-multiple" is useful when you want to launch more than one instance
+of qutida at the same time. By default, only one instance is allowed,
+and the "-multiple" argument cancels this limitation.
+
+"-urls [url_1, url_2, ...]" tells the application to add threads with given
+URLs at launch time. The arguments below are used to customize this procedure.
+
+"-default" If this argument is passed along with the "-urls" argument, then
+default parameters will be used for every new thread from the list, so
+they will be added "silently". Otherwise, the "Add threads" dialog
+will be shown, containling the list of new URLs. That allows you to modify
+thread parameters before download starts.
+
+"-start" This argument only makes sense if the "-default" argument is passed.
+This combination tells the program to add new threads with default parameters
+and to start downloading them immediately without any dialogs being shown.
