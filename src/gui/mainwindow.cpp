@@ -294,8 +294,13 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
                                                      QAuthenticator*) ) );
 }
 
+//
+
 void MainWindow::callAddThreadDialog(const QStringList &urlList)
 {
+    if ( !this->isVisible() )
+        showHideRequested();
+
     AddThread *dialog = new AddThread(urlList, this);
     dialog->setWindowTitle( Tr::MW::dialogAddThreadCaption() );
     dialog->exec();
@@ -420,6 +425,7 @@ void MainWindow::readSettings()
                     Qt::AscendingOrder : Qt::DescendingOrder;
         int index = settings.value(KEY_SORT_SECTION, 0).toInt();
         headerThreads->setSortIndicator(index, order);
+        emit requestSortThreads(index, order); //maybe not nessesary
         int count = settings.beginReadArray(ARRAY_SECTIONS);
 
           for (int i = 0; i < count; ++i)
@@ -672,6 +678,7 @@ void MainWindow::removeRequested()
         return;
 
     bool del = (RemoveDialog::Delete == decision);
+    selectionModelThreads->clearSelection();
 
     for (int i = selected.count() - 1; i >= 0; --i)
         emit requestRemoveThread(selected.at(i), del);
@@ -741,6 +748,7 @@ void MainWindow::threadModelDataChanged(const QModelIndex &topLeft)
 
 void MainWindow::threadsSortIndicatorChanged(int column, Qt::SortOrder order)
 {
+    selectionModelThreads->clearSelection(); //to be improved
     emit requestSortThreads(column, order);
 }
 

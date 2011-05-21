@@ -1,4 +1,4 @@
-This is qutida version 0.1.6.
+This is qutida version 0.1.7.
 
 qutida (Qt Imageboard Download Assistant) is a tool for downloading
 various content form imageboards. It is distributed under the terms
@@ -38,7 +38,7 @@ when it is launched. The list of arguments with descriptions is given below.
 of qutida at the same time. By default, only one instance is allowed,
 and the "-multiple" argument cancels this limitation.
 
-"-urls [url_1, url_2, ...]" tells the application to add threads with given
+"-urls [url_1] [url_2] ..." tells the application to add threads with given
 URLs at launch time. The arguments below are used to customize this procedure.
 
 "-default" If this argument is passed along with the "-urls" argument, then

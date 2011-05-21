@@ -51,9 +51,10 @@ ThreadManager::ThreadManager(QObject *parent) :
          i <= ImageboardThread::InfoIteratorLast; ++i)
         headerData << i;
     mThreadModel = new ThreadModel(headerData, this);
-    connect( mThreadModel, SIGNAL( itemsRearranged(int, int) ),
-             this, SLOT( threadModelItemsRearranged(int, int) ) );
     mCategoryModel = new CategoryModel(this);
+    sortingColumn = -1;
+    sortingOrder = Qt::AscendingOrder;
+    threadsSorted = false;
     readSettings();
 }
 
@@ -89,6 +90,9 @@ CategoryModel *ThreadManager::categoryModel()
 void ThreadManager::requestAddThread(const ImageboardThread::Parameters &param,
                                      bool start)
 {
+    if ( !Common::isThreadUrlValid(param.url) )
+        return;
+
     foreach (ImageboardThread *thread, threadList)
         if (thread)
             if (thread->url() == param.url)
@@ -98,9 +102,13 @@ void ThreadManager::requestAddThread(const ImageboardThread::Parameters &param,
     threadList.append(thread);
     mThreadModel->addItem(thread);
     mCategoryModel->tryAddCategory(thread);
+    threadsSorted = false;
 
     if (start)
         thread->startDownload();
+
+    if (sortingColumn > -1)
+        requestSortThreads(sortingColumn, sortingOrder);
 }
 
 void ThreadManager::requestBackup(const QString &fileName)
@@ -130,12 +138,14 @@ void ThreadManager::requestRemoveThread(int index, bool del)
     if (index >= threadList.count() || index < 0)
         return;
 
-    ImageboardThread *thread = threadList.takeAt(index);
+    ImageboardThread *thread = mThreadModel->threadForRow(index);
+    threadList.removeAll(thread);
 
     if (!thread)
         return;
 
     mCategoryModel->tryRemoveCategory(thread);
+    mThreadModel->removeItem(thread);
 
     if (del)
     {
@@ -143,7 +153,6 @@ void ThreadManager::requestRemoveThread(int index, bool del)
     }
     else
     {
-        thread->stopDownload();
         thread->deleteLater();
     }
 }
@@ -153,7 +162,7 @@ void ThreadManager::requestStartThread(int index)
     if (index >= threadList.count() || index < 0)
         return;
 
-    ImageboardThread *thread = threadList.value(index);
+    ImageboardThread *thread = mThreadModel->threadForRow(index);
 
     if (!thread)
         return;
@@ -166,7 +175,7 @@ void ThreadManager::requestStopThread(int index)
     if (index >= threadList.count() || index < 0)
         return;
 
-    ImageboardThread *thread = threadList.value(index);
+    ImageboardThread *thread = mThreadModel->threadForRow(index);
 
     if (!thread)
         return;
@@ -179,7 +188,7 @@ void ThreadManager::requestOpenDir(int index)
     if (index >= threadList.count() || index < 0)
         return;
 
-    ImageboardThread *thread = threadList.value(index);
+    ImageboardThread *thread = mThreadModel->threadForRow(index);
 
     if (!thread)
         return;
@@ -192,7 +201,7 @@ void ThreadManager::requestOpenUrl(int index)
     if (index >= threadList.count() || index < 0)
         return;
 
-    ImageboardThread *thread = threadList.value(index);
+    ImageboardThread *thread = mThreadModel->threadForRow(index);
 
     if (!thread)
         return;
@@ -202,12 +211,18 @@ void ThreadManager::requestOpenUrl(int index)
 
 void ThreadManager::requestSortThreads(int column, Qt::SortOrder order)
 {
+    if (threadsSorted && sortingColumn == column && sortingOrder == order)
+        return;
+
     int count = threadList.count();
 
     if (count < 2)
         return;
 
     mThreadModel->sort(column, order);
+    sortingColumn = column;
+    sortingOrder = order;
+    threadsSorted = true;
 }
 
 void ThreadManager::requestSetObservedThread(int index, InfoWidget *widget)
@@ -221,7 +236,7 @@ void ThreadManager::requestSetObservedThread(int index, InfoWidget *widget)
         return;
     }
 
-    widget->setObservedThread( threadList.value(index) );
+    widget->setObservedThread( mThreadModel->threadForRow(index) );
 }
 
 void ThreadManager::requestModifyRestart(const QList<int> &indexes,
@@ -287,14 +302,4 @@ void ThreadManager::readSettings()
 
       settings.endArray();
     settings.endGroup();
-}
-
-//
-
-void ThreadManager::threadModelItemsRearranged(int prevIndex1, int prevIndex2)
-{
-    ImageboardThread *thread1 = threadList.value(prevIndex1);
-    ImageboardThread *thread2 = threadList.value(prevIndex2);
-    threadList.replace(prevIndex1, thread2);
-    threadList.replace(prevIndex2, thread1);
 }

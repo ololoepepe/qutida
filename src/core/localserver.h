@@ -17,39 +17,43 @@
 ** along with qutida.  If not, see <http://www.gnu.org/licenses/>.
 ****************************************************************************/
 
-#ifndef THREADMODEL_H
-#define THREADMODEL_H
+#ifndef LOCALSERVER_H
+#define LOCALSERVER_H
 
-#include "src/mv/treemodel.h"
 #include "src/core/imageboardthread.h"
 
+#include <QLocalServer>
 #include <QObject>
-#include <QVariant>
+#include <QStringList>
+#include <QSignalMapper>
 #include <QList>
-#include <QModelIndex>
-#include <QMap>
+#include <QLocalSocket>
+#include <QString>
 
-class ThreadModel : public TreeModel
+class LocalServer : public QLocalServer
 {
     Q_OBJECT
 public:
-    explicit ThreadModel(const QList<QVariant> &headerData,
-                         QObject *parent = 0);
+    static const QString PREFIX;
+    static const QString ARG_MULTIPLE;
+    static const QString ARG_URLS;
+    static const QString ARG_DEFAULT;
+    static const QString ARG_START;
 
-    QVariant data(const QModelIndex &index, int role) const;
-    QVariant headerData(int section, Qt::Orientation orientation,
-                        int role) const;
-    void sort(int column, Qt::SortOrder order);
+    explicit LocalServer(QObject *parent = 0);
 
-    void addItem(ImageboardThread *thread);
-    bool removeItem(const ImageboardThread *thread);
-    bool sortItems(int column, bool ascending);
-    void retranslate();
-    ImageboardThread *threadForRow(int row);
+signals:
+    void addThreads(const QStringList &urlList);
+    void addThreadSilent(const ImageboardThread::Parameters &param,
+                         bool start);
+
+private:
+    QSignalMapper socketMapper;
 
 private slots:
-    void itemDataChanged(int row, int column);
+    void newConnectionAvailable();
+    void readChannelFinished(QObject *object);
 
 };
 
-#endif // THREADMODEL_H
+#endif // LOCALSERVER_H

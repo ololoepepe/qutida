@@ -27,6 +27,7 @@
 #include "src/core/imageboardthread.h"
 #include "src/gui/infowidget.h"
 #include "src/mv/categorymodel.h"
+#include "src/core/localserver.h"
 
 #include <QApplication>
 #include <QObject>
@@ -39,21 +40,19 @@
 #include <QLocalServer>
 #include <QStringList>
 #include <QSettings>
+#include <QLocalSocket>
+#include <QIODevice>
+#include <QUrl>
 
 int main(int argc, char *argv[])
 {
-    const QString PREFIX = "-";
-    const QString ARG_MULTIPLE = PREFIX + "multiple";
-    const QString ARG_URLS = PREFIX + "urls";
-    const QString ARG_DEFAULT = PREFIX + "default";
-    const QString ARG_START = PREFIX + "start";
-
     QApplication app(argc, argv);
     QApplication::setOrganizationName(Common::ORG_NAME);
     QApplication::setOrganizationDomain(Common::ORG_DOMAIN);
     QApplication::setApplicationName(Common::APP_NAME);
     QApplication::setWindowIcon( QIcon(":/res/ico/anonymous.png") );
-    QLocalServer localServer;
+    LocalServer localServer;
+    //LocalServer::removeServer(Common::APP_NAME);
     bool serverStarted = localServer.listen(Common::APP_NAME);
     QStringList argList;
     QStringList urlList;
@@ -63,23 +62,49 @@ int main(int argc, char *argv[])
     {
         QString arg(argv[i]);
 
-        if ( arg.at(0) == PREFIX.at(0) )
+        if ( arg.at(0) == LocalServer::PREFIX.at(0) )
         {
-            argList << argv[i];
+            argList << arg;
 
             if (fillingUrlList)
                 fillingUrlList = false;
-            else if (ARG_URLS == arg)
+            else if (LocalServer::ARG_URLS == arg)
                 fillingUrlList = true;
         }
         else if (fillingUrlList)
         {
-            urlList << arg;
+            urlList << QUrl::fromUserInput(arg).toString();
         }
     }
 
-    if ( !serverStarted && !argList.contains(ARG_MULTIPLE) )
+    if ( !serverStarted && !argList.contains(LocalServer::ARG_MULTIPLE) )
+    {
+        if ( argList.contains(LocalServer::ARG_URLS) )
+        {
+            QLocalSocket socket;
+            socket.connectToServer(Common::APP_NAME, QIODevice::WriteOnly);
+
+            if ( !socket.waitForConnected() )
+                return 1;
+
+            QByteArray data;
+
+            for (int i = 0; i < argc; ++i)
+            {
+                data.append(argv[i]).append('\0');
+            }
+
+            if ( -1 == socket.write(data) )
+                return 2;
+
+            if ( !socket.waitForBytesWritten() )
+                return 3;
+
+            socket.disconnectFromServer();
+        }
+
         return 0;
+    }
 
     qRegisterMetaType<ParceTask::Result>("ParceTask::Result");
     qRegisterMetaType<SaveTask::Result>("SaveTask::Result");
@@ -89,10 +114,14 @@ int main(int argc, char *argv[])
     qRegisterMetaType<QModelIndex>("QModelIndex");
     QThreadPool::globalInstance()->setMaxThreadCount(10);
     ThreadManager threadManager(0);
+    QObject::connect( &localServer,
+             SIGNAL( addThreadSilent(ImageboardThread::Parameters, bool) ),
+             &threadManager,
+             SLOT( requestAddThread(ImageboardThread::Parameters, bool) ) );
 
-    if ( argList.contains(ARG_DEFAULT) && !urlList.isEmpty() )
+    if ( argList.contains(LocalServer::ARG_DEFAULT) && !urlList.isEmpty() )
     {
-        bool start = argList.contains(ARG_START);
+        bool start = argList.contains(LocalServer::ARG_START);
         QSettings settings;
         settings.beginGroup(ParametersDialog::GROUP_PARAMETERS);
           settings.beginGroup(ThreadManager::SUB_GROUP_DEFAULT);
@@ -143,12 +172,17 @@ int main(int argc, char *argv[])
                       &threadManager, SLOT( requestRetranslate() ) );
     QObject::connect( mainWindow, SIGNAL( requestWriteSettings() ),
                       &threadManager, SLOT( requestWriteSettings() ) );
+    QObject::connect( &localServer, SIGNAL( addThreads(QStringList) ),
+                      mainWindow, SLOT( callAddThreadDialog(QStringList) ) );
     mainWindow->show();
 
-    if ( !argList.contains(ARG_DEFAULT) && !urlList.isEmpty() )
+    if ( !argList.contains(LocalServer::ARG_DEFAULT) && !urlList.isEmpty() )
     {
         mainWindow->callAddThreadDialog(urlList);
     }
 
-    return app.exec();
+    int err = app.exec();
+    //LocalServer::removeServer(Common::APP_NAME);
+    localServer.close();
+    return err;
 }

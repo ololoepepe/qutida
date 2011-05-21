@@ -62,7 +62,8 @@ AddThread::AddThread(const QStringList &urlList, QWidget *parent) :
     initialize();
 
     for (int i = 0; i < urlList.count(); ++i)
-        textEditUrls->append( urlList.at(i) );
+        textEditUrls->append(
+                    QUrl::fromUserInput( urlList.at(i) ).toString() );
 }
 
 //

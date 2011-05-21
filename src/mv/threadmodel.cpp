@@ -30,8 +30,6 @@
 ThreadModel::ThreadModel(const QList<QVariant> &headerData, QObject *parent) :
     TreeModel(headerData, parent)
 {
-    connect( rootItem, SIGNAL( childrenRearranged(int, int) ),
-             this, SIGNAL( itemsRearranged(int, int) ) );
 }
 
 //
@@ -77,7 +75,6 @@ void ThreadModel::sort(int column, Qt::SortOrder order)
     if (count < 2)
         return;
 
-    emit layoutAboutToBeChanged();
     bool ascending = (Qt::AscendingOrder == order);
 
     for (int i = 0; i < count - 1; ++i)
@@ -100,27 +97,43 @@ void ThreadModel::sort(int column, Qt::SortOrder order)
 
 //
 
-void ThreadModel::addItem(const ImageboardThread *thread)
+void ThreadModel::addItem(ImageboardThread *thread)
 {
     if (!thread)
         return;
 
     beginInsertRows( QModelIndex(), rootItem->childCount(),
                      rootItem->childCount() );
-    ThreadModelItem *item =
-            new ThreadModelItem( dataFromInfoMap(
-                                    ImageboardThread::infoFromParameters(
-                                        thread->parameters() ) ), rootItem);
-    connect( thread, SIGNAL( infoChanged(ImageboardThread::Info, QVariant) ),
-             item,
-             SLOT( threadInfoChanged(ImageboardThread::Info, QVariant) ) );
-    connect( thread, SIGNAL( destroyed() ), item, SLOT( planDeletion() ) );
-    connect( item, SIGNAL( requestDeletion(int) ),
-             this, SLOT( requestDeletion(int) ) );
+    ThreadModelItem *item = new ThreadModelItem(thread, rootItem);
     connect( item, SIGNAL( dataChanged(int, int) ),
              this, SLOT( itemDataChanged(int, int) ) );
     rootItem->appendChild(item);
     endInsertRows();
+}
+
+bool ThreadModel::removeItem(const ImageboardThread *thread)
+{
+    if (!thread)
+        return false;
+
+    for (int i = 0; i < rootItem->childCount(); ++i)
+    {
+        ThreadModelItem *item =
+                dynamic_cast<ThreadModelItem*>( rootItem->child(i) );
+
+        if (item)
+        {
+            if ( item->relatedThread()->url() == thread->url() )
+            {
+                beginRemoveRows(QModelIndex(), i, i);
+                rootItem->removeChild(i);
+                endRemoveRows();
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 void ThreadModel::retranslate()
@@ -131,6 +144,20 @@ void ThreadModel::retranslate()
                                      rootItem->columnCount() - 1,
                                      QModelIndex() ) );
     emit dataChanged(topLeft, bottomRight);
+}
+
+ImageboardThread *ThreadModel::threadForRow(int row)
+{
+    if (row >= rootItem->childCount() || row < 0)
+        return 0;
+
+    ThreadModelItem *item =
+            dynamic_cast<ThreadModelItem*>( rootItem->child(row) );
+
+    if (!item)
+        return 0;
+    else
+        return item->relatedThread();
 }
 
 //
@@ -145,14 +172,4 @@ void ThreadModel::itemDataChanged(int row, int column)
 
     QModelIndex ind( index(row, column) );
     emit dataChanged(ind, ind);
-}
-
-void ThreadModel::requestDeletion(int row)
-{
-    if ( row >= rootItem->childCount() )
-        return;
-
-    beginRemoveRows(QModelIndex(), row, row);
-    rootItem->removeChild(row);
-    endRemoveRows();
 }

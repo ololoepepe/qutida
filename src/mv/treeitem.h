@@ -74,13 +74,8 @@ public:
     virtual QVariant data(int column) const;
     void modifyData(int column, const QVariant &data);
 
-public slots:
-    void planDeletion();
-
 signals:
     void dataChanged(int itemRow, int column);
-    void childrenRearranged(int prevIndex1, int prevIndex2);
-    void requestDeletion(int itemRow);
 
 protected:
     QList<QVariant> itemData;

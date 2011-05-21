@@ -25,10 +25,24 @@
 #include <QList>
 #include <QVariant>
 
-ThreadModelItem::ThreadModelItem(const QList<QVariant> &data,
+ThreadModelItem::ThreadModelItem(ImageboardThread *thread,
                                  TreeItem *parent) :
-    TreeItem(data, parent)
+    TreeItem(QList<QVariant>(), parent)
 {
+    itemData = dataFromInfoMap(
+                ImageboardThread::infoFromParameters( thread->parameters() ) );
+    mRelatedThread = thread;
+    connect( thread,
+             SIGNAL( infoChanged(ImageboardThread::Info, QVariant) ),
+             this,
+             SLOT( threadInfoChanged(ImageboardThread::Info, QVariant) ) );
+}
+
+//
+
+ImageboardThread *ThreadModelItem::relatedThread()
+{
+    return mRelatedThread;
 }
 
 //

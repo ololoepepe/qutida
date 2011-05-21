@@ -68,6 +68,7 @@ public:
     explicit MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
                         QWidget *parent = 0);
 
+public slots:
     void callAddThreadDialog(const QStringList &urlList);
 
 signals:

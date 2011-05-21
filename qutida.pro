@@ -21,7 +21,8 @@ HEADERS += \
     src/gui/infowidget.h \
     src/gui/threadparameters.h \
     src/mv/progressbardelegate.h \
-    src/gui/authentication.h
+    src/gui/authentication.h \
+    src/core/localserver.h
 
 SOURCES += \
     src/gui/mainwindow.cpp \
@@ -46,7 +47,8 @@ SOURCES += \
     src/gui/infowidget.cpp \
     src/gui/threadparameters.cpp \
     src/mv/progressbardelegate.cpp \
-    src/gui/authentication.cpp
+    src/gui/authentication.cpp \
+    src/core/localserver.cpp
 
 QT += \
     network

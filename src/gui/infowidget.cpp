@@ -154,10 +154,14 @@ void InfoWidget::setObservedThread(ImageboardThread *thread)
     observedThread = thread;
 
     if (observedThread)
+    {
         connect( observedThread,
                  SIGNAL( infoChanged(ImageboardThread::Info,QVariant) ),
                  this,
                  SLOT( threadInfoChanged(ImageboardThread::Info, QVariant) ) );
+        connect( observedThread, SIGNAL( destroyed() ),
+                 this, SLOT( observedThreadDestroyed() ) );
+    }
 
     getThreadData();
 }
@@ -300,4 +304,10 @@ void InfoWidget::threadInfoChanged(ImageboardThread::Info key,
     default:
         break;
     }
+}
+
+void InfoWidget::observedThreadDestroyed()
+{
+    observedThread = 0;
+    getThreadData();
 }

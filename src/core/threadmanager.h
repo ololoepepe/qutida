@@ -68,11 +68,11 @@ private:
     ThreadModel *mThreadModel;
     CategoryModel *mCategoryModel;
     QList<ImageboardThread*> threadList;
+    int sortingColumn;
+    Qt::SortOrder sortingOrder;
+    bool threadsSorted;
 
     void readSettings();
-
-private slots:
-    void threadModelItemsRearranged(int prevIndex1, int prevIndex2);
 
 };
 

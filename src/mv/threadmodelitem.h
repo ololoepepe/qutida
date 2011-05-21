@@ -32,9 +32,28 @@ class ThreadModelItem : public TreeItem
 {
     Q_OBJECT
 public:
-    ThreadModelItem(const QList<QVariant> &data, TreeItem *parent = 0);
+    static QList<QVariant> dataFromInfoMap(
+        const QMap<ImageboardThread::Info, QVariant> &infoMap)
+    {
+        QList<QVariant> data;
+        data << infoMap.value(ImageboardThread::InfoThread);
+        data << infoMap.value(ImageboardThread::InfoBoard);
+        data << infoMap.value(ImageboardThread::InfoHost);
+        data << infoMap.value(ImageboardThread::InfoStateExtended);
+        data << infoMap.value(ImageboardThread::InfoProgress);
+        data << infoMap.value(ImageboardThread::InfoDir);
+        data << infoMap.value(ImageboardThread::InfoUrl);
+        return data;
+    }
 
-public slots:
+    ThreadModelItem(ImageboardThread *thread, TreeItem *parent = 0);
+
+    ImageboardThread *relatedThread();
+
+private:
+    ImageboardThread *mRelatedThread;
+
+private slots:
     void threadInfoChanged(ImageboardThread::Info key, const QVariant &data);
 
 };

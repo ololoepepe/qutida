@@ -77,12 +77,16 @@ bool TreeItem::appendChild(TreeItem *child)
 
 bool TreeItem::removeChild(int row)
 {
-    if ( row >= childItems.count() )
+    if (row >= childItems.count() || row < 0)
     {
         return false;
     }
 
-    childItems.value(row)->deleteLater();
+    TreeItem *child = childItems.value(row);
+
+    if (child)
+        child->deleteLater();
+
     childItems.removeAt(row);
     return true;
 }
@@ -102,7 +106,6 @@ void TreeItem::rearrangeChildren(TreeItem *child1, TreeItem *child2)
     int index2 = childItems.indexOf(child2);
     childItems.replace(index1, child2);
     childItems.replace(index2, child1);
-    emit childrenRearranged(index1, index2);
 }
 
 //
@@ -118,11 +121,4 @@ void TreeItem::modifyData(int column, const QVariant &data)
         return;
 
     itemData.replace(column, data);
-}
-
-//
-
-void TreeItem::planDeletion()
-{
-    emit requestDeletion( row() );
 }

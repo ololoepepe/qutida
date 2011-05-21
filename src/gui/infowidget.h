@@ -76,6 +76,7 @@ private:
 
 private slots:
     void threadInfoChanged(ImageboardThread::Info key, const QVariant &data);
+    void observedThreadDestroyed();
 
 };
 

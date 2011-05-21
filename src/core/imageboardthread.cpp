@@ -71,12 +71,15 @@ ImageboardThread::ImageboardThread(const Parameters &param, QObject *parent) :
 
 ImageboardThread::~ImageboardThread()
 {
+    if ( downloadMap.isEmpty() )
+        return;
+
+    downloadMapper.blockSignals(true);
+
     foreach ( Download *download, downloadMap.values() )
     {
-        if (download)
-        {
-            download->deleteLater();
-        }
+        download->abort();
+        download->deleteLater();
     }
 }
 
