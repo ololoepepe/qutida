@@ -32,6 +32,7 @@
 #include <QString>
 #include <QSettings>
 #include <QUrl>
+#include <QDateTime>
 
 const QString LocalServer::PREFIX = "-";
 const QString LocalServer::ARG_MULTIPLE = PREFIX + "multiple";
@@ -112,6 +113,7 @@ void LocalServer::readChannelFinished(QObject *object)
         for (int i = 0; i < urlList.count(); ++i)
         {
             param.url = urlList.at(i);
+            param.added = QDateTime::currentDateTime();
             emit addThreadSilent(param, start);
         }
     }

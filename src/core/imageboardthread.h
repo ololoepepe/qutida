@@ -34,6 +34,7 @@
 #include <QTimer>
 #include <QSignalMapper>
 #include <QSettings>
+#include <QDateTime>
 
 class ImageboardThread : public QObject
 {
@@ -43,6 +44,7 @@ public:
     {
         QString url;
         QString directory;
+        QDateTime added;
         QStringList extentions;
         bool external;
         bool replace;
@@ -63,7 +65,8 @@ public:
         InfoProgress,
         InfoDir,
         InfoUrl,
-        InfoIteratorLast = InfoUrl,
+        InfoAdded,
+        InfoIteratorLast = InfoAdded,
         InfoStateExtendedPrev,
         InfoRestartEnabled,
         InfoRestartInterval,
@@ -100,6 +103,7 @@ public:
 
     static const QString KEY_URL;
     static const QString KEY_DIRECTORY;
+    static const QString KEY_ADDED;
     static const QString KEY_EXTENTIONS;
     static const QString KEY_EXTERNAL;
     static const QString KEY_REPLACE;
@@ -120,6 +124,7 @@ public:
         map.insert(InfoProgress, 0);
         map.insert(InfoDir, param.directory);
         map.insert(InfoUrl, param.url);
+        map.insert(InfoAdded, param.added);
         map.insert(InfoRestartEnabled, param.restartEnabled);
         map.insert(InfoRestartInterval, param.restartInterval);
         map.insert(InfoTimeRest, -1);
@@ -129,35 +134,6 @@ public:
         return map;
     }
 
-    static int compare(const ImageboardThread &thread1,
-                       const ImageboardThread &thread2,
-                       Info key)
-    {
-        QVariant val1 = thread1.dataForKey(key);
-        QVariant val2 = thread2.dataForKey(key);
-
-        switch ( val1.type() )
-        {
-        case QVariant::String:
-            return QString::localeAwareCompare( val1.toString(),
-                                                val2.toString() );
-        case QVariant::Int:
-        {
-            int intVal1 = val1.toInt();
-            int intVal2 = val2.toInt();
-
-            if (intVal1 < intVal2)
-                return -1;
-            else if (intVal1 > intVal2)
-                return 1;
-            else
-                return 0;
-        }
-        default:
-            return 0;
-        }
-    }
-
     static Parameters readParameters(
         QSettings &settings, const Parameters &defParam = DEF_PARAMETERS)
     {
@@ -165,6 +141,8 @@ public:
         param.url = settings.value(KEY_URL, defParam.url).toString();
         param.directory =
                 settings.value(KEY_DIRECTORY, defParam.directory).toString();
+        param.added = settings.value(
+                    KEY_ADDED, QDateTime::currentDateTime() ).toDateTime();
         param.extentions = settings.value(KEY_EXTENTIONS,
                                           defParam.extentions).toStringList();
         param.external =
@@ -190,6 +168,7 @@ public:
     {
         settings.setValue(KEY_URL, param.url);
         settings.setValue(KEY_DIRECTORY, param.directory);
+        settings.setValue(KEY_ADDED, param.added);
         settings.setValue(KEY_EXTENTIONS, param.extentions);
         settings.setValue(KEY_EXTERNAL, param.external);
         settings.setValue(KEY_REPLACE, param.replace);

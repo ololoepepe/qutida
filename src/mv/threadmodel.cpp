@@ -45,13 +45,20 @@ QVariant ThreadModel::data(const QModelIndex &index, int role) const
     TreeItem *item = static_cast<TreeItem*>( index.internalPointer() );
 
     if ( ImageboardThread::InfoStateExtended == index.column() )
+    {
         return Tr::IT::threadExtendedState(
                     static_cast<ImageboardThread::ExtendedState>(
                         item->data( index.column() ).toInt() ) );
+    }
+    else if ( ImageboardThread::InfoAdded == index.column() )
+    {
+        return item->data( index.column() ).toDateTime().toString(
+                    "dd.MM.yyyy hh:mm:ss");
+    }
     else
+    {
         return item->data( index.column() );
-
-    return item->data( index.column() );
+    }
 }
 
 QVariant ThreadModel::headerData(int section, Qt::Orientation orientation,

@@ -43,6 +43,7 @@ public:
         data << infoMap.value(ImageboardThread::InfoProgress);
         data << infoMap.value(ImageboardThread::InfoDir);
         data << infoMap.value(ImageboardThread::InfoUrl);
+        data << infoMap.value(ImageboardThread::InfoAdded);
         return data;
     }
 

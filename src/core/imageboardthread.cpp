@@ -28,6 +28,7 @@
 #include <QStringList>
 #include <QThreadPool>
 #include <QDir>
+#include <QDateTime>
 
 const int ImageboardThread::TIMER_INTERVAL = 60 * 1000; //1 minute
 
@@ -35,11 +36,12 @@ const QString ImageboardThread::DEF_EXTENTIONS_PLAIN = "jpg|jpeg|png|gif";
 const QStringList ImageboardThread::DEF_EXTENTIONS_LIST =
 ImageboardThread::DEF_EXTENTIONS_PLAIN.split("|", QString::SkipEmptyParts);
 const ImageboardThread::Parameters ImageboardThread::DEF_PARAMETERS =
-{QString(), QDir::homePath(), ImageboardThread::DEF_EXTENTIONS_LIST,
- false, false, 1, 1, false, 20, false};
+{QString(), QDir::homePath(), QDateTime::currentDateTime(),
+ ImageboardThread::DEF_EXTENTIONS_LIST, false, false, 1, 1, false, 20, false};
 
 const QString ImageboardThread::KEY_URL = "url";
 const QString ImageboardThread::KEY_DIRECTORY = "directory";
+const QString ImageboardThread::KEY_ADDED = "added";
 const QString ImageboardThread::KEY_EXTENTIONS = "extentions";
 const QString ImageboardThread::KEY_EXTERNAL = "external";
 const QString ImageboardThread::KEY_REPLACE = "replace";

@@ -23,6 +23,7 @@
 #include <QVariant>
 #include <QList>
 #include <QObject>
+#include <QDateTime>
 
 class TreeItem : public QObject
 {
@@ -50,6 +51,18 @@ public:
             if (intVal1 < intVal2)
                 return -1;
             else if (intVal1 > intVal2)
+                return 1;
+            else
+                return 0;
+        }
+        case QVariant::DateTime:
+        {
+            uint uintVal1 = val1.toDateTime().toTime_t();
+            uint uintVal2 = val2.toDateTime().toTime_t();
+
+            if (uintVal1 < uintVal2)
+                return -1;
+            else if (uintVal1 > uintVal2)
                 return 1;
             else
                 return 0;

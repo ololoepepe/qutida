@@ -25,6 +25,7 @@
 #include "src/gui/infowidget.h"
 #include "src/mv/categorymodel.h"
 #include "src/gui/parametersdialog.h"
+#include "src/gui/addthread.h"
 
 #include <QMainWindow>
 #include <QString>
@@ -145,6 +146,7 @@ private:
     QTranslator translator;
     ParametersDialog::CommonParameters commonParam;
     bool finalClose;
+    AddThread *addThreadDialog;
 
     void retranslate(bool initial = false);
     void readSettings();

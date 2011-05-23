@@ -292,6 +292,7 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
                                                  QAuthenticator*) ),
              this, SLOT( proxyAuthenticationRequired(QNetworkProxy,
                                                      QAuthenticator*) ) );
+    addThreadDialog = 0;
 }
 
 //
@@ -301,25 +302,34 @@ void MainWindow::callAddThreadDialog(const QStringList &urlList)
     if ( !this->isVisible() )
         showHideRequested();
 
-    AddThread *dialog = new AddThread(urlList, this);
-    dialog->setWindowTitle( Tr::MW::dialogAddThreadCaption() );
-    dialog->exec();
-
-    if (dialog->result() == QDialog::Accepted)
+    if (!addThreadDialog)
     {
-        bool start = dialog->start();
-        int count = dialog->parameters().count();
+        addThreadDialog = new AddThread(urlList, this);
+        addThreadDialog->setWindowTitle( Tr::MW::dialogAddThreadCaption() );
+        addThreadDialog->exec();
 
-        if (count > 0)
-            selectionModelThreads->clearSelection();
+        if (addThreadDialog->result() == QDialog::Accepted)
+        {
+            bool start = addThreadDialog->start();
+            int count = addThreadDialog->parameters().count();
 
-        for (int i = 0; i < count; ++i)
-            emit requestAddThread(dialog->parameters().at(i), start);
+            if (count > 0)
+                selectionModelThreads->clearSelection();
+
+            for (int i = 0; i < count; ++i)
+                emit requestAddThread(addThreadDialog->parameters().at(i), start);
+        }
+
+        addThreadDialog->deleteLater();
+        addThreadDialog = 0;
+        emit requestSortThreads( headerThreads->sortIndicatorSection(),
+                                 headerThreads->sortIndicatorOrder() );
     }
-
-    dialog->deleteLater();
-    emit requestSortThreads( headerThreads->sortIndicatorSection(),
-                             headerThreads->sortIndicatorOrder() );
+    else
+    {
+        addThreadDialog->appendList(urlList);
+        addThreadDialog->activateWindow();
+    }
 }
 
 //

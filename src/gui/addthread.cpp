@@ -43,6 +43,7 @@
 #include <QStringList>
 #include <QDir>
 #include <QUrl>
+#include <QDateTime>
 
 const QString AddThread::GROUP_ADD_THREAD = "add_thread";
 const QString AddThread::KEY_GEOMETRY = "geometry";
@@ -67,6 +68,22 @@ AddThread::AddThread(const QStringList &urlList, QWidget *parent) :
 }
 
 //
+
+void AddThread::appendList(const QStringList &urlList)
+{
+    QStringList urls = textEditUrls->toPlainText().split(QRegExp("\\s+"),
+                                                         QString::SkipEmptyParts);
+
+    for (int i = 0; i < urlList.count(); ++i)
+        urls.append( QUrl::fromUserInput( urlList.at(i) ).toString() );
+
+    urls.removeDuplicates();
+
+    textEditUrls->clear();
+
+    for (int i = 0; i < urls.count(); ++i)
+        textEditUrls->append( QUrl::fromUserInput( urls.at(i) ).toString() );
+}
 
 const QList<ImageboardThread::Parameters> &AddThread::parameters() const
 {
@@ -285,7 +302,8 @@ void AddThread::buttonOkClicked()
 {
     resetDefParam();
     writeSettings();
-    QStringList urls = textEditUrls->toPlainText().split( QRegExp("\\s+") );
+    QStringList urls = textEditUrls->toPlainText().split(QRegExp("\\s+"),
+                                                         QString::SkipEmptyParts);
     urls.removeDuplicates();
     int count = urls.count();
 
@@ -298,6 +316,7 @@ void AddThread::buttonOkClicked()
             ImageboardThread::Parameters param = defParam;
             param.url = url;
             param.directory += constructSubPath(param.url);
+            param.added = QDateTime::currentDateTime();
             paramList << param;
         }
     }

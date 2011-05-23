@@ -28,6 +28,7 @@
 #include "src/gui/infowidget.h"
 #include "src/mv/categorymodel.h"
 #include "src/core/localserver.h"
+#include "src/core/networkaccessmanager.h"
 
 #include <QApplication>
 #include <QObject>
@@ -43,6 +44,7 @@
 #include <QLocalSocket>
 #include <QIODevice>
 #include <QUrl>
+#include <QDateTime>
 
 int main(int argc, char *argv[])
 {
@@ -51,6 +53,7 @@ int main(int argc, char *argv[])
     QApplication::setOrganizationDomain(Common::ORG_DOMAIN);
     QApplication::setApplicationName(Common::APP_NAME);
     QApplication::setWindowIcon( QIcon(":/res/ico/anonymous.png") );
+    NetworkAccessManager::instance()->setCache(0);
     LocalServer localServer;
     //LocalServer::removeServer(Common::APP_NAME);
     bool serverStarted = localServer.listen(Common::APP_NAME);
@@ -133,6 +136,7 @@ int main(int argc, char *argv[])
         for (int i = 0; i < urlList.count(); ++i)
         {
             param.url = urlList.at(i);
+            param.added = QDateTime::currentDateTime();
             threadManager.requestAddThread(param, start);
         }
     }

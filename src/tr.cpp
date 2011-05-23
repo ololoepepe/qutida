@@ -59,6 +59,9 @@ namespace Tr
             case ImageboardThread::InfoUrl:
                 return QObject::tr("URL",
                                    "imageboard thread: model header");
+            case ImageboardThread::InfoAdded:
+                return QObject::tr("Added",
+                                   "imageboard thread: model header");
             default:
                 return QString();
             }

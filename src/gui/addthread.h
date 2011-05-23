@@ -48,6 +48,7 @@ public:
     explicit AddThread(QWidget *parent = 0);
     AddThread(const QStringList &urlList, QWidget *parent = 0);
 
+    void appendList(const QStringList &urlList);
     const QList<ImageboardThread::Parameters> &parameters() const;
     bool start() const;
 
