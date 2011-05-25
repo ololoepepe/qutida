@@ -18,7 +18,6 @@
 ****************************************************************************/
 
 #include "src/mv/progressbardelegate.h"
-#include "src/core/imageboardthread.h"
 
 #include <QItemDelegate>
 #include <QObject>

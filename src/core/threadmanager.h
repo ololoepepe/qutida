@@ -25,6 +25,7 @@
 #include "src/mv/threadmodel.h"
 #include "src/gui/infowidget.h"
 #include "src/mv/categorymodel.h"
+#include "src/gui/threadparameters.h"
 
 #include <QObject>
 #include <QAbstractItemModel>
@@ -59,8 +60,8 @@ public slots:
     void requestOpenUrl(int index);
     void requestSortThreads(int column, Qt::SortOrder order);
     void requestSetObservedThread(int index, InfoWidget *widget);
-    void requestModifyRestart(const QList<int> &indexes,
-                              bool enabled, int interval);
+    void requestModifyParameters(const QList<int> &indexes,
+                                 ThreadParameters::Parameters param);
     void requestRetranslate();
     void requestWriteSettings();
 

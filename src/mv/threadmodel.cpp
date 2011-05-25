@@ -21,6 +21,7 @@
 #include "src/mv/threadmodelitem.h"
 #include "src/core/imageboardthread.h"
 #include "src/tr.h"
+#include "src/core/threadinfo.h"
 
 #include <QObject>
 #include <QVariant>
@@ -44,13 +45,13 @@ QVariant ThreadModel::data(const QModelIndex &index, int role) const
 
     TreeItem *item = static_cast<TreeItem*>( index.internalPointer() );
 
-    if ( ImageboardThread::InfoStateExtended == index.column() )
+    if ( ThreadInfo::ExtendedState == index.column() )
     {
         return Tr::IT::threadExtendedState(
                     static_cast<ImageboardThread::ExtendedState>(
                         item->data( index.column() ).toInt() ) );
     }
-    else if ( ImageboardThread::InfoAdded == index.column() )
+    else if ( ThreadInfo::Added == index.column() )
     {
         return item->data( index.column() ).toDateTime().toString(
                     "dd.MM.yyyy hh:mm:ss");
@@ -68,7 +69,7 @@ QVariant ThreadModel::headerData(int section, Qt::Orientation orientation,
         return QVariant();
 
     return Tr::IT::threadModelHeader(
-                static_cast<ImageboardThread::Info>(
+                static_cast<ThreadInfo::Enum>(
                     rootItem->data(section).toInt() ) );
 }
 

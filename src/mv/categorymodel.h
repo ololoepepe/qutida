@@ -23,6 +23,7 @@
 #include "src/mv/treemodel.h"
 #include "src/tr.h"
 #include "src/core/imageboardthread.h"
+#include "src/core/threadinfo.h"
 
 #include <QObject>
 #include <QString>
@@ -58,7 +59,7 @@ private:
     QStringList boardList;
 
 private slots:
-    void threadInfoChanged(ImageboardThread::Info key, const QVariant &data);
+    void threadInfoChanged(ThreadInfo::Enum key, const QVariant &data);
 
 };
 

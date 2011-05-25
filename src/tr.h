@@ -21,6 +21,7 @@
 #define TR_H
 
 #include "src/core/imageboardthread.h"
+#include "src/core/threadinfo.h"
 
 #include <QObject>
 #include <QString>
@@ -33,7 +34,7 @@ namespace Tr
 
     namespace IT
     {
-        QString threadModelHeader(ImageboardThread::Info key);
+        QString threadModelHeader(ThreadInfo::Enum key);
         QString threadExtendedState(ImageboardThread::ExtendedState ext);
     }
 
@@ -149,6 +150,11 @@ namespace Tr
         QString labelFilesTotalKeyText();
         QString labelFilesSavedKeyText();
         QString labelFilesFailedKeyText();
+        QString labelSavePageKeyText();
+        QString labelSavePageDataText(bool enabled);
+        QString labelFilesAuxTotalKeyText();
+        QString labelFilesAuxSavedKeyText();
+        QString labelFilesAuxFailedKeyText();
         QString labelFilesDataText(int count);
     }
 

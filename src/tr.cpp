@@ -34,32 +34,32 @@ namespace Tr
 
     namespace IT
     {
-        QString threadModelHeader(ImageboardThread::Info key)
+        QString threadModelHeader(ThreadInfo::Enum key)
         {
             switch (key)
             {
-            case ImageboardThread::InfoThread:
+            case ThreadInfo::Thread:
                 return QObject::tr("Thread",
                                    "imageboard thread: model header");
-            case ImageboardThread::InfoBoard:
+            case ThreadInfo::Board:
                 return QObject::tr("Board",
                                    "imageboard thread: model header");
-            case ImageboardThread::InfoHost:
+            case ThreadInfo::Host:
                 return QObject::tr("Host",
                                    "imageboard thread: model header");
-            case ImageboardThread::InfoStateExtended:
+            case ThreadInfo::ExtendedState:
                 return QObject::tr("State",
                                    "imageboard thread: model header");
-            case ImageboardThread::InfoProgress:
+            case ThreadInfo::Progress:
                 return QObject::tr("Progress",
                                    "imageboard thread: model header");
-            case ImageboardThread::InfoDir:
+            case ThreadInfo::Dir:
                 return QObject::tr("Directory",
                                    "imageboard thread: model header");
-            case ImageboardThread::InfoUrl:
+            case ThreadInfo::Url:
                 return QObject::tr("URL",
                                    "imageboard thread: model header");
-            case ImageboardThread::InfoAdded:
+            case ThreadInfo::Added:
                 return QObject::tr("Added",
                                    "imageboard thread: model header");
             default:
@@ -295,7 +295,7 @@ namespace Tr
         {return QObject::tr("Ask confirmation on exit",
                             "parameters dialog: check box text");}
         QString checkBoxMinimizeText()
-        {return QObject::tr("Minimize to syztem tray on close",
+        {return QObject::tr("Minimize to system tray on close",
                             "parameters dialog: check box text");}
         QString checkBoxProxyEnabledText()
         {return QObject::tr("Enable proxy",
@@ -322,17 +322,17 @@ namespace Tr
     {
         //label texts
         QString labelThreadKeyText()
-        {return IT::threadModelHeader(ImageboardThread::InfoThread) + ":";}
+        {return IT::threadModelHeader(ThreadInfo::Thread) + ":";}
         QString labelBoardKeyText()
-        {return IT::threadModelHeader(ImageboardThread::InfoBoard) + ":";}
+        {return IT::threadModelHeader(ThreadInfo::Board) + ":";}
         QString labelHostKeyText()
-        {return IT::threadModelHeader(ImageboardThread::InfoHost) + ":";}
+        {return IT::threadModelHeader(ThreadInfo::Host) + ":";}
         QString labelDirKeyText()
-        {return IT::threadModelHeader(ImageboardThread::InfoDir) + ":";}
+        {return IT::threadModelHeader(ThreadInfo::Dir) + ":";}
         QString labelUrlKeyText()
-        {return IT::threadModelHeader(ImageboardThread::InfoUrl) + ":";}
+        {return IT::threadModelHeader(ThreadInfo::Url) + ":";}
         QString labelExtStateKey()
-        {return IT::threadModelHeader(ImageboardThread::InfoStateExtended) +
+        {return IT::threadModelHeader(ThreadInfo::ExtendedState) +
                     ":";}
         QString labelRestartKeyText()
         {return QObject::tr("Restart (minutes left)",
@@ -361,6 +361,21 @@ namespace Tr
         {return QObject::tr("Files saved", "info widget: label text") + ":";}
         QString labelFilesFailedKeyText()
         {return QObject::tr("Files failed", "info widget: label text") + ":";}
+        QString labelSavePageKeyText()
+        {return QObject::tr("Save page", "info widget: label text") + ":";}
+        QString labelSavePageDataText(bool enabled)
+        {
+            if (enabled)
+                return QObject::tr("Yes", "info widget: label text");
+            else
+                return QObject::tr("No", "info widget: label text");
+        }
+        QString labelFilesAuxTotalKeyText()
+        {return QObject::tr("Auxiliary total", "info widget: label text") + ":";}
+        QString labelFilesAuxSavedKeyText()
+        {return QObject::tr("Auxiliary saved", "info widget: label text") + ":";}
+        QString labelFilesAuxFailedKeyText()
+        {return QObject::tr("Auxiliary failed", "info widget: label text") + ":";}
         QString labelFilesDataText(int count)
         {
             if (count >= 0)

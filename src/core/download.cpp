@@ -30,10 +30,12 @@ const int Download::RETRY_DELAY = 5 * 1000; //5 seconds
 
 //
 
-Download::Download(const QString &url, int attempts, QObject *parent) :
+Download::Download(const QString &url, bool aux,
+                   int attempts, QObject *parent) :
     QObject(parent)
 {
     downloadUrl = url;
+    isAux = aux;
     attemptsTotal = (attempts > 1) ? attempts : 1;
     attemptsUsed = 0;
     networkReply = 0;
@@ -55,6 +57,11 @@ Download::~Download()
 QString Download::url() const
 {
     return downloadUrl;
+}
+
+bool Download::isAuxiliary() const
+{
+    return isAux;
 }
 
 const QByteArray &Download::data() const

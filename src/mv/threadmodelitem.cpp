@@ -20,6 +20,7 @@
 #include "src/mv/threadmodelitem.h"
 #include "src/core/imageboardthread.h"
 #include "src/tr.h"
+#include "src/core/threadinfo.h"
 
 #include <QObject>
 #include <QList>
@@ -33,9 +34,9 @@ ThreadModelItem::ThreadModelItem(ImageboardThread *thread,
                 ImageboardThread::infoFromParameters( thread->parameters() ) );
     mRelatedThread = thread;
     connect( thread,
-             SIGNAL( infoChanged(ImageboardThread::Info, QVariant) ),
+             SIGNAL( infoChanged(ThreadInfo::Enum, QVariant) ),
              this,
-             SLOT( threadInfoChanged(ImageboardThread::Info, QVariant) ) );
+             SLOT( threadInfoChanged(ThreadInfo::Enum, QVariant) ) );
 }
 
 //
@@ -47,7 +48,7 @@ ImageboardThread *ThreadModelItem::relatedThread()
 
 //
 
-void ThreadModelItem::threadInfoChanged(ImageboardThread::Info key,
+void ThreadModelItem::threadInfoChanged(ThreadInfo::Enum key,
                                         const QVariant &data)
 {
     if (key >= itemData.count() || key < 0)

@@ -21,6 +21,7 @@
 #include "src/mv/treemodel.h"
 #include "src/tr.h"
 #include "src/core/imageboardthread.h"
+#include "src/core/threadinfo.h"
 
 #include <QObject>
 #include <QList>
@@ -154,9 +155,9 @@ void CategoryModel::tryAddCategory(ImageboardThread *thread)
         return;
 
     connect( thread,
-             SIGNAL( infoChanged(ImageboardThread::Info, QVariant) ),
+             SIGNAL( infoChanged(ThreadInfo::Enum, QVariant) ),
              this,
-             SLOT( threadInfoChanged(ImageboardThread::Info, QVariant) ) );
+             SLOT( threadInfoChanged(ThreadInfo::Enum, QVariant) ) );
 
     ++countAll;
     QModelIndex stateIndex = index(Tr::CM::CategState, 0);
@@ -197,9 +198,9 @@ void CategoryModel::tryRemoveCategory(ImageboardThread *thread)
         return;
 
     disconnect( thread,
-                SIGNAL( infoChanged(ImageboardThread::Info, QVariant) ),
+                SIGNAL( infoChanged(ThreadInfo::Enum, QVariant) ),
                 this,
-                SLOT( threadInfoChanged(ImageboardThread::Info, QVariant) ) );
+                SLOT( threadInfoChanged(ThreadInfo::Enum, QVariant) ) );
 
     --countAll;
     QModelIndex stateIndex = index(Tr::CM::CategState, 0);
@@ -329,19 +330,19 @@ Tr::CM::Category CategoryModel::categoryForIndex(
 
 //
 
-void CategoryModel::threadInfoChanged(ImageboardThread::Info key,
+void CategoryModel::threadInfoChanged(ThreadInfo::Enum key,
                                       const QVariant &data)
 {
     switch (key)
     {
-    case ImageboardThread::InfoStateExtended:
+    case ThreadInfo::ExtendedState:
     {
         ImageboardThread::ExtendedState state =
                 static_cast<ImageboardThread::ExtendedState>( data.toInt() );
         checkState(state, true);
         break;
     }
-    case ImageboardThread::InfoStateExtendedPrev:
+    case ThreadInfo::ExtendedStatePrev:
     {
         ImageboardThread::ExtendedState state =
                 static_cast<ImageboardThread::ExtendedState>( data.toInt() );

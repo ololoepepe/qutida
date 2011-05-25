@@ -41,10 +41,12 @@ public:
     static const int REPLY_TIMEOUT;
     static const int RETRY_DELAY;
 
-    Download(const QString &url, int attempts = 1, QObject *parent = 0);
+    Download(const QString &url, bool aux = false,
+             int attempts = 1, QObject *parent = 0);
     ~Download();
 
     QString url() const;
+    bool isAuxiliary() const;
     const QByteArray &data() const;
     State state() const;
 
@@ -57,6 +59,7 @@ signals:
 
 private:
     QString downloadUrl;
+    bool isAux;
     QByteArray downloadData;
     QNetworkReply *networkReply;
     State downloadState;

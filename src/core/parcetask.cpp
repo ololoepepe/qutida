@@ -19,6 +19,7 @@
 
 #include "src/core/parcetask.h"
 #include "src/common.h"
+#include "src/core/savepagetask.h"
 
 #include <QObject>
 #include <QString>
@@ -30,6 +31,7 @@
 
 const QString ParceTask::PARCE_PATTERN_BEG = "(href=\"(http://)?\\S+\\.(";
 const QString ParceTask::PARCE_PATTERN_END = ")\")+";
+const QString ParceTask::PARCE_PATTERN_AUX = "(http://\\S+/\\S+\\.\\w+(?=(\"|')))+";
 const QString ParceTask::REMOVE_PATTERN = "href=|\"";
 
 //
@@ -158,6 +160,43 @@ void ParceTask::run()
         if ( !dir.exists() )
         {
             dir.mkpath(parameters.dir);
+        }
+    }
+
+    if (parameters.savePage)
+    {
+        QStringList auxUrlList;
+        QRegExp auxParceMask(PARCE_PATTERN_AUX);
+        int pos = 0;
+
+        while ( ( pos = auxParceMask.indexIn(content, pos) ) != -1 )
+        {
+            auxUrlList << auxParceMask.cap(1);
+            pos += auxParceMask.matchedLength();
+        }
+
+        auxUrlList.removeDuplicates();
+
+        for (int i = 0; i < auxUrlList.count(); ++i)
+        {
+            QString d = Common::getHost( auxUrlList.at(i) );
+
+            if (d == domain || QString() == d)
+            {
+                result.auxUrls << auxUrlList.at(i);
+            }
+        }
+
+        if ( !result.auxUrls.isEmpty() )
+        {
+            QDir dir(parameters.dir + QDir::separator() +
+                     SavePageTask::AUX_FILES_DIR);
+
+            if ( !dir.exists() )
+            {
+                dir.mkpath(parameters.dir + QDir::separator() +
+                           SavePageTask::AUX_FILES_DIR);
+            }
         }
     }
 

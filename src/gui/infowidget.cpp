@@ -19,6 +19,7 @@
 
 #include "src/gui/infowidget.h"
 #include "src/tr.h"
+#include "src/core/threadinfo.h"
 
 #include <QWidget>
 #include <QVBoxLayout>
@@ -127,6 +128,47 @@ InfoWidget::InfoWidget(QWidget *parent) :
         hLayoutBlocks->addLayout(vLayoutData2);
         //
         hLayoutBlocks->addStretch();
+        //
+        vLayoutKey3 = new QVBoxLayout();
+          labelSavePageKey = new QLabel(Tr::IW::labelSavePageKeyText(), this);
+          labelSavePageKey->setFont(keyFont);
+          vLayoutKey3->addWidget(labelSavePageKey);
+          //
+          labelFilesAuxTotalKey = new QLabel(
+                      Tr::IW::labelFilesAuxTotalKeyText(), this);
+          labelFilesAuxTotalKey->setFont(keyFont);
+          vLayoutKey3->addWidget(labelFilesAuxTotalKey);
+          //
+          labelFilesAuxSavedKey = new QLabel(
+                      Tr::IW::labelFilesAuxSavedKeyText(), this);
+          labelFilesAuxSavedKey->setFont(keyFont);
+          vLayoutKey3->addWidget(labelFilesAuxSavedKey);
+          //
+          labelFilesAuxFailedKey = new QLabel(
+                      Tr::IW::labelFilesAuxFailedKeyText(), this);
+          labelFilesAuxFailedKey->setFont(keyFont);
+          vLayoutKey3->addWidget(labelFilesAuxFailedKey);
+          //
+          vLayoutKey3->addStretch();
+        hLayoutBlocks->addLayout(vLayoutKey3);
+        //
+        vLayoutData3 = new QVBoxLayout();
+          labelSavePageData = new QLabel(this);
+          vLayoutData3->addWidget(labelSavePageData);
+          //
+          labelFilesAuxTotalData = new QLabel(this);
+          vLayoutData3->addWidget(labelFilesAuxTotalData);
+          //
+          labelFilesAuxSavedData = new QLabel(this);
+          vLayoutData3->addWidget(labelFilesAuxSavedData);
+          //
+          labelFilesAuxFailedData = new QLabel(this);
+          vLayoutData3->addWidget(labelFilesAuxFailedData);
+          //
+          vLayoutData3->addStretch();
+        hLayoutBlocks->addLayout(vLayoutData3);
+        //
+        hLayoutBlocks->addStretch();
       vLayout->addLayout(hLayoutBlocks);
       //
       vLayout->addStretch();
@@ -146,19 +188,18 @@ void InfoWidget::setObservedThread(ImageboardThread *thread)
 {
     if (observedThread)
         disconnect(observedThread,
-                    SIGNAL( infoChanged(ImageboardThread::Info, QVariant) ),
+                    SIGNAL( infoChanged(ThreadInfo::Enum, QVariant) ),
                     this,
-                    SLOT( threadInfoChanged(ImageboardThread::Info,
-                                            QVariant) ) );
+                    SLOT( threadInfoChanged(ThreadInfo::Enum, QVariant) ) );
 
     observedThread = thread;
 
     if (observedThread)
     {
         connect( observedThread,
-                 SIGNAL( infoChanged(ImageboardThread::Info,QVariant) ),
+                 SIGNAL( infoChanged(ThreadInfo::Enum, QVariant) ),
                  this,
-                 SLOT( threadInfoChanged(ImageboardThread::Info, QVariant) ) );
+                 SLOT( threadInfoChanged(ThreadInfo::Enum, QVariant) ) );
         connect( observedThread, SIGNAL( destroyed() ),
                  this, SLOT( observedThreadDestroyed() ) );
     }
@@ -178,6 +219,43 @@ void InfoWidget::retranslate()
     labelFilesTotalKey->setText( Tr::IW::labelFilesTotalKeyText() );
     labelFilesSavedKey->setText( Tr::IW::labelFilesSavedKeyText() );
     labelFilesFailedKey->setText( Tr::IW::labelFilesFailedKeyText() );
+    labelSavePageKey->setText( Tr::IW::labelSavePageKeyText() );
+    labelFilesAuxTotalKey->setText( Tr::IW::labelFilesAuxTotalKeyText() );
+    labelFilesAuxSavedKey->setText( Tr::IW::labelFilesAuxSavedKeyText() );
+    labelFilesAuxFailedKey->setText( Tr::IW::labelFilesAuxFailedKeyText() );
+
+    if (observedThread)
+    {
+        labelFilesTotalData->setText(
+                    Tr::IW::labelFilesDataText(
+                        observedThread->dataForKey(
+                            ThreadInfo::FilesTotal).toInt() ) );
+        labelFilesSavedData->setText(
+                    Tr::IW::labelFilesDataText(
+                        observedThread->dataForKey(
+                            ThreadInfo::FilesSaved).toInt() ) );
+        labelFilesFailedData->setText(
+                    Tr::IW::labelFilesDataText(
+                        observedThread->dataForKey(
+                            ThreadInfo::FilesFailed).toInt() ) );
+        labelSavePageData->setText(
+                    Tr::IW::labelSavePageDataText(
+                        observedThread->dataForKey(
+                            ThreadInfo::SavePage).toBool() ) );
+        labelFilesAuxTotalData->setText(
+                    Tr::IW::labelFilesDataText(
+                        observedThread->dataForKey(
+                            ThreadInfo::FilesAuxTotal).toInt() ) );
+        labelFilesAuxSavedData->setText(
+                    Tr::IW::labelFilesDataText(
+                        observedThread->dataForKey(
+                            ThreadInfo::FilesAuxSaved).toInt() ) );
+        labelFilesAuxFailedData->setText(
+                    Tr::IW::labelFilesDataText(
+                        observedThread->dataForKey(
+                            ThreadInfo::FilesAuxFailed).toInt() ) );
+    }
+
     getThreadData();
 }
 
@@ -187,50 +265,51 @@ void InfoWidget::getThreadData()
 {
     if (observedThread)
     {
-        threadInfoChanged(
-                    ImageboardThread::InfoProgress,
-                    observedThread->dataForKey(
-                        ImageboardThread::InfoProgress) );
-        threadInfoChanged(
-                    ImageboardThread::InfoThread,
-                    observedThread->dataForKey(
-                        ImageboardThread::InfoThread) );
-        threadInfoChanged(
-                    ImageboardThread::InfoBoard,
-                    observedThread->dataForKey(
-                        ImageboardThread::InfoBoard) );
-        threadInfoChanged(
-                    ImageboardThread::InfoHost,
-                    observedThread->dataForKey(
-                        ImageboardThread::InfoHost) );
-        threadInfoChanged(
-                    ImageboardThread::InfoDir,
-                    observedThread->dataForKey(
-                        ImageboardThread::InfoDir) );
-        threadInfoChanged(
-                    ImageboardThread::InfoUrl,
-                    observedThread->dataForKey(
-                        ImageboardThread::InfoUrl) );
-        threadInfoChanged(
-                    ImageboardThread::InfoStateExtended,
-                    observedThread->dataForKey(
-                        ImageboardThread::InfoStateExtended) );
-        threadInfoChanged(
-                    ImageboardThread::InfoTimeRest,
-                    observedThread->dataForKey(
-                        ImageboardThread::InfoTimeRest) );
-        threadInfoChanged(
-                    ImageboardThread::InfoFilesTotal,
-                    observedThread->dataForKey(
-                        ImageboardThread::InfoFilesTotal) );
-        threadInfoChanged(
-                    ImageboardThread::InfoFilesSaved,
-                    observedThread->dataForKey(
-                        ImageboardThread::InfoFilesSaved) );
-        threadInfoChanged(
-                    ImageboardThread::InfoFilesFailed,
-                    observedThread->dataForKey(
-                        ImageboardThread::InfoFilesFailed) );
+        threadInfoChanged( ThreadInfo::Progress,
+                           observedThread->dataForKey(
+                              ThreadInfo::Progress) );
+        threadInfoChanged( ThreadInfo::Thread,
+                           observedThread->dataForKey(
+                              ThreadInfo::Thread) );
+        threadInfoChanged( ThreadInfo::Board,
+                           observedThread->dataForKey(
+                              ThreadInfo::Board) );
+        threadInfoChanged( ThreadInfo::Host,
+                           observedThread->dataForKey(
+                              ThreadInfo::Host) );
+        threadInfoChanged( ThreadInfo::Dir,
+                           observedThread->dataForKey(
+                              ThreadInfo::Dir) );
+        threadInfoChanged( ThreadInfo::Url,
+                           observedThread->dataForKey(
+                              ThreadInfo::Url) );
+        threadInfoChanged( ThreadInfo::ExtendedState,
+                           observedThread->dataForKey(
+                              ThreadInfo::ExtendedState) );
+        threadInfoChanged( ThreadInfo::TimeRest,
+                           observedThread->dataForKey(
+                              ThreadInfo::TimeRest) );
+        threadInfoChanged( ThreadInfo::FilesTotal,
+                           observedThread->dataForKey(
+                              ThreadInfo::FilesTotal) );
+        threadInfoChanged( ThreadInfo::FilesSaved,
+                           observedThread->dataForKey(
+                              ThreadInfo::FilesSaved) );
+        threadInfoChanged( ThreadInfo::FilesFailed,
+                           observedThread->dataForKey(
+                              ThreadInfo::FilesFailed) );
+        threadInfoChanged( ThreadInfo::SavePage,
+                           observedThread->dataForKey(
+                              ThreadInfo::SavePage) );
+        threadInfoChanged( ThreadInfo::FilesAuxTotal,
+                           observedThread->dataForKey(
+                              ThreadInfo::FilesAuxTotal) );
+        threadInfoChanged( ThreadInfo::FilesAuxSaved,
+                           observedThread->dataForKey(
+                              ThreadInfo::FilesAuxSaved) );
+        threadInfoChanged( ThreadInfo::FilesAuxFailed,
+                           observedThread->dataForKey(
+                              ThreadInfo::FilesAuxFailed) );
     }
     else
     {
@@ -245,60 +324,79 @@ void InfoWidget::getThreadData()
         labelFilesTotalData->clear();
         labelFilesSavedData->clear();
         labelFilesFailedData->clear();
+        labelSavePageData->clear();
+        labelFilesAuxTotalData->clear();
+        labelFilesAuxSavedData->clear();
+        labelFilesAuxFailedData->clear();
     }
 }
 
 //
 
-void InfoWidget::threadInfoChanged(ImageboardThread::Info key,
-                                   const QVariant &data)
+void InfoWidget::threadInfoChanged(ThreadInfo::Enum key, const QVariant &data)
 {
     switch (key)
     {
-    case ImageboardThread::InfoProgress:
+    case ThreadInfo::Progress:
         progressBar->setValue( data.toInt() );
         break;
-    case ImageboardThread::InfoThread:
+    case ThreadInfo::Thread:
         labelThreadData->setText( data.toString() );
         break;
-    case ImageboardThread::InfoBoard:
+    case ThreadInfo::Board:
         labelBoardData->setText( data.toString() );
         break;
-    case ImageboardThread::InfoHost:
+    case ThreadInfo::Host:
         labelHostData->setText( data.toString() );
         break;
-    case ImageboardThread::InfoDir:
+    case ThreadInfo::Dir:
         labelDirData->setText( data.toString() );
         break;
-    case ImageboardThread::InfoUrl:
+    case ThreadInfo::Url:
         labelUrlData->setText( data.toString() );
         break;
-    case ImageboardThread::InfoStateExtended:
+    case ThreadInfo::ExtendedState:
         labelExtStateData->setText(
                     Tr::IT::threadExtendedState(
                         static_cast<ImageboardThread::ExtendedState>(
                             data.toInt() ) ) );
         break;
-    case ImageboardThread::InfoTimeRest:
+    case ThreadInfo::TimeRest:
     {
         int rest = observedThread->dataForKey(
-                    ImageboardThread::InfoTimeRest).toInt();
+                    ThreadInfo::TimeRest).toInt();
         bool enabled = observedThread->dataForKey(
-                    ImageboardThread::InfoRestartEnabled).toBool();
+                    ThreadInfo::RestartEnabled).toBool();
         labelRestartData->setText(
                     Tr::IW::labelRestartDataText(rest, enabled) );
         break;
     }
-    case ImageboardThread::InfoFilesTotal:
+    case ThreadInfo::FilesTotal:
         labelFilesTotalData->setText(
                     Tr::IW::labelFilesDataText( data.toInt() ) );
         break;
-    case ImageboardThread::InfoFilesSaved:
+    case ThreadInfo::FilesSaved:
         labelFilesSavedData->setText(
                     Tr::IW::labelFilesDataText( data.toInt() ) );
         break;
-    case ImageboardThread::InfoFilesFailed:
+    case ThreadInfo::FilesFailed:
         labelFilesFailedData->setText(
+                    Tr::IW::labelFilesDataText( data.toInt() ) );
+        break;
+    case ThreadInfo::SavePage:
+        labelSavePageData->setText(
+                    Tr::IW::labelSavePageDataText( data.toBool() ) );
+        break;
+    case ThreadInfo::FilesAuxTotal:
+        labelFilesAuxTotalData->setText(
+                    Tr::IW::labelFilesDataText( data.toInt() ) );
+        break;
+    case ThreadInfo::FilesAuxSaved:
+        labelFilesAuxSavedData->setText(
+                    Tr::IW::labelFilesDataText( data.toInt() ) );
+        break;
+    case ThreadInfo::FilesAuxFailed:
+        labelFilesAuxFailedData->setText(
                     Tr::IW::labelFilesDataText( data.toInt() ) );
         break;
     default:

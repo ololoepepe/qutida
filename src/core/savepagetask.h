@@ -17,40 +17,55 @@
 ** along with qutida.  If not, see <http://www.gnu.org/licenses/>.
 ****************************************************************************/
 
-#ifndef RMDIRTASK_H
-#define RMDIRTASK_H
+#ifndef SAVEPAGETASK_H
+#define SAVEPAGETASK_H
+
+#include "src/core/download.h"
 
 #include <QObject>
 #include <QRunnable>
 #include <QString>
+#include <QStringList>
 
-class RmdirTask : public QObject, public QRunnable
+class SavePageTask : public QObject, public QRunnable
 {
     Q_OBJECT
 public:
     struct Parameters
     {
+        Download *download;
+        QStringList urls;
+        QStringList normalUrls;
         QString dir;
+        bool replace;
+    };
+
+    enum Error
+    {
+        NoError = 0,
+        DataError,
+        FileError
     };
 
     struct Result
     {
-        QString dir;
-        bool success;
+        QString url;
+        Error err;
+        Download *download;
     };
 
-    explicit RmdirTask(const Parameters &param);
+    static const QString AUX_FILES_DIR;
+
+    explicit SavePageTask(const Parameters &param);
 
     void run();
 
 signals:
-    void finished(RmdirTask::Result result);
+    void finished(SavePageTask::Result result);
 
 private:
     Parameters parameters;
 
-    bool rmdirRec(const QString &dir);
-
 };
 
-#endif // RMDIRTASK_H
+#endif // SAVEPAGETASK_H

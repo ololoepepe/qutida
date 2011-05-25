@@ -26,7 +26,7 @@
 namespace Common
 {
     const QString APP_NAME = "qutida";
-    const QString APP_VERSION = "0.1.8";
+    const QString APP_VERSION = "0.1.9";
     const QString ORG_NAME = "Andrew Bogdanov";
     const QString ORG_DOMAIN = "https://github.com/the-dark-angel";
     const QString CR_YEARS = "2011";

@@ -26,6 +26,7 @@
 #include "src/mv/categorymodel.h"
 #include "src/gui/parametersdialog.h"
 #include "src/gui/addthread.h"
+#include "src/gui/threadparameters.h"
 
 #include <QMainWindow>
 #include <QString>
@@ -83,8 +84,8 @@ signals:
     void requestOpenUrl(int index);
     void requestSortThreads(int column, Qt::SortOrder order);
     void requestSetObservedThread(int index, InfoWidget *widget);
-    void requestModifyRestart(const QList<int> &indexes,
-                              bool enabled, int interval);
+    void requestModifyParameters(const QList<int> &indexes,
+                                 ThreadParameters::Parameters);
     void requestRetranslate();
     void requestWriteSettings();
 

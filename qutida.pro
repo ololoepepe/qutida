@@ -22,7 +22,9 @@ HEADERS += \
     src/gui/threadparameters.h \
     src/mv/progressbardelegate.h \
     src/gui/authentication.h \
-    src/core/localserver.h
+    src/core/localserver.h \
+    src/core/threadinfo.h \
+    src/core/savepagetask.h
 
 SOURCES += \
     src/gui/mainwindow.cpp \
@@ -48,7 +50,9 @@ SOURCES += \
     src/gui/threadparameters.cpp \
     src/mv/progressbardelegate.cpp \
     src/gui/authentication.cpp \
-    src/core/localserver.cpp
+    src/core/localserver.cpp \
+    src/core/threadinfo.cpp \
+    src/core/savepagetask.cpp
 
 QT += \
     network

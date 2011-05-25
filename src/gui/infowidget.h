@@ -21,6 +21,7 @@
 #define INFOWIDGET_H
 
 #include "src/core/imageboardthread.h"
+#include "src/core/threadinfo.h"
 
 #include <QWidget>
 #include <QVBoxLayout>
@@ -68,6 +69,19 @@ private:
           QLabel *labelFilesSavedData;
           QLabel *labelFilesFailedData;
         //stretch
+        QVBoxLayout *vLayoutKey3;
+          QLabel *labelSavePageKey;
+          QLabel *labelFilesAuxTotalKey;
+          QLabel *labelFilesAuxSavedKey;
+          QLabel *labelFilesAuxFailedKey;
+          //stretch
+        QVBoxLayout *vLayoutData3;
+          QLabel *labelSavePageData;
+          QLabel *labelFilesAuxTotalData;
+          QLabel *labelFilesAuxSavedData;
+          QLabel *labelFilesAuxFailedData;
+          //stretch
+        //stretch
       //stretch
     //
     ImageboardThread *observedThread;
@@ -75,7 +89,7 @@ private:
     void getThreadData();
 
 private slots:
-    void threadInfoChanged(ImageboardThread::Info key, const QVariant &data);
+    void threadInfoChanged(ThreadInfo::Enum key, const QVariant &data);
     void observedThreadDestroyed();
 
 };

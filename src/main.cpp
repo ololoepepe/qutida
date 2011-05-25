@@ -23,12 +23,14 @@
 #include "src/common.h"
 #include "src/core/parcetask.h"
 #include "src/core/savetask.h"
+#include "src/core/savepagetask.h"
 #include "src/core/rmdirtask.h"
 #include "src/core/imageboardthread.h"
 #include "src/gui/infowidget.h"
 #include "src/mv/categorymodel.h"
 #include "src/core/localserver.h"
 #include "src/core/networkaccessmanager.h"
+#include "src/gui/threadparameters.h"
 
 #include <QApplication>
 #include <QObject>
@@ -111,10 +113,12 @@ int main(int argc, char *argv[])
 
     qRegisterMetaType<ParceTask::Result>("ParceTask::Result");
     qRegisterMetaType<SaveTask::Result>("SaveTask::Result");
+    qRegisterMetaType<SavePageTask::Result>("SavePageTask::Result");
     qRegisterMetaType<RmdirTask::Result>("RmdirTask::Result");
     qRegisterMetaType<ImageboardThread*>("ImageboardThread*");
     qRegisterMetaType<InfoWidget*>("InfoWidget*");
     qRegisterMetaType<QModelIndex>("QModelIndex");
+    qRegisterMetaType<ThreadParameters::Parameters>("ThreadParameters::Parameters");
     QThreadPool::globalInstance()->setMaxThreadCount(10);
     ThreadManager threadManager(0);
     QObject::connect( &localServer,
@@ -169,9 +173,11 @@ int main(int argc, char *argv[])
                       &threadManager,
                       SLOT( requestSetObservedThread(int, InfoWidget*) ) );
     QObject::connect( mainWindow,
-                      SIGNAL( requestModifyRestart(QList<int>, bool, int) ),
+                      SIGNAL( requestModifyParameters(
+                                 QList<int>, ThreadParameters::Parameters) ),
                       &threadManager,
-                      SLOT( requestModifyRestart(QList<int>, bool, int) ) );
+                      SLOT( requestModifyParameters(
+                               QList<int>, ThreadParameters::Parameters) ) );
     QObject::connect( mainWindow, SIGNAL( requestRetranslate() ),
                       &threadManager, SLOT( requestRetranslate() ) );
     QObject::connect( mainWindow, SIGNAL( requestWriteSettings() ),

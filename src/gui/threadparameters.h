@@ -33,10 +33,16 @@ class ThreadParameters : public QDialog
 {
     Q_OBJECT
 public:
-    explicit ThreadParameters(bool enabled, int interval, QWidget *parent = 0);
+    struct Parameters
+    {
+        bool restartEnabled;
+        int restartInterval;
+        bool savePage;
+    };
 
-    bool restartEnabled() const;
-    int restartInterval() const;
+    explicit ThreadParameters(Parameters param, QWidget *parent = 0);
+
+    Parameters parameters() const;
 
 private:
     QVBoxLayout *vLayout;
@@ -47,6 +53,9 @@ private:
         //stretch
         QLabel *labelRestartInterval;
         QSpinBox *spinBoxRestartInterval;
+      QHBoxLayout *hLayoutSavePage;
+        //stretch
+        QCheckBox *checkBoxSavePage;
       QHBoxLayout *hLayoutActions;
         //stretch
         QPushButton *buttonCancel;

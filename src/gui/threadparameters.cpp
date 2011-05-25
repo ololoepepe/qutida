@@ -29,8 +29,7 @@
 #include <QPushButton>
 #include <QLayout>
 
-ThreadParameters::ThreadParameters(bool enabled, int interval,
-                                   QWidget *parent) :
+ThreadParameters::ThreadParameters(Parameters param, QWidget *parent) :
     QDialog(parent)
 {
     vLayout = new QVBoxLayout(this);
@@ -39,7 +38,7 @@ ThreadParameters::ThreadParameters(bool enabled, int interval,
         //
         checkBoxRestartEnabled =
                 new QCheckBox(Tr::TP::checkBoxRestartEnabledText(), this);
-        checkBoxRestartEnabled->setChecked(enabled);
+        checkBoxRestartEnabled->setChecked(param.restartEnabled);
         hLayoutRestartEnabled->addWidget(checkBoxRestartEnabled);
       vLayout->addLayout(hLayoutRestartEnabled);
       //
@@ -53,9 +52,17 @@ ThreadParameters::ThreadParameters(bool enabled, int interval,
         spinBoxRestartInterval = new QSpinBox(this);
         spinBoxRestartInterval->setMinimum(1);
         spinBoxRestartInterval->setMaximum(360);
-        spinBoxRestartInterval->setValue(interval);
+        spinBoxRestartInterval->setValue(param.restartInterval);
         hLayoutRestartInterval->addWidget(spinBoxRestartInterval);
       vLayout->addLayout(hLayoutRestartInterval);
+      //
+      hLayoutSavePage = new QHBoxLayout();
+        hLayoutSavePage->addStretch();
+        //
+        checkBoxSavePage = new QCheckBox(Tr::AT::checkBoxSavePageText(), this);
+        checkBoxRestartEnabled->setChecked(param.savePage);
+        hLayoutSavePage->addWidget(checkBoxSavePage);
+      vLayout->addLayout(hLayoutSavePage);
       //
       hLayoutActions = new QHBoxLayout();
         hLayoutActions->addStretch();
@@ -73,12 +80,11 @@ ThreadParameters::ThreadParameters(bool enabled, int interval,
 
 //
 
-bool ThreadParameters::restartEnabled() const
+ThreadParameters::Parameters ThreadParameters::parameters() const
 {
-    return checkBoxRestartEnabled->isChecked();
-}
-
-int ThreadParameters::restartInterval() const
-{
-    return spinBoxRestartInterval->value();
+    Parameters param;
+    param.restartEnabled = checkBoxRestartEnabled->isChecked();
+    param.restartInterval = spinBoxRestartInterval->value();
+    param.savePage = checkBoxSavePage->isChecked();
+    return param;
 }

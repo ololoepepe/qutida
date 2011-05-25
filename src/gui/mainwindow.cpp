@@ -103,7 +103,7 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
                    SIGNAL( dataChanged(QModelIndex, QModelIndex) ),
                    this, SLOT( threadModelDataChanged(QModelIndex) ) );
         treeViewThreads->setItemDelegateForColumn(
-                    ImageboardThread::InfoProgress,
+                    ThreadInfo::Progress,
                     new ProgressBarDelegate(threadModel) );
         treeViewThreads->setSelectionBehavior(QAbstractItemView::SelectRows);
         treeViewThreads->setSelectionMode(
@@ -216,19 +216,17 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
         menuView->addSeparator();
         //
         menuColumns = new QMenu(Tr::MW::menuColumnsTitle(), this);
-          for (int i = ImageboardThread::InfoIteratorFirst;
-               i <= ImageboardThread::InfoIteratorLast; ++i)
+          for (ThreadInfo i = ThreadInfo::IteratorFirst;
+               i <= ThreadInfo::IteratorMiddle; ++i)
           {
               QAction *actColumn = new QAction(
-                          Tr::IT::threadModelHeader(
-                              static_cast<ImageboardThread::Info>(i) ),
-                          this);
+                          Tr::IT::threadModelHeader( i.toEnum() ),this);
               actColumn->setCheckable(true);
               actColumn->setChecked(true);
               actColumnList << actColumn;
               connect( actColumn, SIGNAL( triggered() ),
                        &columnMapper, SLOT( map() ) );
-              columnMapper.setMapping(actColumn, i);
+              columnMapper.setMapping( actColumn, i.toEnum() );
               menuColumns->addAction(actColumn);
           }
 
@@ -396,11 +394,10 @@ void MainWindow::retranslate(bool initial)
     actAboutQt->setText( Tr::MW::actAboutQtText() );
     actShowHide->setText( Tr::MW::actShowHideText( this->isVisible() ) );
 
-    for (int i = ImageboardThread::InfoIteratorFirst;
-         i <= ImageboardThread::InfoIteratorLast; ++i)
-        actColumnList.value(i)->setText(
-                    Tr::IT::threadModelHeader(
-                        static_cast<ImageboardThread::Info>(i) ) );
+    for (ThreadInfo i = ThreadInfo::IteratorFirst;
+         i <= ThreadInfo::IteratorMiddle; ++i)
+        actColumnList.value( i.toEnum() )->setText(
+                    Tr::IT::threadModelHeader( i.toEnum() ) );
 
     toolBar->setWindowTitle( Tr::MW::actToolBarText() );
     actShowHide->setText( Tr::MW::actShowHideText(
@@ -656,17 +653,18 @@ void MainWindow::threadParametersRequested()
     if (!current)
         return;
 
-    ThreadParameters *dialog =
-            new ThreadParameters(current->restartEnabled(),
-                                 current->restartInterval(), this);
+    ThreadParameters::Parameters param;
+    param.restartEnabled = current->restartEnabled();
+    param.restartInterval = current->restartInterval();
+    param.savePage = current->savePage();
+    ThreadParameters *dialog = new ThreadParameters(param, this);
     dialog->setWindowTitle( Tr::MW::dialogThreadParametersCaption() );
     dialog->exec();
 
     if ( QDialog::Accepted == dialog->result() )
     {
-        emit requestModifyRestart( getSelectedIndexes(),
-                                  dialog->restartEnabled(),
-                                  dialog->restartInterval() );
+        emit requestModifyParameters( getSelectedIndexes(),
+                                      dialog->parameters() );
     }
 
     dialog->deleteLater();
@@ -752,7 +750,7 @@ void MainWindow::proxyAuthenticationRequired(const QNetworkProxy &proxy,
 
 void MainWindow::threadModelDataChanged(const QModelIndex &topLeft)
 {
-    if (topLeft.column() == ImageboardThread::InfoStateExtended)
+    if (topLeft.column() == ThreadInfo::ExtendedState)
         categoriesSelectionChanged();
 }
 
@@ -856,8 +854,7 @@ void MainWindow::categoriesSelectionChanged()
             ImageboardThread::ExtendedState state =
               static_cast<ImageboardThread::ExtendedState>(
                 threadModel->pureData(
-                  threadModel->index(
-                      i, ImageboardThread::InfoStateExtended) ).toInt() );
+                  threadModel->index(i, ThreadInfo::ExtendedState) ).toInt() );
             bool hide = true;
 
             for (int j = 0; j < stateList.count(); ++j)
@@ -887,7 +884,7 @@ void MainWindow::categoriesSelectionChanged()
             if (Common::getHost(
                   threadModel->pureData(
                     threadModel->index(
-                      i, ImageboardThread::InfoUrl) ).toString() ) ==
+                      i, ThreadInfo::Url) ).toString() ) ==
                         categoryValue)
             {
                 treeViewThreads->setRowHidden(i, QModelIndex(), false);
@@ -911,7 +908,7 @@ void MainWindow::categoriesSelectionChanged()
             if (Common::getBoard(
                   threadModel->pureData(
                     threadModel->index(
-                      i, ImageboardThread::InfoUrl) ).toString() ) ==
+                      i, ThreadInfo::Url) ).toString() ) ==
                         categoryValue)
             {
                 treeViewThreads->setRowHidden(i, QModelIndex(), false);

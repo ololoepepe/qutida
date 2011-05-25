@@ -38,6 +38,7 @@ public:
         QStringList extentions;
         bool external;
         bool replace;
+        bool savePage;
     };
 
     enum Error
@@ -52,11 +53,13 @@ public:
         Error err;
         QStringList existingUrls;
         QStringList newUrls;
+        QStringList auxUrls;
         Download *download;
     };
 
     static const QString PARCE_PATTERN_BEG;
     static const QString PARCE_PATTERN_END;
+    static const QString PARCE_PATTERN_AUX;
     static const QString REMOVE_PATTERN;
 
     explicit ParceTask(const Parameters &param);

@@ -36,29 +36,38 @@ void RmdirTask::run()
 {
     Result result;
     result.dir = parameters.dir;
-    QDir d(parameters.dir);
+    result.success = rmdirRec(parameters.dir);
+    emit finished(result);
+}
+
+//
+
+bool RmdirTask::rmdirRec(const QString &dir)
+{
+    QDir d(dir);
 
     if ( !d.exists() )
+        return true;
+
+    QStringList fileList = d.entryList(QDir::Files | QDir::Hidden);
+    QStringList directoryList = d.entryList(QDir::Dirs | QDir::Hidden);
+    bool success = true;
+
+    foreach (QString file, fileList)
+        if ( !QFile::remove(d.absolutePath() + QDir::separator() + file) )
+            success = false;
+
+    foreach (QString directory, directoryList)
     {
-        result.success = false;
-        emit finished(result);
-        return;
+        if ("." == directory || ".." == directory)
+            continue;
+
+        if ( !rmdirRec(d.absolutePath() + QDir::separator() + directory) )
+            success = false;
     }
 
-    QStringList entryList = d.entryList(QDir::Files);
+    if ( !d.rmdir(dir) )
+        success = false;
 
-    foreach (QString entry, entryList)
-    {
-        QString entryAbsPath = d.absolutePath() + QDir::separator() + entry;
-
-        if ( !QFile::remove(entryAbsPath) )
-        {
-            result.success = false;
-            emit finished(result);
-            return;
-        }
-    }
-
-    result.success = d.rmdir(parameters.dir);
-    emit finished(result);
+    return success;
 }

@@ -22,6 +22,7 @@
 #include "src/core/imageboardthread.h"
 #include "src/mv/categorymodel.h"
 #include "src/common.h"
+#include "threadinfo.h"
 
 #include <QObject>
 #include <QList>
@@ -47,9 +48,11 @@ ThreadManager::ThreadManager(QObject *parent) :
     QObject(parent)
 {
     QList<QVariant> headerData;
-    for (int i = ImageboardThread::InfoIteratorFirst;
-         i <= ImageboardThread::InfoIteratorLast; ++i)
-        headerData << i;
+
+    for (ThreadInfo i = ThreadInfo::IteratorFirst;
+         i <= ThreadInfo::IteratorMiddle; ++i)
+        headerData << i.toEnum();
+
     mThreadModel = new ThreadModel(headerData, this);
     mCategoryModel = new CategoryModel(this);
     sortingColumn = -1;
@@ -239,8 +242,8 @@ void ThreadManager::requestSetObservedThread(int index, InfoWidget *widget)
     widget->setObservedThread( mThreadModel->threadForRow(index) );
 }
 
-void ThreadManager::requestModifyRestart(const QList<int> &indexes,
-                                         bool enabled, int interval)
+void ThreadManager::requestModifyParameters(const QList<int> &indexes,
+                                            ThreadParameters::Parameters param)
 {
     for (int i = 0; i < indexes.count(); ++i)
     {
@@ -248,10 +251,14 @@ void ThreadManager::requestModifyRestart(const QList<int> &indexes,
 
         if ( ( index < threadList.count() ) && (index > -1) )
         {
-            ImageboardThread *thread = threadList.value(i);
+            ImageboardThread *thread = mThreadModel->threadForRow(index);
 
             if (thread)
-                thread->modifyRestart(enabled, interval);
+            {
+                thread->modifyRestart(param.restartEnabled,
+                                      param.restartInterval);
+                thread->modifySavePage(param.savePage);
+            }
         }
     }
 }

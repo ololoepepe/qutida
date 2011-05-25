@@ -22,6 +22,7 @@
 
 #include "src/mv/treeitem.h"
 #include "src/core/imageboardthread.h"
+#include "src/core/threadinfo.h"
 
 #include <QObject>
 #include <QList>
@@ -33,17 +34,17 @@ class ThreadModelItem : public TreeItem
     Q_OBJECT
 public:
     static QList<QVariant> dataFromInfoMap(
-        const QMap<ImageboardThread::Info, QVariant> &infoMap)
+        const QMap<ThreadInfo::Enum, QVariant> &infoMap)
     {
         QList<QVariant> data;
-        data << infoMap.value(ImageboardThread::InfoThread);
-        data << infoMap.value(ImageboardThread::InfoBoard);
-        data << infoMap.value(ImageboardThread::InfoHost);
-        data << infoMap.value(ImageboardThread::InfoStateExtended);
-        data << infoMap.value(ImageboardThread::InfoProgress);
-        data << infoMap.value(ImageboardThread::InfoDir);
-        data << infoMap.value(ImageboardThread::InfoUrl);
-        data << infoMap.value(ImageboardThread::InfoAdded);
+        data << infoMap.value(ThreadInfo::Thread);
+        data << infoMap.value(ThreadInfo::Board);
+        data << infoMap.value(ThreadInfo::Host);
+        data << infoMap.value(ThreadInfo::ExtendedState);
+        data << infoMap.value(ThreadInfo::Progress);
+        data << infoMap.value(ThreadInfo::Dir);
+        data << infoMap.value(ThreadInfo::Url);
+        data << infoMap.value(ThreadInfo::Added);
         return data;
     }
 
@@ -55,7 +56,7 @@ private:
     ImageboardThread *mRelatedThread;
 
 private slots:
-    void threadInfoChanged(ImageboardThread::Info key, const QVariant &data);
+    void threadInfoChanged(ThreadInfo::Enum key, const QVariant &data);
 
 };
 

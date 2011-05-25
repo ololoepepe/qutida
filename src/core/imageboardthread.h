@@ -24,7 +24,9 @@
 #include "src/core/download.h"
 #include "src/core/parcetask.h"
 #include "src/core/savetask.h"
+#include "src/core/savepagetask.h"
 #include "src/core/rmdirtask.h"
+#include "src/core/threadinfo.h"
 
 #include <QObject>
 #include <QString>
@@ -53,27 +55,6 @@ public:
         bool restartEnabled;
         int restartInterval;
         bool savePage;
-    };
-
-    enum Info
-    {
-        InfoIteratorFirst = 0,
-        InfoThread = InfoIteratorFirst,
-        InfoBoard,
-        InfoHost,
-        InfoStateExtended,
-        InfoProgress,
-        InfoDir,
-        InfoUrl,
-        InfoAdded,
-        InfoIteratorLast = InfoAdded,
-        InfoStateExtendedPrev,
-        InfoRestartEnabled,
-        InfoRestartInterval,
-        InfoTimeRest,
-        InfoFilesTotal,
-        InfoFilesSaved,
-        InfoFilesFailed
     };
 
     enum State
@@ -113,24 +94,29 @@ public:
     static const QString KEY_RESTART_INTERVAL;
     static const QString KEY_SAVE_PAGE;
 
-    static QMap<Info, QVariant> infoFromParameters(const Parameters &param)
+    static QMap<ThreadInfo::Enum, QVariant> infoFromParameters(
+        const Parameters &param)
     {
-        QMap<Info, QVariant> map;
-        map.insert( InfoThread, Common::getThread(param.url) );
-        map.insert( InfoBoard, Common::getBoard(param.url) );
-        map.insert( InfoHost, Common::getHost(param.url) );
-        map.insert(InfoStateExtended, ExtReadyInitial);
-        map.insert(InfoStateExtendedPrev, ExtReadyInitial);
-        map.insert(InfoProgress, 0);
-        map.insert(InfoDir, param.directory);
-        map.insert(InfoUrl, param.url);
-        map.insert(InfoAdded, param.added);
-        map.insert(InfoRestartEnabled, param.restartEnabled);
-        map.insert(InfoRestartInterval, param.restartInterval);
-        map.insert(InfoTimeRest, -1);
-        map.insert(InfoFilesTotal, -1);
-        map.insert(InfoFilesSaved, -1);
-        map.insert(InfoFilesFailed, -1);
+        QMap<ThreadInfo::Enum, QVariant> map;
+        map.insert( ThreadInfo::Thread, Common::getThread(param.url) );
+        map.insert( ThreadInfo::Board, Common::getBoard(param.url) );
+        map.insert( ThreadInfo::Host, Common::getHost(param.url) );
+        map.insert(ThreadInfo::ExtendedState, ExtReadyInitial);
+        map.insert(ThreadInfo::ExtendedStatePrev, ExtReadyInitial);
+        map.insert(ThreadInfo::Progress, 0);
+        map.insert(ThreadInfo::Dir, param.directory);
+        map.insert(ThreadInfo::Url, param.url);
+        map.insert(ThreadInfo::Added, param.added);
+        map.insert(ThreadInfo::RestartEnabled, param.restartEnabled);
+        map.insert(ThreadInfo::RestartInterval, param.restartInterval);
+        map.insert(ThreadInfo::TimeRest, -1);
+        map.insert(ThreadInfo::FilesTotal, -1);
+        map.insert(ThreadInfo::FilesSaved, -1);
+        map.insert(ThreadInfo::FilesFailed, -1);
+        map.insert(ThreadInfo::SavePage, param.savePage);
+        map.insert(ThreadInfo::FilesAuxTotal, -1);
+        map.insert(ThreadInfo::FilesAuxSaved, -1);
+        map.insert(ThreadInfo::FilesAuxFailed, -1);
         return map;
     }
 
@@ -187,21 +173,23 @@ public:
     QString dir() const;
     bool restartEnabled() const;
     int restartInterval() const;
+    bool savePage() const;
     ExtendedState extendedState() const;
-    QVariant dataForKey(Info key) const;
+    QVariant dataForKey(ThreadInfo::Enum key) const;
 
 public slots:
     void startDownload();
     void stopDownload();
     void deleteWithFiles();
     void modifyRestart(bool enabled, int interval);
+    void modifySavePage(bool enabled);
 
 signals:
-    void infoChanged(ImageboardThread::Info key, const QVariant &data);
+    void infoChanged(ThreadInfo::Enum key, const QVariant &data);
 
 private:
     Parameters threadParameters;
-    QMap<Info, QVariant> infoMap;
+    QMap<ThreadInfo::Enum, QVariant> infoMap;
     State threadState;
     ExtendedState previousState;
     QTimer timer;
@@ -209,20 +197,24 @@ private:
     int filesTotal;
     int filesSaved;
     int filesFailed;
+    int filesAuxTotal;
+    int filesAuxSaved;
+    int filesAuxFailed;
     QMap<QString, Download*> downloadMap;
     QSignalMapper downloadMapper;
 
     int progress() const;
-    void addDownload(const QString &url, int attempts);
+    void addDownload(const QString &url, int attempts, bool aux = false);
     void setUpRestart();
     void checkCompletion();
-    void changeInfo(Info key, const QVariant &data);
+    void changeInfo(ThreadInfo::Enum key, const QVariant &data);
 
 private slots:
     void timerTimeout();
     void downloadFinished(const QString &url);
     void parceFinished(ParceTask::Result result);
     void saveFinished(SaveTask::Result result);
+    void savePageFinished(SavePageTask::Result result);
     void rmdirFinished(RmdirTask::Result result);
 
 };
