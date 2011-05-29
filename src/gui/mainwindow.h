@@ -49,6 +49,7 @@
 #include <QPoint>
 #include <QAuthenticator>
 #include <QNetworkProxy>
+#include <QStringList>
 
 class MainWindow : public QMainWindow
 {
@@ -72,6 +73,7 @@ public:
 
 public slots:
     void callAddThreadDialog(const QStringList &urlList);
+    void setVisibility(bool visible);
 
 signals:
     void requestAddThread(const ImageboardThread::Parameters &param,
@@ -82,10 +84,9 @@ signals:
     void requestStopThread(int index);
     void requestOpenDir(int index);
     void requestOpenUrl(int index);
-    void requestSortThreads(int column, Qt::SortOrder order);
     void requestSetObservedThread(int index, InfoWidget *widget);
     void requestModifyParameters(const QList<int> &indexes,
-                                 ThreadParameters::Parameters);
+                                 const ImageboardThread::Modifiable &modParam);
     void requestRetranslate();
     void requestWriteSettings();
 
@@ -148,6 +149,9 @@ private:
     ParametersDialog::CommonParameters commonParam;
     bool finalClose;
     AddThread *addThreadDialog;
+    QList<ImageboardThread*> selectedThreads;
+    ImageboardThread *currentThread;
+    bool lockInfoWidget;
 
     void retranslate(bool initial = false);
     void readSettings();
@@ -157,6 +161,8 @@ private:
     void trySetProxy(const ParametersDialog::ProxySettings &proxySettings);
 
 private slots:
+    void setSelectedThreads();
+    void restoreSelectedThreads();
     void addRequested();
     void backupRequested();
     void exitRequested();
@@ -176,7 +182,6 @@ private slots:
     void proxyAuthenticationRequired (const QNetworkProxy &proxy,
                                       QAuthenticator *authenticator);
     void threadModelDataChanged(const QModelIndex &topLeft);
-    void threadsSortIndicatorChanged(int column, Qt::SortOrder order);
     void threadsSelectionChanged(const QItemSelection &selected);
     void categoriesSelectionChanged();
     void trayIconActivated(QSystemTrayIcon::ActivationReason reason);

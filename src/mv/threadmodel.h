@@ -47,8 +47,15 @@ public:
     void retranslate();
     ImageboardThread *threadForRow(int row);
 
+signals:
+    void startedSort();
+    void finishedSort();
+
 private slots:
     void itemDataChanged(int row, int column);
+
+private:
+    void sortInRange(int column, Qt::SortOrder order, int lbound, int ubound);
 
 };
 

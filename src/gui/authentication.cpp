@@ -49,6 +49,8 @@ Authentication::Authentication(QWidget *parent) :
       vLayout->addLayout(hLayoutPassword);
       //
       hLayoutActions = new QHBoxLayout();
+        hLayoutActions->addStretch();
+        //
         buttonCancel = new QPushButton(Tr::buttonCancelText(), this);
         connect( buttonCancel, SIGNAL( clicked() ), this, SLOT( accept() ) );
         hLayoutActions->addWidget(buttonCancel);

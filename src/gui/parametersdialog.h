@@ -42,7 +42,9 @@ public:
     {
         QString language;
         bool minimize;
+        bool startMinimized;
         bool exitConfirmation;
+        bool startOnLoad;
     };
 
     struct ProxySettings
@@ -60,7 +62,9 @@ public:
     static const QString GROUP_PARAMETERS;
     static const QString KEY_LANGUAGE;
     static const QString KEY_MINIMIZE;
+    static const QString KEY_START_MINIMIZED;
     static const QString KEY_EXIT_CONFIRMATION;
+    static const QString KEY_START_ON_LOAD;
 
     static const QString GROUP_PROXY;
       static const QString KEY_ENABLED;
@@ -92,8 +96,12 @@ public:
               param.language = LANGUAGE_ENGLISH;
 
           param.minimize = settings.value(KEY_MINIMIZE, true).toBool();
-          param.exitConfirmation = settings.value(KEY_EXIT_CONFIRMATION,
-                                                  false).toBool();
+          param.startMinimized =
+                  settings.value(KEY_START_MINIMIZED, false).toBool();
+          param.exitConfirmation =
+                  settings.value(KEY_EXIT_CONFIRMATION, false).toBool();
+          param.startOnLoad = settings.value(KEY_START_ON_LOAD,
+                                             false).toBool();
         settings.endGroup();
         return param;
     }
@@ -142,22 +150,22 @@ private:
       QHBoxLayout *hLayoutLanguage;
         QLabel *labelLanguage;
         QComboBox *comboBoxLanguage;
-      QHBoxLayout *hLayoutWindow;
-        QCheckBox *checkBoxMinimise;
-        QCheckBox *checkBoxExitConfirmation;
-      QFrame *frameProxy;
-        QVBoxLayout *vLayoutProxy;
-          QCheckBox *checkBoxProxyEnabled;
-          QHBoxLayout *hLayoutProxy1;
-            QLabel *labelProxyHost;
-            QLineEdit *lineEditProxyHost;
-            QLabel *labelProxyPort;
-            QLineEdit *lineEditProxyPort;
-          QHBoxLayout *hLayoutProxy2;
-            QLabel *labelProxyUser;
-            QLineEdit *lineEditProxyUser;
-            QLabel *labelProxyPassword;
-            QLineEdit *lineEditProxyPassword;
+      QCheckBox *checkBoxStartOnLoad;
+      QCheckBox *checkBoxMinimise;
+      QCheckBox *checkBoxStartMinimized;
+      QCheckBox *checkBoxExitConfirmation;
+      QCheckBox *checkBoxProxyEnabled;
+      QHBoxLayout *hLayoutProxyHostPort;
+        QLabel *labelProxyHost;
+        QLineEdit *lineEditProxyHost;
+        QLabel *labelProxyPort;
+        QLineEdit *lineEditProxyPort;
+      QHBoxLayout *hLayoutProxyUser;
+        QLabel *labelProxyUser;
+        QLineEdit *lineEditProxyUser;
+      QHBoxLayout *hLayoutProxyPassword;
+        QLabel *labelProxyPassword;
+        QLineEdit *lineEditProxyPassword;
       QHBoxLayout *hLayoutActions;
         //stretch
         QPushButton *buttonCancel;

@@ -80,6 +80,7 @@ public:
     int row() const;
     TreeItem *child(int row);
     int childCount() const;
+    int indexOf(TreeItem *child);
     bool appendChild(TreeItem *child);
     bool removeChild(int row);
     void rearrangeChildren(TreeItem *child1, TreeItem *child2);

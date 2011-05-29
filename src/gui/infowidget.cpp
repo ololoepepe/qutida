@@ -18,8 +18,9 @@
 ****************************************************************************/
 
 #include "src/gui/infowidget.h"
-#include "src/tr.h"
 #include "src/core/threadinfo.h"
+#include "src/common.h"
+#include "src/tr.h"
 
 #include <QWidget>
 #include <QVBoxLayout>
@@ -149,7 +150,10 @@ InfoWidget::InfoWidget(QWidget *parent) :
           labelFilesAuxFailedKey->setFont(keyFont);
           vLayoutKey3->addWidget(labelFilesAuxFailedKey);
           //
-          vLayoutKey3->addStretch();
+          labelExtentionsKey = new QLabel(
+                      Tr::AT::labelExtentionsText(), this);
+          labelExtentionsKey->setFont(keyFont);
+          vLayoutKey3->addWidget(labelExtentionsKey);
         hLayoutBlocks->addLayout(vLayoutKey3);
         //
         vLayoutData3 = new QVBoxLayout();
@@ -165,7 +169,8 @@ InfoWidget::InfoWidget(QWidget *parent) :
           labelFilesAuxFailedData = new QLabel(this);
           vLayoutData3->addWidget(labelFilesAuxFailedData);
           //
-          vLayoutData3->addStretch();
+          labelExtentionsData = new QLabel(this);
+          vLayoutData3->addWidget(labelExtentionsData);
         hLayoutBlocks->addLayout(vLayoutData3);
         //
         hLayoutBlocks->addStretch();
@@ -223,6 +228,7 @@ void InfoWidget::retranslate()
     labelFilesAuxTotalKey->setText( Tr::IW::labelFilesAuxTotalKeyText() );
     labelFilesAuxSavedKey->setText( Tr::IW::labelFilesAuxSavedKeyText() );
     labelFilesAuxFailedKey->setText( Tr::IW::labelFilesAuxFailedKeyText() );
+    labelExtentionsKey->setText( Tr::AT::labelExtentionsText() );
 
     if (observedThread)
     {
@@ -310,6 +316,9 @@ void InfoWidget::getThreadData()
         threadInfoChanged( ThreadInfo::FilesAuxFailed,
                            observedThread->dataForKey(
                               ThreadInfo::FilesAuxFailed) );
+        threadInfoChanged( ThreadInfo::Extentions,
+                           observedThread->dataForKey(
+                              ThreadInfo::Extentions) );
     }
     else
     {
@@ -328,6 +337,7 @@ void InfoWidget::getThreadData()
         labelFilesAuxTotalData->clear();
         labelFilesAuxSavedData->clear();
         labelFilesAuxFailedData->clear();
+        labelExtentionsData->clear();
     }
 }
 
@@ -399,6 +409,9 @@ void InfoWidget::threadInfoChanged(ThreadInfo::Enum key, const QVariant &data)
         labelFilesAuxFailedData->setText(
                     Tr::IW::labelFilesDataText( data.toInt() ) );
         break;
+    case ThreadInfo::Extentions:
+        labelExtentionsData->setText(
+                    Common::strFromList(data.toStringList(), " ") );
     default:
         break;
     }

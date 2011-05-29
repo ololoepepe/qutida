@@ -20,6 +20,7 @@
 #include "src/tr.h"
 #include "src/core/imageboardthread.h"
 #include "src/common.h"
+#include "src/core/download.h"
 
 #include <QString>
 #include <QObject>
@@ -235,6 +236,11 @@ namespace Tr
         QString tbuttonSearchDirTooltip()
         {return QObject::tr("Open the select directory dialog",
                             "add thread: tool button tooltip");}
+        //label tooltips
+        QString labelAttemptTooltip()
+        {return QObject::tr("Retry delay (seconds)",
+                            "add thread: label tooltip") + ": " +
+                    QString::number(Download::RETRY_DELAY / 1000);}
         //check box tooltips
         QString checkBoxSavePageTooltip()
         {return QObject::tr("If checked, the page will be saved. The newer "
@@ -258,8 +264,8 @@ namespace Tr
         QString lineEditExtentionsTooltip()
         {return QObject::tr("Put the desired file extentions here, "
                             "divided by one or more whitespace or "
-                            "tabulation symbols",
-                            "add thread: line edit tooltip");}
+                            "tabulation symbols. Use \"*\" to match "
+                            "any extention", "add thread: line edit tooltip");}
         //button texts
         QString buttonResetExtentionsText()
         {return QObject::tr("Default", "add thread: button text");}
@@ -291,11 +297,17 @@ namespace Tr
         {return QObject::tr("Password",
                             "parameters dialog: label text") + ":";}
         //check box texts
+        QString checkBoxStartOnLoadText()
+        {return QObject::tr("Start downloading threads on load",
+                            "parameters dialog: check box text");}
         QString checkBoxExitConfirmationText()
         {return QObject::tr("Ask confirmation on exit",
                             "parameters dialog: check box text");}
         QString checkBoxMinimizeText()
         {return QObject::tr("Minimize to system tray on close",
+                            "parameters dialog: check box text");}
+        QString checkBoxStartMinimizedText()
+        {return QObject::tr("Start minimized to tray",
                             "parameters dialog: check box text");}
         QString checkBoxProxyEnabledText()
         {return QObject::tr("Enable proxy",
@@ -383,18 +395,6 @@ namespace Tr
             else
                 return QObject::tr("Unknown", "info widget: label text");
         }
-    }
-
-    namespace TP
-    {
-        //check box texts
-        QString checkBoxRestartEnabledText()
-        {return QObject::tr("Restart enabled",
-                            "thread parameters: check box text");}
-        //label texts
-        QString labelRestartIntervalText()
-        {return QObject::tr("Restart interval",
-                            "thread parameters: label text");}
     }
 
     namespace CM

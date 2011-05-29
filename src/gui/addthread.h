@@ -45,6 +45,11 @@ public:
     static const QString KEY_GEOMETRY;
     static const QString KEY_START;
 
+    static const int ATTEMPT_MIN;
+    static const int ATTEMPT_MAX;
+    static const int RESTART_MIN;
+    static const int RESTART_MAX;
+
     explicit AddThread(QWidget *parent = 0);
     AddThread(const QStringList &urlList, QWidget *parent = 0);
 

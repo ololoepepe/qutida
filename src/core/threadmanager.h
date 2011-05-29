@@ -25,7 +25,6 @@
 #include "src/mv/threadmodel.h"
 #include "src/gui/infowidget.h"
 #include "src/mv/categorymodel.h"
-#include "src/gui/threadparameters.h"
 
 #include <QObject>
 #include <QAbstractItemModel>
@@ -58,10 +57,9 @@ public slots:
     void requestStopThread(int index);
     void requestOpenDir(int index);
     void requestOpenUrl(int index);
-    void requestSortThreads(int column, Qt::SortOrder order);
     void requestSetObservedThread(int index, InfoWidget *widget);
     void requestModifyParameters(const QList<int> &indexes,
-                                 ThreadParameters::Parameters param);
+                                 const ImageboardThread::Modifiable &modParam);
     void requestRetranslate();
     void requestWriteSettings();
 
@@ -69,9 +67,6 @@ private:
     ThreadModel *mThreadModel;
     CategoryModel *mCategoryModel;
     QList<ImageboardThread*> threadList;
-    int sortingColumn;
-    Qt::SortOrder sortingOrder;
-    bool threadsSorted;
 
     void readSettings();
 

@@ -20,6 +20,8 @@
 #ifndef THREADPARAMETERS_H
 #define THREADPARAMETERS_H
 
+#include "src/core/imageboardthread.h"
+
 #include <QDialog>
 #include <QWidget>
 #include <QCheckBox>
@@ -28,38 +30,45 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QLineEdit>
 
 class ThreadParameters : public QDialog
 {
     Q_OBJECT
 public:
-    struct Parameters
-    {
-        bool restartEnabled;
-        int restartInterval;
-        bool savePage;
-    };
+    explicit ThreadParameters(const ImageboardThread::Modifiable &modParam,
+                              QWidget *parent = 0);
 
-    explicit ThreadParameters(Parameters param, QWidget *parent = 0);
-
-    Parameters parameters() const;
+    ImageboardThread::Modifiable modParameters() const;
 
 private:
     QVBoxLayout *vLayout;
-      QHBoxLayout *hLayoutRestartEnabled;
-        //stretch
-        QCheckBox *checkBoxRestartEnabled;
-      QHBoxLayout *hLayoutRestartInterval;
-        //stretch
-        QLabel *labelRestartInterval;
-        QSpinBox *spinBoxRestartInterval;
-      QHBoxLayout *hLayoutSavePage;
+      QHBoxLayout *hLayoutMode;
         //stretch
         QCheckBox *checkBoxSavePage;
+        QCheckBox *checkBoxExternal;
+        QCheckBox *checkBoxReplace;
+      QHBoxLayout *hLayoutAttempt;
+        //stretch
+        QLabel *labelAttemptPage;
+        QSpinBox *spinBoxAttemptPage;
+        QLabel *labelAttemptFile;
+        QSpinBox *spinBoxAttemptFile;
+      QHBoxLayout *hLayoutExtentions;
+        QLabel *labelExtentions;
+        QLineEdit *lineEditExtentions;
+        QPushButton *buttonResetExtentions;
+      QHBoxLayout *hLayoutRestart;
+        //stretch
+        QCheckBox *checkBoxRestartEnabled;
+        QSpinBox *spinBoxRestartInterval;
       QHBoxLayout *hLayoutActions;
         //stretch
         QPushButton *buttonCancel;
         QPushButton *buttonOk;
+
+private slots:
+    void buttonResetExtentionsClicked();
 
 };
 

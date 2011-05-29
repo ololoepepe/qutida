@@ -107,19 +107,18 @@ QString ImageboardThread::dir() const
     return threadParameters.directory;
 }
 
-bool ImageboardThread::restartEnabled() const
+ImageboardThread::Modifiable ImageboardThread::modParameters() const
 {
-    return threadParameters.restartEnabled;
-}
-
-int ImageboardThread::restartInterval() const
-{
-    return threadParameters.restartInterval;
-}
-
-bool ImageboardThread::savePage() const
-{
-    return threadParameters.savePage;
+    Modifiable modParam;
+    modParam.extentions = threadParameters.extentions;
+    modParam.external = threadParameters.external;
+    modParam.replace = threadParameters.replace;
+    modParam.attemptPage = threadParameters.attemptPage;
+    modParam.attemptFile = threadParameters.attemptFile;
+    modParam.restartEnabled = threadParameters.restartEnabled;
+    modParam.restartInterval = threadParameters.restartInterval;
+    modParam.savePage = threadParameters.savePage;
+    return modParam;
 }
 
 ImageboardThread::ExtendedState ImageboardThread::extendedState() const
@@ -207,14 +206,28 @@ void ImageboardThread::deleteWithFiles()
     QThreadPool::globalInstance()->start(rmdirTask);
 }
 
-void ImageboardThread::modifyRestart(bool enabled, int interval)
+void ImageboardThread::modifyParameters(const Modifiable &modParam)
 {
-    threadParameters.restartEnabled = enabled;
-    changeInfo(ThreadInfo::RestartEnabled, enabled);
-    threadParameters.restartInterval = (interval > 0) ? interval : 1;
+    if ( !modParam.extentions.isEmpty() )
+    {
+        threadParameters.extentions = modParam.extentions;
+        changeInfo(ThreadInfo::Extentions, threadParameters.extentions);
+    }
+
+    threadParameters.external = modParam.external;
+    threadParameters.replace = modParam.replace;
+
+    threadParameters.attemptPage =
+            (modParam.attemptPage > 0) ? modParam.attemptPage : 1;
+    threadParameters.attemptFile =
+            (modParam.attemptFile > 0) ? modParam.attemptFile : 1;
+    threadParameters.restartEnabled = modParam.restartEnabled;
+    changeInfo(ThreadInfo::RestartEnabled, threadParameters.restartEnabled);
+    threadParameters.restartInterval =
+            (modParam.restartInterval > 0) ? modParam.restartInterval : 1;
     changeInfo(ThreadInfo::RestartInterval, threadParameters.restartInterval);
 
-    if ( (WaitingState == threadState) && !enabled )
+    if ( (WaitingState == threadState) && !modParam.restartInterval )
     {
         timer.stop();
         threadState = ReadyState;
@@ -231,12 +244,9 @@ void ImageboardThread::modifyRestart(bool enabled, int interval)
     {
         changeInfo(ThreadInfo::TimeRest, -1);
     }
-}
 
-void ImageboardThread::modifySavePage(bool enabled)
-{
-    threadParameters.savePage = enabled;
-    changeInfo(ThreadInfo::SavePage, enabled);
+    threadParameters.savePage = modParam.savePage;
+    changeInfo(ThreadInfo::SavePage, threadParameters.savePage);
 }
 
 //
@@ -279,8 +289,15 @@ void ImageboardThread::setUpRestart()
 
 void ImageboardThread::checkCompletion()
 {
-    if ( (filesSaved + filesFailed >= filesTotal) &&
-            (filesAuxSaved + filesAuxFailed >= filesAuxTotal) )
+    int ready = 0;
+    ready += (filesSaved > 0) ? filesSaved : 0;
+    ready += (filesFailed > 0) ? filesFailed : 0;
+    int readyAux = 0;
+    readyAux += (filesAuxSaved > 0) ? filesAuxSaved : 0;
+    readyAux += (filesAuxFailed > 0) ? filesAuxFailed : 0;
+
+    if ( (ready >= filesTotal) &&
+            (readyAux >= filesAuxTotal) )
     {
         threadState = ReadyState;
         changeInfo(ThreadInfo::ExtendedState, ExtReadyCompleted);
@@ -514,7 +531,7 @@ void ImageboardThread::saveFinished(SaveTask::Result result)
 
 void ImageboardThread::savePageFinished(SavePageTask::Result result)
 {
-    if (SaveTask::NoError != result.err)
+    if (SavePageTask::NoError != result.err)
     {
         ++filesAuxFailed;
         changeInfo(ThreadInfo::FilesAuxFailed, filesAuxFailed);

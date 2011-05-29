@@ -18,6 +18,8 @@
 ****************************************************************************/
 
 #include "src/gui/threadparameters.h"
+#include "src/core/imageboardthread.h"
+#include "src/gui/addthread.h"
 #include "src/tr.h"
 
 #include <QDialog>
@@ -28,41 +30,89 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QLayout>
+#include <QLineEdit>
 
-ThreadParameters::ThreadParameters(Parameters param, QWidget *parent) :
+ThreadParameters::ThreadParameters(
+    const ImageboardThread::Modifiable &modParam, QWidget *parent) :
     QDialog(parent)
 {
     vLayout = new QVBoxLayout(this);
-      hLayoutRestartEnabled = new QHBoxLayout();
-        hLayoutRestartEnabled->addStretch();
-        //
-        checkBoxRestartEnabled =
-                new QCheckBox(Tr::TP::checkBoxRestartEnabledText(), this);
-        checkBoxRestartEnabled->setChecked(param.restartEnabled);
-        hLayoutRestartEnabled->addWidget(checkBoxRestartEnabled);
-      vLayout->addLayout(hLayoutRestartEnabled);
-      //
-      hLayoutRestartInterval = new QHBoxLayout();
-        hLayoutRestartInterval->addStretch();
-        //
-        labelRestartInterval =
-                new QLabel(Tr::TP::labelRestartIntervalText(), this);
-        hLayoutRestartInterval->addWidget(labelRestartInterval);
-        //
-        spinBoxRestartInterval = new QSpinBox(this);
-        spinBoxRestartInterval->setMinimum(1);
-        spinBoxRestartInterval->setMaximum(360);
-        spinBoxRestartInterval->setValue(param.restartInterval);
-        hLayoutRestartInterval->addWidget(spinBoxRestartInterval);
-      vLayout->addLayout(hLayoutRestartInterval);
-      //
-      hLayoutSavePage = new QHBoxLayout();
-        hLayoutSavePage->addStretch();
+      hLayoutMode = new QHBoxLayout();
+        hLayoutMode->addStretch();
         //
         checkBoxSavePage = new QCheckBox(Tr::AT::checkBoxSavePageText(), this);
-        checkBoxRestartEnabled->setChecked(param.savePage);
-        hLayoutSavePage->addWidget(checkBoxSavePage);
-      vLayout->addLayout(hLayoutSavePage);
+        checkBoxSavePage->setToolTip( Tr::AT::checkBoxSavePageTooltip() );
+        checkBoxSavePage->setChecked(modParam.savePage);
+        hLayoutMode->addWidget(checkBoxSavePage);
+        //
+        checkBoxExternal = new QCheckBox(Tr::AT::checkBoxExternalText(), this);
+        checkBoxExternal->setToolTip( Tr::AT::checkBoxExternalTooltip() );
+        checkBoxExternal->setChecked(modParam.external);
+        hLayoutMode->addWidget(checkBoxExternal);
+        //
+        checkBoxReplace = new QCheckBox(Tr::AT::checkBoxReplaceText(), this);
+        checkBoxReplace->setToolTip( Tr::AT::checkBoxReplaceTooltip() );
+        checkBoxReplace->setChecked(modParam.replace);
+        hLayoutMode->addWidget(checkBoxReplace);
+      vLayout->addLayout(hLayoutMode);
+      //
+      hLayoutAttempt = new QHBoxLayout();
+        hLayoutAttempt->addStretch();
+        //
+        labelAttemptPage = new QLabel(Tr::AT::labelAttemptPageText(), this);
+        hLayoutAttempt->addWidget(labelAttemptPage);
+        //
+        spinBoxAttemptPage = new QSpinBox(this);
+        spinBoxAttemptPage->setMinimum(AddThread::ATTEMPT_MIN);
+        spinBoxAttemptPage->setMaximum(AddThread::ATTEMPT_MAX);
+        spinBoxAttemptPage->setValue(modParam.attemptPage);
+        hLayoutAttempt->addWidget(spinBoxAttemptPage);
+        //
+        labelAttemptFile = new QLabel(Tr::AT::labelAttemptFileText(), this);
+        hLayoutAttempt->addWidget(labelAttemptFile);
+        //
+        spinBoxAttemptFile = new QSpinBox(this);
+        spinBoxAttemptFile->setMinimum(AddThread::ATTEMPT_MIN);
+        spinBoxAttemptFile->setMaximum(AddThread::ATTEMPT_MAX);
+        spinBoxAttemptFile->setValue(modParam.attemptFile);
+        hLayoutAttempt->addWidget(spinBoxAttemptFile);
+      vLayout->addLayout(hLayoutAttempt);
+      //
+      hLayoutExtentions = new QHBoxLayout();
+        labelExtentions = new QLabel(Tr::AT::labelExtentionsText(), this);
+        hLayoutExtentions->addWidget(labelExtentions);
+        //
+        lineEditExtentions = new QLineEdit(this);
+        lineEditExtentions->setToolTip( Tr::AT::lineEditExtentionsTooltip() );
+        lineEditExtentions->setText(
+                    Common::strFromList(modParam.extentions, " ") );
+        hLayoutExtentions->addWidget(lineEditExtentions);
+        //
+        buttonResetExtentions =
+                new QPushButton(Tr::AT::buttonResetExtentionsText(), this);
+        buttonResetExtentions->setToolTip(
+                    Tr::AT::buttonResetExtentionsTooltip() );
+        connect( buttonResetExtentions, SIGNAL( clicked() ),
+                 this, SLOT( buttonResetExtentionsClicked() ) );
+        hLayoutExtentions->addWidget(buttonResetExtentions);
+      vLayout->addLayout(hLayoutExtentions);
+      //
+      hLayoutRestart = new QHBoxLayout();
+        hLayoutRestart->addStretch();
+        //
+        checkBoxRestartEnabled =
+                new QCheckBox(Tr::AT::checkBoxRestartEnabledText(), this);
+        checkBoxRestartEnabled->setToolTip(
+                    Tr::AT::checkBoxRestartEnabledTooltip() );
+        checkBoxRestartEnabled->setChecked(modParam.restartEnabled);
+        hLayoutRestart->addWidget(checkBoxRestartEnabled);
+        //
+        spinBoxRestartInterval = new QSpinBox(this);
+        spinBoxRestartInterval->setMinimum(AddThread::RESTART_MIN);
+        spinBoxRestartInterval->setMaximum(AddThread::RESTART_MAX);
+        spinBoxRestartInterval->setValue(modParam.restartInterval);
+        hLayoutRestart->addWidget(spinBoxRestartInterval);
+      vLayout->addLayout(hLayoutRestart);
       //
       hLayoutActions = new QHBoxLayout();
         hLayoutActions->addStretch();
@@ -80,11 +130,26 @@ ThreadParameters::ThreadParameters(Parameters param, QWidget *parent) :
 
 //
 
-ThreadParameters::Parameters ThreadParameters::parameters() const
+ImageboardThread::Modifiable ThreadParameters::modParameters() const
 {
-    Parameters param;
-    param.restartEnabled = checkBoxRestartEnabled->isChecked();
-    param.restartInterval = spinBoxRestartInterval->value();
-    param.savePage = checkBoxSavePage->isChecked();
-    return param;
+    ImageboardThread::Modifiable modParam;
+    modParam.extentions = lineEditExtentions->text().split(
+                QRegExp("\\s+"), QString::SkipEmptyParts);
+    modParam.external = checkBoxExternal->isChecked();
+    modParam.replace = checkBoxReplace->isChecked();
+    modParam.attemptPage = spinBoxAttemptPage->value();
+    modParam.attemptFile = spinBoxAttemptFile->value();
+    modParam.restartEnabled = checkBoxRestartEnabled->isChecked();
+    modParam.restartInterval = spinBoxRestartInterval->value();
+    modParam.savePage = checkBoxSavePage->isChecked();
+    return modParam;
+}
+
+//
+
+void ThreadParameters::buttonResetExtentionsClicked()
+{
+    lineEditExtentions->setText(
+                Common::strFromList(
+                    ImageboardThread::DEF_EXTENTIONS_LIST, " ") );
 }

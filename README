@@ -1,4 +1,4 @@
-This is qutida version 0.1.9.
+This is qutida version 0.1.10.
 
 qutida (Qt Imageboard Download Assistant) is a tool for downloading
 various content form imageboards. It is distributed under the terms
@@ -23,6 +23,9 @@ To compile the application, you first need to get Qt libraries version 4.7.2
 or later. Then type "cd <path_to_source_code>" in your terminal (command line)
 and put the command: qmake -o Makefile qutida.pro
 Then type "make" or "nmake" depending on the compiler you use.
+
+Note: On Windows you have to put "src" directory into "release" or "debug"
+subdirectory after running "qmake" and before running "make".
 
 For Visual Studio users, qmake can also generate .dsp or .vcproj files,
 for example: qmake -tp vc qutida.pro

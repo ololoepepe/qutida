@@ -98,6 +98,8 @@ namespace Tr
         QString checkBoxReplaceText();
         QString checkBoxRestartEnabledText();
         QString checkBoxStartText();
+        //label tooltips
+        QString labelAttemptTooltip();
         //check box tooltips
         QString checkBoxSavePageTooltip();
         QString checkBoxExternalTooltip();
@@ -122,8 +124,10 @@ namespace Tr
         QString labelUserText();
         QString labelPasswordText();
         //check box texts
+        QString checkBoxStartOnLoadText();
         QString checkBoxExitConfirmationText();
         QString checkBoxMinimizeText();
+        QString checkBoxStartMinimizedText();
         QString checkBoxProxyEnabledText();
     }
 
@@ -156,14 +160,6 @@ namespace Tr
         QString labelFilesAuxSavedKeyText();
         QString labelFilesAuxFailedKeyText();
         QString labelFilesDataText(int count);
-    }
-
-    namespace TP
-    {
-        //check box texts
-        QString checkBoxRestartEnabledText();
-        //label texts
-        QString labelRestartIntervalText();
     }
 
     namespace CM

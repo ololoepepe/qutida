@@ -11,5 +11,8 @@
         <file>res/loc/qutida_ru.qm</file>
         <file>res/ico/database.png</file>
         <file>res/ico/qt-logo.png</file>
+        <file>res/ico/arrow-left.png</file>
+        <file>res/ico/document.png</file>
+        <file>res/ico/arrow-right.png</file>
     </qresource>
 </RCC>

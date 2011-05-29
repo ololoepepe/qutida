@@ -49,6 +49,11 @@ const QString AddThread::GROUP_ADD_THREAD = "add_thread";
 const QString AddThread::KEY_GEOMETRY = "geometry";
 const QString AddThread::KEY_START = "start";
 
+const int AddThread::ATTEMPT_MIN = 1;
+const int AddThread::ATTEMPT_MAX = 10;
+const int AddThread::RESTART_MIN = 1;
+const int AddThread::RESTART_MAX = 360;
+
 //
 
 AddThread::AddThread(QWidget *parent) :
@@ -139,19 +144,21 @@ void AddThread::initialize()
         hLayoutAttempt->addStretch();
         //
         labelAttemptPage = new QLabel(Tr::AT::labelAttemptPageText(), this);
+        labelAttemptPage->setToolTip( Tr::AT::labelAttemptTooltip() );
         hLayoutAttempt->addWidget(labelAttemptPage);
         //
         spinBoxAttemptPage = new QSpinBox(this);
-        spinBoxAttemptPage->setMinimum(1);
-        spinBoxAttemptPage->setMaximum(5);
+        spinBoxAttemptPage->setMinimum(ATTEMPT_MIN);
+        spinBoxAttemptPage->setMaximum(ATTEMPT_MAX);
         hLayoutAttempt->addWidget(spinBoxAttemptPage);
         //
         labelAttemptFile = new QLabel(Tr::AT::labelAttemptFileText(), this);
+        labelAttemptFile->setToolTip( Tr::AT::labelAttemptTooltip() );
         hLayoutAttempt->addWidget(labelAttemptFile);
         //
         spinBoxAttemptFile = new QSpinBox(this);
-        spinBoxAttemptFile->setMinimum(1);
-        spinBoxAttemptFile->setMaximum(5);
+        spinBoxAttemptFile->setMinimum(ATTEMPT_MIN);
+        spinBoxAttemptFile->setMaximum(ATTEMPT_MAX);
         hLayoutAttempt->addWidget(spinBoxAttemptFile);
       vLayout->addLayout(hLayoutAttempt);
       //
@@ -182,8 +189,8 @@ void AddThread::initialize()
         hLayoutRestart->addWidget(checkBoxRestartEnabled);
         //
         spinBoxRestartInterval = new QSpinBox(this);
-        spinBoxRestartInterval->setMinimum(1);
-        spinBoxRestartInterval->setMaximum(360);
+        spinBoxRestartInterval->setMinimum(RESTART_MIN);
+        spinBoxRestartInterval->setMaximum(RESTART_MAX);
         hLayoutRestart->addWidget(spinBoxRestartInterval);
       vLayout->addLayout(hLayoutRestart);
       //

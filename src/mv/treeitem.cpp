@@ -51,7 +51,7 @@ int TreeItem::row() const
     if (!parentItem)
         return -1;
     else
-        return parentItem->childItems.indexOf( const_cast<TreeItem*>(this) );
+        return parentItem->indexOf( const_cast<TreeItem*>(this) );
 }
 
 TreeItem *TreeItem::child(int row)
@@ -62,6 +62,11 @@ TreeItem *TreeItem::child(int row)
 int TreeItem::childCount() const
 {
     return childItems.count();
+}
+
+int TreeItem::indexOf(TreeItem *child)
+{
+    return childItems.indexOf(child);
 }
 
 bool TreeItem::appendChild(TreeItem *child)

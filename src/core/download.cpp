@@ -141,7 +141,6 @@ void Download::resetReply()
 {
     QNetworkRequest request(downloadUrl);
     request.setOriginatingObject(this);
-    request.setAttribute(QNetworkRequest::CacheSaveControlAttribute, false);
     networkReply = NetworkAccessManager::instance()->get(request);
     connect( networkReply, SIGNAL( finished() ),
              this, SLOT( replyFinished() ) );

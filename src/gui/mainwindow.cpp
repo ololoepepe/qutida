@@ -82,6 +82,9 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
                        QWidget *parent) :
     QMainWindow(parent)
 {
+    addThreadDialog = 0;
+    currentThread = 0;
+    lockInfoWidget = false;
     vSplitter = new QSplitter(Qt::Vertical, this);
     setCentralWidget(vSplitter);
       hSplitterTop = new QSplitter(Qt::Horizontal, vSplitter);
@@ -102,6 +105,10 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
           connect( threadModel,
                    SIGNAL( dataChanged(QModelIndex, QModelIndex) ),
                    this, SLOT( threadModelDataChanged(QModelIndex) ) );
+          connect( threadModel, SIGNAL( startedSort() ),
+                   this, SLOT( setSelectedThreads() ) );
+          connect( threadModel, SIGNAL( finishedSort() ),
+                   this, SLOT( restoreSelectedThreads() ) );
         treeViewThreads->setItemDelegateForColumn(
                     ThreadInfo::Progress,
                     new ProgressBarDelegate(threadModel) );
@@ -111,16 +118,11 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
         treeViewThreads->setContextMenuPolicy(Qt::CustomContextMenu);
         treeViewThreads->setAlternatingRowColors(true);
         treeViewThreads->setRootIsDecorated(false);
-        treeViewThreads->setSortingEnabled(true);
         connect( treeViewThreads,
                  SIGNAL( customContextMenuRequested(QPoint) ),
                  this, SLOT( treeViewThreadsMenuRequested(QPoint) ) );
           headerThreads = treeViewThreads->header();
           headerThreads->setContextMenuPolicy(Qt::CustomContextMenu);
-          connect( headerThreads,
-                   SIGNAL( sortIndicatorChanged(int, Qt::SortOrder) ),
-                   this,
-                   SLOT( threadsSortIndicatorChanged(int, Qt::SortOrder) ) );
           connect( headerThreads, SIGNAL( customContextMenuRequested(QPoint) ),
                    this, SLOT( headerViewThreadsMenuRequested(QPoint) ) );
           //
@@ -148,7 +150,8 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
         //
         menuFile->addSeparator();
         //
-        actExit = new QAction(Tr::MW::actExitText(), this);
+        actExit = new QAction(QIcon(":/res/ico/arrow-left.png"),
+                              Tr::MW::actExitText(), this);
         connect( actExit, SIGNAL( triggered() ),
                  this, SLOT( exitRequested() ) );
         menuFile->addAction(actExit);
@@ -160,7 +163,8 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
         menuEdit->addAction(actParameters);
       menuThread = menuBar()->addMenu( Tr::MW::menuThreadTitle() );
       menuThread->setEnabled(false);
-        actOpenDir = new QAction(Tr::MW::actOpenDirText(), this);
+        actOpenDir = new QAction(QIcon(":/res/ico/document.png"),
+                                 Tr::MW::actOpenDirText(), this);
         connect( actOpenDir, SIGNAL( triggered() ),
                  this, SLOT( openDirRequested() ) );
         menuThread->addAction(actOpenDir);
@@ -235,7 +239,8 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
         menuView->addMenu(menuColumns);
         //
       menuHelp = menuBar()->addMenu( Tr::MW::menuHelpTitle() );
-        actHomepage = new QAction(Tr::MW::actHomepageText(), this);
+        actHomepage = new QAction(QIcon(":/res/ico/earth.png"),
+                                  Tr::MW::actHomepageText(), this);
         connect( actHomepage, SIGNAL( triggered() ),
                  this, SLOT( homepageRequested() ) );
         menuHelp->addAction(actHomepage);
@@ -272,7 +277,8 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
                this,
                SLOT( trayIconActivated(QSystemTrayIcon::ActivationReason) ) );
       contextMenuTray = new QMenu(this);
-        actShowHide = new QAction(Tr::MW::actShowHideText(true), this);
+        actShowHide = new QAction(this);
+        actShowHide->setIcon( QIcon(":/res/ico/arrow-right.png") );
         connect( actShowHide, SIGNAL( triggered() ),
                  this, SLOT( showHideRequested() ) );
         contextMenuTray->addAction(actShowHide);
@@ -290,7 +296,7 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
                                                  QAuthenticator*) ),
              this, SLOT( proxyAuthenticationRequired(QNetworkProxy,
                                                      QAuthenticator*) ) );
-    addThreadDialog = 0;
+    treeViewThreads->setSortingEnabled(true);
 }
 
 //
@@ -310,24 +316,32 @@ void MainWindow::callAddThreadDialog(const QStringList &urlList)
         {
             bool start = addThreadDialog->start();
             int count = addThreadDialog->parameters().count();
-
-            if (count > 0)
-                selectionModelThreads->clearSelection();
+            setSelectedThreads();
+            treeViewThreads->setSortingEnabled(false);
 
             for (int i = 0; i < count; ++i)
                 emit requestAddThread(addThreadDialog->parameters().at(i), start);
+
+            treeViewThreads->setSortingEnabled(true);
+            restoreSelectedThreads();
         }
 
         addThreadDialog->deleteLater();
         addThreadDialog = 0;
-        emit requestSortThreads( headerThreads->sortIndicatorSection(),
-                                 headerThreads->sortIndicatorOrder() );
     }
     else
     {
         addThreadDialog->appendList(urlList);
         addThreadDialog->activateWindow();
     }
+}
+
+void MainWindow::setVisibility(bool visible)
+{
+    actShowHide->setText( Tr::MW::actShowHideText(visible) );
+
+    if (this->isVisible() != visible)
+        showHideRequested();
 }
 
 //
@@ -432,7 +446,6 @@ void MainWindow::readSettings()
                     Qt::AscendingOrder : Qt::DescendingOrder;
         int index = settings.value(KEY_SORT_SECTION, 0).toInt();
         headerThreads->setSortIndicator(index, order);
-        emit requestSortThreads(index, order); //maybe not nessesary
         int count = settings.beginReadArray(ARRAY_SECTIONS);
 
           for (int i = 0; i < count; ++i)
@@ -539,6 +552,71 @@ void MainWindow::trySetProxy(
 
 //
 
+void MainWindow::setSelectedThreads()
+{
+    ThreadModel *model = static_cast<ThreadModel*>( treeViewThreads->model() );
+
+    if (!model)
+        return;
+
+    QList<int> selected = getSelectedIndexes();
+
+    for (int i = 0; i < selected.count(); ++i)
+    {
+        ImageboardThread *thread = model->threadForRow( selected.at(i) );
+
+        if (thread)
+            selectedThreads << thread;
+    }
+
+    if (infoWidget)
+        currentThread = infoWidget->observed();
+}
+
+void MainWindow::restoreSelectedThreads()
+{
+    ThreadModel *model = static_cast<ThreadModel*>( treeViewThreads->model() );
+
+    if (!model)
+        return;
+
+    if ( !selectedThreads.isEmpty() )
+        selectionModelThreads->reset();
+    else
+        return;
+
+    int currentRow = -1;
+    lockInfoWidget = true;
+
+    for (int i = 0; i < model->rowCount(); ++i)
+    {
+        ImageboardThread *thread = model->threadForRow(i);
+
+        if (thread == currentThread && currentThread)
+        {
+            currentRow = i;
+            currentThread = 0;
+        }
+
+        if ( selectedThreads.contains(thread) )
+        {
+            selectionModelThreads->select(model->index(i, 0), QItemSelectionModel::Select |
+                                          QItemSelectionModel::Rows);
+            selectedThreads.removeAll(thread);
+        }
+    }
+
+    if (currentRow > -1)
+        selectionModelThreads->setCurrentIndex(
+                    model->index(currentRow, 0),
+                    QItemSelectionModel::Current |
+                    QItemSelectionModel::Rows);
+
+    lockInfoWidget = false;
+    selectedThreads.clear();
+    currentThread = 0;
+}
+
 void MainWindow::addRequested()
 {
     AddThread *dialog = new AddThread(this);
@@ -549,17 +627,17 @@ void MainWindow::addRequested()
     {
         bool start = dialog->start();
         int count = dialog->parameters().count();
-
-        if (count > 0)
-            selectionModelThreads->clearSelection();
+        setSelectedThreads();
+        treeViewThreads->setSortingEnabled(false);
 
         for (int i = 0; i < count; ++i)
             emit requestAddThread(dialog->parameters().at(i), start);
+
+        treeViewThreads->setSortingEnabled(true);
+        restoreSelectedThreads();
     }
 
     dialog->deleteLater();
-    emit requestSortThreads( headerThreads->sortIndicatorSection(),
-                             headerThreads->sortIndicatorOrder() );
 }
 
 void MainWindow::backupRequested()
@@ -653,24 +731,21 @@ void MainWindow::threadParametersRequested()
     if (!current)
         return;
 
-    ThreadParameters::Parameters param;
-    param.restartEnabled = current->restartEnabled();
-    param.restartInterval = current->restartInterval();
-    param.savePage = current->savePage();
-    ThreadParameters *dialog = new ThreadParameters(param, this);
+    ThreadParameters *dialog = new ThreadParameters(current->modParameters(),
+                                                    this);
     dialog->setWindowTitle( Tr::MW::dialogThreadParametersCaption() );
     dialog->exec();
 
     if ( QDialog::Accepted == dialog->result() )
     {
         emit requestModifyParameters( getSelectedIndexes(),
-                                      dialog->parameters() );
+                                      dialog->modParameters() );
     }
 
     dialog->deleteLater();
 }
 
-void MainWindow::removeRequested()
+void MainWindow::removeRequested() //improve (reqest remove all index list)
 {
     QList<int> selected = getSelectedIndexes();
 
@@ -754,15 +829,9 @@ void MainWindow::threadModelDataChanged(const QModelIndex &topLeft)
         categoriesSelectionChanged();
 }
 
-void MainWindow::threadsSortIndicatorChanged(int column, Qt::SortOrder order)
-{
-    selectionModelThreads->clearSelection(); //to be improved
-    emit requestSortThreads(column, order);
-}
-
 void MainWindow::threadsSelectionChanged(const QItemSelection &selected)
 {
-    if (!infoWidget)
+    if (!infoWidget || lockInfoWidget)
         return;
 
     bool anySelection = !getSelectedIndexes().isEmpty();

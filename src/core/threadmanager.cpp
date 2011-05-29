@@ -22,7 +22,8 @@
 #include "src/core/imageboardthread.h"
 #include "src/mv/categorymodel.h"
 #include "src/common.h"
-#include "threadinfo.h"
+#include "src/core/threadinfo.h"
+#include "src/gui/parametersdialog.h"
 
 #include <QObject>
 #include <QList>
@@ -55,9 +56,6 @@ ThreadManager::ThreadManager(QObject *parent) :
 
     mThreadModel = new ThreadModel(headerData, this);
     mCategoryModel = new CategoryModel(this);
-    sortingColumn = -1;
-    sortingOrder = Qt::AscendingOrder;
-    threadsSorted = false;
     readSettings();
 }
 
@@ -105,13 +103,9 @@ void ThreadManager::requestAddThread(const ImageboardThread::Parameters &param,
     threadList.append(thread);
     mThreadModel->addItem(thread);
     mCategoryModel->tryAddCategory(thread);
-    threadsSorted = false;
 
     if (start)
         thread->startDownload();
-
-    if (sortingColumn > -1)
-        requestSortThreads(sortingColumn, sortingOrder);
 }
 
 void ThreadManager::requestBackup(const QString &fileName)
@@ -212,22 +206,6 @@ void ThreadManager::requestOpenUrl(int index)
     QDesktopServices::openUrl( QUrl(thread->url(), QUrl::TolerantMode ) );
 }
 
-void ThreadManager::requestSortThreads(int column, Qt::SortOrder order)
-{
-    if (threadsSorted && sortingColumn == column && sortingOrder == order)
-        return;
-
-    int count = threadList.count();
-
-    if (count < 2)
-        return;
-
-    mThreadModel->sort(column, order);
-    sortingColumn = column;
-    sortingOrder = order;
-    threadsSorted = true;
-}
-
 void ThreadManager::requestSetObservedThread(int index, InfoWidget *widget)
 {
     if (!widget)
@@ -242,8 +220,8 @@ void ThreadManager::requestSetObservedThread(int index, InfoWidget *widget)
     widget->setObservedThread( mThreadModel->threadForRow(index) );
 }
 
-void ThreadManager::requestModifyParameters(const QList<int> &indexes,
-                                            ThreadParameters::Parameters param)
+void ThreadManager::requestModifyParameters(
+    const QList<int> &indexes, const ImageboardThread::Modifiable &modParam)
 {
     for (int i = 0; i < indexes.count(); ++i)
     {
@@ -254,11 +232,7 @@ void ThreadManager::requestModifyParameters(const QList<int> &indexes,
             ImageboardThread *thread = mThreadModel->threadForRow(index);
 
             if (thread)
-            {
-                thread->modifyRestart(param.restartEnabled,
-                                      param.restartInterval);
-                thread->modifySavePage(param.savePage);
-            }
+                thread->modifyParameters(modParam);
         }
     }
 }
@@ -292,6 +266,8 @@ void ThreadManager::requestWriteSettings()
 void ThreadManager::readSettings()
 {
     QSettings settings;
+    ParametersDialog::CommonParameters commonParam =
+            ParametersDialog::readCommonParameters(settings);
     settings.beginGroup(GROUP_THREADS);
       settings.beginGroup(SUB_GROUP_DEFAULT);
       ImageboardThread::Parameters defParam =
@@ -304,7 +280,7 @@ void ThreadManager::readSettings()
           settings.setArrayIndex(i);
           ImageboardThread::Parameters param =
                   ImageboardThread::readParameters(settings, defParam);
-          requestAddThread(param, false); //to be improved
+          requestAddThread(param, commonParam.startOnLoad);
       }
 
       settings.endArray();

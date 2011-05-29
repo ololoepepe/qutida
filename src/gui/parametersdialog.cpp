@@ -34,14 +34,18 @@
 #include <QPoint>
 #include <QFrame>
 #include <QLineEdit>
+#include <QRegExp>
+#include <QRegExpValidator>
 
 const QString ParametersDialog::GROUP_PARAMETERS_DIALOG = "parameters_dialog";
 const QString ParametersDialog::KEY_POSITION = "position";
 
 const QString ParametersDialog::GROUP_PARAMETERS = "parameters";
-const QString ParametersDialog::KEY_LANGUAGE = "language";
-const QString ParametersDialog::KEY_MINIMIZE = "minimize";
-const QString ParametersDialog::KEY_EXIT_CONFIRMATION = "exit_confirmation";
+  const QString ParametersDialog::KEY_START_ON_LOAD = "start_on_load";
+  const QString ParametersDialog::KEY_LANGUAGE = "language";
+  const QString ParametersDialog::KEY_MINIMIZE = "minimize";
+  const QString ParametersDialog::KEY_START_MINIMIZED = "start_minimized";
+  const QString ParametersDialog::KEY_EXIT_CONFIRMATION = "exit_confirmation";
 
 const QString ParametersDialog::GROUP_PROXY = "proxy";
   const QString ParametersDialog::KEY_ENABLED = "enabled";
@@ -58,6 +62,8 @@ const QString ParametersDialog::LANGUAGE_RUSSIAN = "Russian";
 ParametersDialog::ParametersDialog(QWidget *parent) :
     QDialog(parent)
 {
+    QRegExp rxPort("([1-5][0-9]{4,4}|6[1-4][0-9]{1,3}|65[1-4][0-9]{1,2}|"
+                   "655[1-2][0-9]{1,1}|6553[0-5]|[1-9]{1,1}[0-9]{3,3})");
     vLayout = new QVBoxLayout(this);
       hLayoutLanguage = new QHBoxLayout();
         labelLanguage = new QLabel(Tr::PD::labelLanguageText(), this);
@@ -67,53 +73,61 @@ ParametersDialog::ParametersDialog(QWidget *parent) :
         comboBoxLanguage->addItem(LANGUAGE_ENGLISH);
         comboBoxLanguage->addItem(LANGUAGE_RUSSIAN);
         hLayoutLanguage->addWidget(comboBoxLanguage);
+        //
+        hLayoutLanguage->addStretch();
       vLayout->addLayout(hLayoutLanguage);
       //
-      hLayoutWindow = new QHBoxLayout();
-        checkBoxMinimise = new QCheckBox(Tr::PD::checkBoxMinimizeText(), this);
-        hLayoutWindow->addWidget(checkBoxMinimise);
-        //
-        checkBoxExitConfirmation =
-                new QCheckBox(Tr::PD::checkBoxExitConfirmationText(), this);
-        hLayoutWindow->addWidget(checkBoxExitConfirmation);
-      vLayout->addLayout(hLayoutWindow);
+      checkBoxStartOnLoad =
+              new QCheckBox(Tr::PD::checkBoxStartOnLoadText(), this);
+      vLayout->addWidget(checkBoxStartOnLoad);
       //
-      frameProxy = new QFrame(this);
-      frameProxy->setFrameStyle(QFrame::StyledPanel | QFrame::Plain);
-        vLayoutProxy = new QVBoxLayout(frameProxy);
-          checkBoxProxyEnabled = new QCheckBox(
-                      Tr::PD::checkBoxProxyEnabledText(), frameProxy);
-          vLayoutProxy->addWidget(checkBoxProxyEnabled);
-          //
-          hLayoutProxy1 = new QHBoxLayout();
-            labelProxyHost = new QLabel(Tr::PD::labelHostText(), frameProxy);
-            hLayoutProxy1->addWidget(labelProxyHost);
-            //
-            lineEditProxyHost = new QLineEdit(frameProxy);
-            hLayoutProxy1->addWidget(lineEditProxyHost);
-            //
-            labelProxyPort = new QLabel(Tr::PD::labelPortText(), frameProxy);
-            hLayoutProxy1->addWidget(labelProxyPort);
-            //
-            lineEditProxyPort = new QLineEdit(frameProxy);
-            hLayoutProxy1->addWidget(lineEditProxyPort);
-          vLayoutProxy->addLayout(hLayoutProxy1);
-          //
-          hLayoutProxy2 = new QHBoxLayout();
-            labelProxyUser = new QLabel(Tr::PD::labelUserText(), frameProxy);
-            hLayoutProxy2->addWidget(labelProxyUser);
-            //
-            lineEditProxyUser = new QLineEdit(frameProxy);
-            hLayoutProxy2->addWidget(lineEditProxyUser);
-            //
-            labelProxyPassword = new QLabel(Tr::PD::labelPasswordText(),
-                                            frameProxy);
-            hLayoutProxy2->addWidget(labelProxyPassword);
-            //
-            lineEditProxyPassword = new QLineEdit(frameProxy);
-            hLayoutProxy2->addWidget(lineEditProxyPassword);
-          vLayoutProxy->addLayout(hLayoutProxy2);
-      vLayout->addWidget(frameProxy);
+      checkBoxMinimise = new QCheckBox(Tr::PD::checkBoxMinimizeText(), this);
+      vLayout->addWidget(checkBoxMinimise);
+      //
+      checkBoxStartMinimized =
+              new QCheckBox(Tr::PD::checkBoxStartMinimizedText(), this);
+      vLayout->addWidget(checkBoxStartMinimized);
+      //
+      checkBoxExitConfirmation =
+              new QCheckBox(Tr::PD::checkBoxExitConfirmationText(), this);
+      vLayout->addWidget(checkBoxExitConfirmation);
+      //
+      checkBoxProxyEnabled =
+              new QCheckBox(Tr::PD::checkBoxProxyEnabledText(), this);
+      vLayout->addWidget(checkBoxProxyEnabled);
+      //
+      hLayoutProxyHostPort = new QHBoxLayout();
+        labelProxyHost = new QLabel(Tr::PD::labelHostText(), this);
+        hLayoutProxyHostPort->addWidget(labelProxyHost);
+        //
+        lineEditProxyHost = new QLineEdit(this);
+        hLayoutProxyHostPort->addWidget(lineEditProxyHost);
+        //
+        labelProxyPort = new QLabel(Tr::PD::labelPortText(), this);
+        hLayoutProxyHostPort->addWidget(labelProxyPort);
+        //
+        lineEditProxyPort = new QLineEdit(this);
+        lineEditProxyPort->setValidator(
+                      new QRegExpValidator(rxPort, lineEditProxyPort) );
+        lineEditProxyPort->setFixedWidth(50);
+        hLayoutProxyHostPort->addWidget(lineEditProxyPort);
+      vLayout->addLayout(hLayoutProxyHostPort);
+      //
+      hLayoutProxyUser = new QHBoxLayout();
+        labelProxyUser = new QLabel(Tr::PD::labelUserText(), this);
+        hLayoutProxyUser->addWidget(labelProxyUser);
+        //
+        lineEditProxyUser = new QLineEdit(this);
+        hLayoutProxyUser->addWidget(lineEditProxyUser);
+      vLayout->addLayout(hLayoutProxyUser);
+      //
+      hLayoutProxyPassword = new QHBoxLayout();
+        labelProxyPassword = new QLabel(Tr::PD::labelPasswordText(), this);
+        hLayoutProxyPassword->addWidget(labelProxyPassword);
+        //
+        lineEditProxyPassword = new QLineEdit(this);
+        hLayoutProxyPassword->addWidget(lineEditProxyPassword);
+      vLayout->addLayout(hLayoutProxyPassword);
       //
       hLayoutActions = new QHBoxLayout();
         hLayoutActions->addStretch();
@@ -161,13 +175,15 @@ void ParametersDialog::readSettings()
     commonParam = readCommonParameters(settings);
     comboBoxLanguage->setCurrentIndex(
                 comboBoxLanguage->findText(commonParam.language) );
+    checkBoxStartOnLoad->setChecked(commonParam.startOnLoad);
     checkBoxMinimise->setChecked(commonParam.minimize);
+    checkBoxStartMinimized->setChecked(commonParam.startMinimized);
     checkBoxExitConfirmation->setChecked(commonParam.exitConfirmation);
     proxySettings = readProxySettings(settings);
     checkBoxProxyEnabled->setChecked(proxySettings.enabled);
     lineEditProxyHost->setText(proxySettings.host);
     quint16 port = proxySettings.port;
-    lineEditProxyPort->setText( (port > 1000) ? QString::number(port) : "" );
+    lineEditProxyPort->setText( (port > 0) ? QString::number(port) : "" );
     lineEditProxyUser->setText(proxySettings.user);
     lineEditProxyPassword->setText(proxySettings.password);
 }
@@ -179,7 +195,9 @@ void ParametersDialog::writeCommonSettings()
     settings.beginGroup(GROUP_PARAMETERS);
       settings.setValue(KEY_LANGUAGE, commonParam.language);
       settings.setValue(KEY_MINIMIZE, commonParam.minimize);
+      settings.setValue(KEY_START_MINIMIZED, commonParam.startMinimized);
       settings.setValue(KEY_EXIT_CONFIRMATION, commonParam.exitConfirmation);
+      settings.setValue(KEY_START_ON_LOAD, commonParam.startOnLoad);
     settings.endGroup();
     writeProxySettings(settings, proxySettings);
 }
@@ -204,7 +222,9 @@ void ParametersDialog::buttonCancelClicked()
 void ParametersDialog::buttonOkClicked()
 {
     commonParam.language = comboBoxLanguage->currentText();
+    commonParam.startOnLoad = checkBoxStartOnLoad->isChecked();
     commonParam.minimize = checkBoxMinimise->isChecked();
+    commonParam.startMinimized = checkBoxStartMinimized->isChecked();
     commonParam.exitConfirmation = checkBoxExitConfirmation->isChecked();
     proxySettings.enabled = checkBoxProxyEnabled->isChecked();
     proxySettings.host = lineEditProxyHost->text();

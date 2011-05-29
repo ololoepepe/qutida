@@ -46,6 +46,7 @@ public:
         FilesAuxTotal,
         FilesAuxSaved,
         FilesAuxFailed,
+        Extentions,
         IteratorLast,
         InvalidValue = IteratorLast
     };

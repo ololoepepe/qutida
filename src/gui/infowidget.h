@@ -74,13 +74,13 @@ private:
           QLabel *labelFilesAuxTotalKey;
           QLabel *labelFilesAuxSavedKey;
           QLabel *labelFilesAuxFailedKey;
-          //stretch
+          QLabel *labelExtentionsKey;
         QVBoxLayout *vLayoutData3;
           QLabel *labelSavePageData;
           QLabel *labelFilesAuxTotalData;
           QLabel *labelFilesAuxSavedData;
           QLabel *labelFilesAuxFailedData;
-          //stretch
+          QLabel *labelExtentionsData;
         //stretch
       //stretch
     //

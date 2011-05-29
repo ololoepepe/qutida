@@ -57,6 +57,18 @@ public:
         bool savePage;
     };
 
+    struct Modifiable
+    {
+        QStringList extentions;
+        bool external;
+        bool replace;
+        int attemptPage;
+        int attemptFile;
+        bool restartEnabled;
+        int restartInterval;
+        bool savePage;
+    };
+
     enum State
     {
         ReadyState,
@@ -117,6 +129,7 @@ public:
         map.insert(ThreadInfo::FilesAuxTotal, -1);
         map.insert(ThreadInfo::FilesAuxSaved, -1);
         map.insert(ThreadInfo::FilesAuxFailed, -1);
+        map.insert(ThreadInfo::Extentions, param.extentions);
         return map;
     }
 
@@ -171,9 +184,7 @@ public:
     const Parameters &parameters() const;
     QString url() const;
     QString dir() const;
-    bool restartEnabled() const;
-    int restartInterval() const;
-    bool savePage() const;
+    Modifiable modParameters() const;
     ExtendedState extendedState() const;
     QVariant dataForKey(ThreadInfo::Enum key) const;
 
@@ -181,8 +192,7 @@ public slots:
     void startDownload();
     void stopDownload();
     void deleteWithFiles();
-    void modifyRestart(bool enabled, int interval);
-    void modifySavePage(bool enabled);
+    void modifyParameters(const Modifiable &modParam);
 
 signals:
     void infoChanged(ThreadInfo::Enum key, const QVariant &data);

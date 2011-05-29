@@ -55,6 +55,7 @@ int main(int argc, char *argv[])
     QApplication::setOrganizationDomain(Common::ORG_DOMAIN);
     QApplication::setApplicationName(Common::APP_NAME);
     QApplication::setWindowIcon( QIcon(":/res/ico/anonymous.png") );
+    QSettings settings;
     NetworkAccessManager::instance()->setCache(0);
     LocalServer localServer;
     //LocalServer::removeServer(Common::APP_NAME);
@@ -118,7 +119,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<ImageboardThread*>("ImageboardThread*");
     qRegisterMetaType<InfoWidget*>("InfoWidget*");
     qRegisterMetaType<QModelIndex>("QModelIndex");
-    qRegisterMetaType<ThreadParameters::Parameters>("ThreadParameters::Parameters");
+    qRegisterMetaType<ImageboardThread::Modifiable>("ImageboardThread::Modifiable");
     QThreadPool::globalInstance()->setMaxThreadCount(10);
     ThreadManager threadManager(0);
     QObject::connect( &localServer,
@@ -129,7 +130,6 @@ int main(int argc, char *argv[])
     if ( argList.contains(LocalServer::ARG_DEFAULT) && !urlList.isEmpty() )
     {
         bool start = argList.contains(LocalServer::ARG_START);
-        QSettings settings;
         settings.beginGroup(ParametersDialog::GROUP_PARAMETERS);
           settings.beginGroup(ThreadManager::SUB_GROUP_DEFAULT);
             ImageboardThread::Parameters param =
@@ -165,31 +165,27 @@ int main(int argc, char *argv[])
     QObject::connect( mainWindow, SIGNAL( requestOpenUrl(int) ),
                       &threadManager, SLOT( requestOpenUrl(int) ) );
     QObject::connect( mainWindow,
-                      SIGNAL( requestSortThreads(int, Qt::SortOrder) ),
-                      &threadManager,
-                      SLOT( requestSortThreads(int, Qt::SortOrder) ) );
-    QObject::connect( mainWindow,
                       SIGNAL(requestSetObservedThread(int, InfoWidget*) ),
                       &threadManager,
                       SLOT( requestSetObservedThread(int, InfoWidget*) ) );
     QObject::connect( mainWindow,
                       SIGNAL( requestModifyParameters(
-                                 QList<int>, ThreadParameters::Parameters) ),
+                                 QList<int>, ImageboardThread::Modifiable) ),
                       &threadManager,
                       SLOT( requestModifyParameters(
-                               QList<int>, ThreadParameters::Parameters) ) );
+                               QList<int>, ImageboardThread::Modifiable) ) );
     QObject::connect( mainWindow, SIGNAL( requestRetranslate() ),
                       &threadManager, SLOT( requestRetranslate() ) );
     QObject::connect( mainWindow, SIGNAL( requestWriteSettings() ),
                       &threadManager, SLOT( requestWriteSettings() ) );
     QObject::connect( &localServer, SIGNAL( addThreads(QStringList) ),
                       mainWindow, SLOT( callAddThreadDialog(QStringList) ) );
-    mainWindow->show();
+    ParametersDialog::CommonParameters commonParam =
+            ParametersDialog::readCommonParameters(settings);
+    mainWindow->setVisibility(!commonParam.startMinimized);
 
     if ( !argList.contains(LocalServer::ARG_DEFAULT) && !urlList.isEmpty() )
-    {
         mainWindow->callAddThreadDialog(urlList);
-    }
 
     int err = app.exec();
     //LocalServer::removeServer(Common::APP_NAME);

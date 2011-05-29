@@ -20,13 +20,15 @@
 #include "src/mv/threadmodel.h"
 #include "src/mv/threadmodelitem.h"
 #include "src/core/imageboardthread.h"
-#include "src/tr.h"
 #include "src/core/threadinfo.h"
+#include "src/tr.h"
 
 #include <QObject>
 #include <QVariant>
 #include <QList>
 #include <QModelIndex>
+#include <QDateTime>
+#include <QString>
 
 ThreadModel::ThreadModel(const QList<QVariant> &headerData, QObject *parent) :
     TreeModel(headerData, parent)
@@ -83,24 +85,10 @@ void ThreadModel::sort(int column, Qt::SortOrder order)
     if (count < 2)
         return;
 
-    bool ascending = (Qt::AscendingOrder == order);
-
-    for (int i = 0; i < count - 1; ++i)
-    {
-        for (int j = i + 1; j < count; ++j)
-        {
-            TreeItem *item1 = rootItem->child(i);
-            TreeItem *item2 = rootItem->child(j);
-            int res = TreeItem::compare(*item1, *item2, column);
-
-            if ( (ascending && res > 0) || (!ascending && res < 0) )
-            {
-                rootItem->rearrangeChildren(item1, item2);
-            }
-        }
-    }
-
+    emit startedSort();
+    sortInRange(column, order, 0, count - 1);
     emit layoutChanged();
+    emit finishedSort();
 }
 
 //
@@ -180,4 +168,147 @@ void ThreadModel::itemDataChanged(int row, int column)
 
     QModelIndex ind( index(row, column) );
     emit dataChanged(ind, ind);
+}
+
+//
+
+void ThreadModel::sortInRange(int column, Qt::SortOrder order,
+                              int lbound, int ubound)
+{
+    if (column >= rootItem->columnCount() || column < 0)
+        return;
+
+    int count = rootItem->childCount();
+
+    if (count < 2)
+        return;
+
+    if (lbound < 0 || ubound >= count || lbound >= ubound)
+        return;
+
+    bool ascending = (Qt::AscendingOrder == order);
+
+    for (int i = lbound; i < ubound; ++i)
+    {
+        for (int j = i + 1; j <= ubound; ++j)
+        {
+            TreeItem *item1 = rootItem->child(i);
+            TreeItem *item2 = rootItem->child(j);
+            int res = TreeItem::compare(*item1, *item2, column);
+
+            if ( (ascending && res > 0) || (!ascending && res < 0) )
+            {
+                rootItem->rearrangeChildren(item1, item2);
+            }
+        }
+    }
+
+    int l = lbound;
+    int u = lbound;
+
+    if (ThreadInfo::Board == column)
+    {
+        QString board =
+                rootItem->child(u)->data(ThreadInfo::Board).toString();
+
+        while (u <= ubound)
+        {
+            if (rootItem->child(u)->data(
+                        ThreadInfo::Board).toString() != board)
+            {
+                sortInRange(ThreadInfo::Thread, order, l, u - 1);
+                board = rootItem->child(u)->data(
+                            ThreadInfo::Board).toString();
+                l = u;
+            }
+
+            ++u;
+        }
+
+        sortInRange(ThreadInfo::Thread , order, l, u - 1);
+    }
+    else if (ThreadInfo::Host == column)
+    {
+        QString host =
+                rootItem->child(u)->data(ThreadInfo::Host).toString();
+
+        while (u <= ubound)
+        {
+            if (rootItem->child(u)->data(
+                        ThreadInfo::Host).toString() != host)
+            {
+                sortInRange(ThreadInfo::Board, order, l, u - 1);
+                host = rootItem->child(u)->data(
+                            ThreadInfo::Host).toString();
+                l = u;
+            }
+
+            ++u;
+        }
+
+        sortInRange(ThreadInfo::Board , order, l, u - 1);
+    }
+    else if (ThreadInfo::Added == column)
+    {
+        QDateTime added =
+                rootItem->child(u)->data(ThreadInfo::Added).toDateTime();
+
+        while (u <= ubound)
+        {
+            if (rootItem->child(u)->data(
+                        ThreadInfo::Added).toDateTime() != added)
+            {
+                sortInRange(ThreadInfo::Host, order, l, u - 1);
+                added = rootItem->child(u)->data(
+                            ThreadInfo::Added).toDateTime();
+                l = u;
+            }
+
+            ++u;
+        }
+
+        sortInRange(ThreadInfo::Host , order, l, u - 1);
+    }
+    else if (ThreadInfo::Progress == column)
+    {
+        int progress =
+                rootItem->child(u)->data(ThreadInfo::Progress).toInt();
+
+        while (u <= ubound)
+        {
+            if (rootItem->child(u)->data(
+                        ThreadInfo::Progress).toInt() != progress)
+            {
+                sortInRange(ThreadInfo::Host, order, l, u - 1);
+                progress = rootItem->child(u)->data(
+                            ThreadInfo::Progress).toInt();
+                l = u;
+            }
+
+            ++u;
+        }
+
+        sortInRange(ThreadInfo::Host , order, l, u - 1);
+    }
+    else if (ThreadInfo::ExtendedState == column)
+    {
+        int state =
+                rootItem->child(u)->data(ThreadInfo::ExtendedState).toInt();
+
+        while (u <= ubound)
+        {
+            if (rootItem->child(u)->data(
+                        ThreadInfo::ExtendedState).toInt() != state)
+            {
+                sortInRange(ThreadInfo::Host, order, l, u - 1);
+                state = rootItem->child(u)->data(
+                            ThreadInfo::ExtendedState).toInt();
+                l = u;
+            }
+
+            ++u;
+        }
+
+        sortInRange(ThreadInfo::Host , order, l, u - 1);
+    }
 }

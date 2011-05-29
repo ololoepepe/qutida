@@ -46,6 +46,7 @@ private:
         QLabel *labelPassword;
         QLineEdit *lineEditPassword;
       QHBoxLayout *hLayoutActions;
+        //stretch
         QPushButton *buttonCancel;
         QPushButton *buttonOk;
 

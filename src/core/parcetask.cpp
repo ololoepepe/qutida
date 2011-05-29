@@ -68,9 +68,15 @@ void ParceTask::run()
                 parameters.download->data() )->toUnicode(
                 parameters.download->data() );
     QStringList urlList;
-    QRegExp parceMask(PARCE_PATTERN_BEG +
-                      Common::strFromList(parameters.extentions, "|") +
-                      PARCE_PATTERN_END);
+    QRegExp parceMask;
+
+    if ( parameters.extentions.contains("*") )
+        parceMask.setPattern(PARCE_PATTERN_BEG + "\\S+" + PARCE_PATTERN_END);
+    else
+        parceMask.setPattern(PARCE_PATTERN_BEG +
+                             Common::strFromList(parameters.extentions, "|") +
+                             PARCE_PATTERN_END);
+
     QRegExp removeMask(REMOVE_PATTERN);
     int pos = 0;
 
