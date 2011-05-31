@@ -42,7 +42,7 @@ public:
     void sort(int column, Qt::SortOrder order);
 
     void addItem(ImageboardThread *thread);
-    bool removeItem(const ImageboardThread *thread);
+    bool removeItem(int row);
     bool sortItems(int column, bool ascending);
     void retranslate();
     ImageboardThread *threadForRow(int row);

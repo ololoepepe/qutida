@@ -154,8 +154,10 @@ int main(int argc, char *argv[])
                 SLOT( requestAddThread(ImageboardThread::Parameters, bool) ) );
     QObject::connect( mainWindow, SIGNAL( requestBackup(QString) ),
                       &threadManager, SLOT( requestBackup(QString) ) );
-    QObject::connect( mainWindow, SIGNAL( requestRemoveThread(int, bool) ),
-                      &threadManager, SLOT( requestRemoveThread(int, bool) ) );
+    QObject::connect( mainWindow,
+                      SIGNAL( requestRemoveThread(QList<int>, bool) ),
+                      &threadManager,
+                      SLOT( requestRemoveThread(QList<int>, bool) ) );
     QObject::connect( mainWindow, SIGNAL( requestStartThread(int) ),
                       &threadManager, SLOT( requestStartThread(int) ) );
     QObject::connect( mainWindow, SIGNAL( requestStopThread(int) ),

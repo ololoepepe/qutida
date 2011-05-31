@@ -130,27 +130,43 @@ void ThreadManager::requestBackup(const QString &fileName)
     file.close();
 }
 
-void ThreadManager::requestRemoveThread(int index, bool del)
+void ThreadManager::requestRemoveThread(QList<int> indexes, bool del)
 {
-    if (index >= threadList.count() || index < 0)
+    if ( indexes.isEmpty() )
         return;
 
-    ImageboardThread *thread = mThreadModel->threadForRow(index);
-    threadList.removeAll(thread);
-
-    if (!thread)
-        return;
-
-    mCategoryModel->tryRemoveCategory(thread);
-    mThreadModel->removeItem(thread);
-
-    if (del)
+    for (int i = 0; i < indexes.count() - 1; ++i)
     {
-        thread->deleteWithFiles();
+        for (int j = i + 1; j < indexes.count(); ++j)
+        {
+            if ( indexes.at(i) < indexes.at(j) )
+            {
+                int tmp = indexes.at(i);
+                indexes.replace( i, indexes.at(j) );
+                indexes.replace(j, tmp);
+            }
+        }
     }
-    else
+
+    for (int i = 0; i < indexes.count(); ++i)
     {
-        thread->deleteLater();
+        ImageboardThread *thread = mThreadModel->threadForRow( indexes.at(i) );
+        threadList.removeAll(thread);
+
+        if (!thread)
+            continue;
+
+        mCategoryModel->tryRemoveCategory(thread);
+        mThreadModel->removeItem( indexes.at(i) );
+
+        if (del)
+        {
+            thread->deleteWithFiles();
+        }
+        else
+        {
+            thread->deleteLater();
+        }
     }
 }
 

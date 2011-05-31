@@ -79,7 +79,7 @@ signals:
     void requestAddThread(const ImageboardThread::Parameters &param,
                           bool start);
     void requestBackup(const QString fileName);
-    void requestRemoveThread(int index, bool);
+    void requestRemoveThread(const QList<int> &indexes, bool);
     void requestStartThread(int index);
     void requestStopThread(int index);
     void requestOpenDir(int index);

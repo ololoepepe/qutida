@@ -107,29 +107,18 @@ void ThreadModel::addItem(ImageboardThread *thread)
     endInsertRows();
 }
 
-bool ThreadModel::removeItem(const ImageboardThread *thread)
+bool ThreadModel::removeItem(int row)
 {
-    if (!thread)
+    if (!rootItem)
         return false;
 
-    for (int i = 0; i < rootItem->childCount(); ++i)
-    {
-        ThreadModelItem *item =
-                dynamic_cast<ThreadModelItem*>( rootItem->child(i) );
+    if ( row < 0 || row >= rootItem->childCount() )
+        return false;
 
-        if (item)
-        {
-            if ( item->relatedThread()->url() == thread->url() )
-            {
-                beginRemoveRows(QModelIndex(), i, i);
-                rootItem->removeChild(i);
-                endRemoveRows();
-                return true;
-            }
-        }
-    }
-
-    return false;
+    beginRemoveRows(QModelIndex(), row, row);
+    rootItem->removeChild(row);
+    endRemoveRows();
+    return true;
 }
 
 void ThreadModel::retranslate()

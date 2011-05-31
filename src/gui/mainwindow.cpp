@@ -745,7 +745,7 @@ void MainWindow::threadParametersRequested()
     dialog->deleteLater();
 }
 
-void MainWindow::removeRequested() //improve (reqest remove all index list)
+void MainWindow::removeRequested()
 {
     QList<int> selected = getSelectedIndexes();
 
@@ -761,10 +761,7 @@ void MainWindow::removeRequested() //improve (reqest remove all index list)
         return;
 
     bool del = (RemoveDialog::Delete == decision);
-    selectionModelThreads->clearSelection();
-
-    for (int i = selected.count() - 1; i >= 0; --i)
-        emit requestRemoveThread(selected.at(i), del);
+    emit requestRemoveThread(selected, del);
 }
 
 void MainWindow::toolBarRequested(bool visible)
@@ -864,8 +861,10 @@ void MainWindow::threadsSelectionChanged(const QItemSelection &selected)
 
 void MainWindow::categoriesSelectionChanged()
 {
-    TreeModel *threadModel = dynamic_cast<TreeModel*>( treeViewThreads->model() );
-    CategoryModel *categoryModel = dynamic_cast<CategoryModel*>( treeViewCategories->model() );
+    TreeModel *threadModel =
+            dynamic_cast<TreeModel*>( treeViewThreads->model() );
+    CategoryModel *categoryModel =
+            dynamic_cast<CategoryModel*>( treeViewCategories->model() );
 
     if (!threadModel || !categoryModel)
         return;
