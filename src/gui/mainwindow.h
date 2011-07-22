@@ -27,6 +27,7 @@
 #include "src/gui/parametersdialog.h"
 #include "src/gui/addthread.h"
 #include "src/gui/threadparameters.h"
+#include "src/gui/threadseventlistener.h"
 
 #include <QMainWindow>
 #include <QString>
@@ -66,7 +67,6 @@ public:
           static const QString KEY_WIDTH;
           static const QString KEY_ENABLED;
           static const QString KEY_POSITION;
-
 
     explicit MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
                         QWidget *parent = 0);
@@ -152,6 +152,7 @@ private:
     QList<ImageboardThread*> selectedThreads;
     ImageboardThread *currentThread;
     bool lockInfoWidget;
+    ThreadsEventListener *threadsEventListener;
 
     void retranslate(bool initial = false);
     void readSettings();
@@ -184,6 +185,7 @@ private slots:
     void threadModelDataChanged(const QModelIndex &topLeft);
     void threadsSelectionChanged(const QItemSelection &selected);
     void categoriesSelectionChanged();
+    void errorCountChanged(int count);
     void trayIconActivated(QSystemTrayIcon::ActivationReason reason);
     void treeViewThreadsMenuRequested(const QPoint &point);
     void headerViewThreadsMenuRequested(const QPoint &point);

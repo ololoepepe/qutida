@@ -32,6 +32,7 @@
 #include "src/common.h"
 #include "src/core/networkaccessmanager.h"
 #include "src/gui/authentication.h"
+#include "src/gui/threadseventlistener.h"
 
 #include <QSplitter>
 #include <QTreeView>
@@ -63,6 +64,7 @@
 #include <QDir>
 #include <QNetworkProxy>
 #include <QAuthenticator>
+#include <QTimer>
 
 const QString MainWindow::GROUP_MAIN_WINDOW = "main_window";
   const QString MainWindow::KEY_GEOMETRY = "geometry";
@@ -98,9 +100,27 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
                    SIGNAL(selectionChanged( QItemSelection, QItemSelection) ),
                    this,
                    SLOT( categoriesSelectionChanged() ) );
+          connect( categoryModel, SIGNAL( errorCountChanged(int) ),
+                   this, SLOT( errorCountChanged(int) ) );
         treeViewCategories->expandAll();
         //
         treeViewThreads = new QTreeView(hSplitterTop);
+          threadsEventListener = new ThreadsEventListener(this);
+          connect( threadsEventListener, SIGNAL( requestAdd() ),
+                   this, SLOT( addRequested() ) );
+          connect( threadsEventListener, SIGNAL( requestRemove() ),
+                   this, SLOT( removeRequested() ) );
+          connect( threadsEventListener, SIGNAL( requestStart() ),
+                   this, SLOT( startRequested() ) );
+          connect( threadsEventListener, SIGNAL( requestStop() ),
+                   this, SLOT( stopRequested() ) );
+          connect( threadsEventListener, SIGNAL( requestOpenDir() ),
+                   this, SLOT( openDirRequested() ) );
+          connect( threadsEventListener, SIGNAL( requestOpenUrl() ),
+                   this, SLOT( openUrlRequested() ) );
+          connect( threadsEventListener, SIGNAL( requestThreadParameters() ),
+                   this, SLOT( threadParametersRequested() ) );
+        treeViewThreads->installEventFilter(threadsEventListener);
         treeViewThreads->setModel(threadModel);
           connect( threadModel,
                    SIGNAL( dataChanged(QModelIndex, QModelIndex) ),
@@ -350,7 +370,7 @@ void MainWindow::closeEvent(QCloseEvent *e)
 {
     if (commonParam.minimize && !finalClose)
     {
-        this->hide();
+        setVisibility(false);
         e->ignore();
     }
     else
@@ -989,6 +1009,27 @@ void MainWindow::categoriesSelectionChanged()
                                               QItemSelectionModel::Rows);
             }
         }
+    }
+}
+
+void MainWindow::errorCountChanged(int count)
+{
+    static int previousCount = 0;
+
+    if (!QSystemTrayIcon::supportsMessages() || count <= 0)
+        return;
+
+    if (count < previousCount)
+    {
+        previousCount = count;
+        return;
+    }
+    else
+    {
+        previousCount = count;
+        trayIcon->showMessage(Tr::MW::trayErrorOccuredTitle(),
+                              Tr::MW::trayErrorOccuredText(count),
+                              QSystemTrayIcon::Warning);
     }
 }
 

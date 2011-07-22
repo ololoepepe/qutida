@@ -118,7 +118,8 @@ namespace Tr
         {return QObject::tr("Help", "main window: menu title");}
         //action titles
         QString actAddText()
-        {return QObject::tr("Add thread", "main window: action text");}
+        {return QObject::tr("Add thread", "main window: action text") +
+                    QString(" <Ctrl+A>");}
         QString actBackupText()
         {return QObject::tr("Backup", "main window: action text");}
         QString actExitText()
@@ -126,20 +127,25 @@ namespace Tr
         QString actParametersText()
         {return QObject::tr("Parameters", "main window: action text");}
         QString actOpenDirText()
-        {return QObject::tr("Open directory", "main window: action text");}
+        {return QObject::tr("Open directory", "main window: action text") +
+                    QString(" <Ctrl+O>");}
         QString actOpenUrlText()
-        {return QObject::tr("Open URL", "main window: action text");}
+        {return QObject::tr("Open URL", "main window: action text") +
+                    QString(" <Ctrl+U>");}
         QString actStopText()
         {return QObject::tr("Stop downloading selected thread",
-                            "main window: action text");}
+                            "main window: action text") +
+                    QString(" <Ctrl+S>");}
         QString actStartText()
         {return QObject::tr("Start downloading selected thread",
-                            "main window: action text");}
+                            "main window: action text") +
+                    QString(" <Ctrl+D>");}
         QString actThreadParametersText()
-        {return QObject::tr("Thread parameters", "main window: action text");}
+        {return QObject::tr("Thread parameters", "main window: action text") +
+                    QString(" <Ctrl+P>");}
         QString actRemoveText()
         {return QObject::tr("Remove selected threads",
-                            "main window: action text");}
+                            "main window: action text") + QString(" <Del>");}
         QString actToolBarText()
         {return QObject::tr("Toolbar", "main window: action text");}
         QString actHomepageText()
@@ -195,6 +201,14 @@ namespace Tr
         {return QObject::tr("Backup", "main window: dialog caption");}
         QString dialogAuthenticationCaption()
         {return QObject::tr("Authentication", "main window: dialog caption");}
+        //tray message titles
+        QString trayErrorOccuredTitle()
+        {return QObject::tr("Error", "main window: tray message title");}
+        //tray message texts
+        QString trayErrorOccuredText(int count)
+        {return QObject::tr("Unable to download thread. Total errors",
+                            "main window: tray message text") + ": " +
+                    QString::number(count);}
     }
 
     namespace AT

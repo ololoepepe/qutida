@@ -24,7 +24,8 @@ HEADERS += \
     src/gui/authentication.h \
     src/core/localserver.h \
     src/core/threadinfo.h \
-    src/core/savepagetask.h
+    src/core/savepagetask.h \
+    src/gui/threadseventlistener.h
 
 SOURCES += \
     src/gui/mainwindow.cpp \
@@ -52,7 +53,8 @@ SOURCES += \
     src/gui/authentication.cpp \
     src/core/localserver.cpp \
     src/core/threadinfo.cpp \
-    src/core/savepagetask.cpp
+    src/core/savepagetask.cpp \
+    src/gui/threadseventlistener.cpp
 
 QT += \
     network
