@@ -30,7 +30,6 @@ public:
     explicit ThreadsEventListener(QObject *parent = 0);
 
 signals:
-    void requestAdd();
     void requestRemove();
     void requestStart();
     void requestStop();

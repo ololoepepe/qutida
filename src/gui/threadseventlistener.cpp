@@ -32,42 +32,40 @@ ThreadsEventListener::ThreadsEventListener(QObject *parent) :
 
 bool ThreadsEventListener::eventFilter(QObject *object, QEvent *event)
 {
-    if (event->type() == QEvent::KeyPress)
+    if (event->type() != QEvent::KeyPress)
+        return QObject::eventFilter(object, event);
+
+    QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+
+    if (keyEvent->modifiers() == Qt::ControlModifier)
     {
-        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-
-        if (keyEvent->modifiers() == Qt::ControlModifier)
+        switch ( keyEvent->key() )
         {
-            switch ( keyEvent->key() )
-            {
-            case Qt::Key_A:
-                emit requestAdd();
-                break;
-            case Qt::Key_O:
-                emit requestOpenDir();
-                break;
-            case Qt::Key_U:
-                emit requestOpenUrl();
-                break;
-            case Qt::Key_S:
-                emit requestStop();
-                break;
-            case Qt::Key_D:
-                emit requestStart();
-                break;
-            case Qt::Key_P:
-                emit requestThreadParameters();
-                break;
-            default:
-                break;
-            }
+        case Qt::Key_O:
+            emit requestOpenDir();
+            return true;
+        case Qt::Key_U:
+            emit requestOpenUrl();
+            return true;
+        case Qt::Key_S:
+            emit requestStop();
+            return true;
+        case Qt::Key_D:
+            emit requestStart();
+            return true;
+        case Qt::Key_P:
+            emit requestThreadParameters();
+            return true;
+        default:
+            return QObject::eventFilter(object, event);
         }
-        else if (keyEvent->modifiers() == Qt::NoModifier)
-        {
-            if (keyEvent->key() == Qt::Key_Delete)
-                emit requestRemove();
-        }
+    }
+    else if (keyEvent->modifiers() == Qt::NoModifier)
+    {
+        if (keyEvent->key() != Qt::Key_Delete)
+            return  QObject::eventFilter(object, event);
 
+        emit requestRemove();
         return true;
     }
     else
