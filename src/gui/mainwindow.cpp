@@ -33,6 +33,7 @@
 #include "src/core/networkaccessmanager.h"
 #include "src/gui/authentication.h"
 #include "src/gui/threadseventlistener.h"
+#include "src/gui/globaleventlistener.h"
 
 #include <QSplitter>
 #include <QTreeView>
@@ -64,7 +65,6 @@
 #include <QDir>
 #include <QNetworkProxy>
 #include <QAuthenticator>
-#include <QTimer>
 
 const QString MainWindow::GROUP_MAIN_WINDOW = "main_window";
   const QString MainWindow::KEY_GEOMETRY = "geometry";
@@ -105,22 +105,6 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
         treeViewCategories->expandAll();
         //
         treeViewThreads = new QTreeView(hSplitterTop);
-          threadsEventListener = new ThreadsEventListener(this);
-          connect( threadsEventListener, SIGNAL( requestAdd() ),
-                   this, SLOT( addRequested() ) );
-          connect( threadsEventListener, SIGNAL( requestRemove() ),
-                   this, SLOT( removeRequested() ) );
-          connect( threadsEventListener, SIGNAL( requestStart() ),
-                   this, SLOT( startRequested() ) );
-          connect( threadsEventListener, SIGNAL( requestStop() ),
-                   this, SLOT( stopRequested() ) );
-          connect( threadsEventListener, SIGNAL( requestOpenDir() ),
-                   this, SLOT( openDirRequested() ) );
-          connect( threadsEventListener, SIGNAL( requestOpenUrl() ),
-                   this, SLOT( openUrlRequested() ) );
-          connect( threadsEventListener, SIGNAL( requestThreadParameters() ),
-                   this, SLOT( threadParametersRequested() ) );
-        treeViewThreads->installEventFilter(threadsEventListener);
         treeViewThreads->setModel(threadModel);
           connect( threadModel,
                    SIGNAL( dataChanged(QModelIndex, QModelIndex) ),
@@ -308,6 +292,28 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
         contextMenuTray->addAction(actExit);
       trayIcon->setContextMenu(contextMenuTray);
     trayIcon->show();
+    threadsEventListener = new ThreadsEventListener(this);
+    connect( threadsEventListener, SIGNAL( requestAdd() ),
+             this, SLOT( addRequested() ) );
+    connect( threadsEventListener, SIGNAL( requestRemove() ),
+             this, SLOT( removeRequested() ) );
+    connect( threadsEventListener, SIGNAL( requestStart() ),
+             this, SLOT( startRequested() ) );
+    connect( threadsEventListener, SIGNAL( requestStop() ),
+             this, SLOT( stopRequested() ) );
+    connect( threadsEventListener, SIGNAL( requestOpenDir() ),
+             this, SLOT( openDirRequested() ) );
+    connect( threadsEventListener, SIGNAL( requestOpenUrl() ),
+             this, SLOT( openUrlRequested() ) );
+    connect( threadsEventListener, SIGNAL( requestThreadParameters() ),
+             this, SLOT( threadParametersRequested() ) );
+    treeViewThreads->installEventFilter(threadsEventListener);
+    globalEvantListener = new GlobalEventListener(this);
+    connect( globalEvantListener, SIGNAL( requestAdd() ),
+             this, SLOT( addRequested() ) );
+    treeViewThreads->installEventFilter(globalEvantListener);
+    treeViewCategories->installEventFilter(globalEvantListener);
+    infoWidget->installEventFilter(globalEvantListener);
     //
     readSettings();
     finalClose = false;
@@ -714,6 +720,9 @@ void MainWindow::parametersRequested()
 
 void MainWindow::openDirRequested()
 {
+    if ( !infoWidget->observed() )
+        return;
+
     int index = getCurrentIndex();
 
     if (index >= 0)
@@ -722,6 +731,9 @@ void MainWindow::openDirRequested()
 
 void MainWindow::openUrlRequested()
 {
+    if ( !infoWidget->observed() )
+        return;
+
     int index = getCurrentIndex();
 
     if (index >= 0)

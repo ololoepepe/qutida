@@ -119,7 +119,7 @@ namespace Tr
         //action titles
         QString actAddText()
         {return QObject::tr("Add thread", "main window: action text") +
-                    QString(" <Ctrl+A>");}
+                    QString(" <Ctrl+N>");}
         QString actBackupText()
         {return QObject::tr("Backup", "main window: action text");}
         QString actExitText()

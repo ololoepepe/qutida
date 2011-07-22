@@ -28,6 +28,7 @@
 #include "src/gui/addthread.h"
 #include "src/gui/threadparameters.h"
 #include "src/gui/threadseventlistener.h"
+#include "src/gui/globaleventlistener.h"
 
 #include <QMainWindow>
 #include <QString>
@@ -153,6 +154,7 @@ private:
     ImageboardThread *currentThread;
     bool lockInfoWidget;
     ThreadsEventListener *threadsEventListener;
+    GlobalEventListener *globalEvantListener;
 
     void retranslate(bool initial = false);
     void readSettings();
