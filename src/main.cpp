@@ -31,6 +31,7 @@
 #include "src/core/localserver.h"
 #include "src/core/networkaccessmanager.h"
 #include "src/gui/threadparameters.h"
+#include "src/core/application.h"
 
 #include <QApplication>
 #include <QObject>
@@ -50,7 +51,7 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    Application app(argc, argv);
     QApplication::setOrganizationName(Common::ORG_NAME);
     QApplication::setOrganizationDomain(Common::ORG_DOMAIN);
     QApplication::setApplicationName(Common::APP_NAME);
@@ -147,6 +148,9 @@ int main(int argc, char *argv[])
 
     MainWindow *mainWindow = new MainWindow(threadManager.threadModel(),
                                             threadManager.categoryModel(), 0);
+    QObject::connect(&app, SIGNAL( requestWriteSettings() ),
+                     mainWindow, SLOT( writeSettings() ),
+                     Qt::DirectConnection);
     QObject::connect(
                 mainWindow,
                 SIGNAL( requestAddThread(ImageboardThread::Parameters, bool) ),

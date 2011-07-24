@@ -26,7 +26,8 @@ HEADERS += \
     src/core/threadinfo.h \
     src/core/savepagetask.h \
     src/gui/threadseventlistener.h \
-    src/gui/globaleventlistener.h
+    src/gui/globaleventlistener.h \
+    src/core/application.h
 
 SOURCES += \
     src/gui/mainwindow.cpp \
@@ -56,7 +57,8 @@ SOURCES += \
     src/core/threadinfo.cpp \
     src/core/savepagetask.cpp \
     src/gui/threadseventlistener.cpp \
-    src/gui/globaleventlistener.cpp
+    src/gui/globaleventlistener.cpp \
+    src/core/application.cpp
 
 QT += \
     network
