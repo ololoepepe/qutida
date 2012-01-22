@@ -49,6 +49,9 @@ public:
     void retranslate();
     Tr::CM::Category categoryForIndex(const QModelIndex &index) const;
 
+signals:
+    void errorCountChanged(int count);
+
 private:
     int countAll;
     int countActive;

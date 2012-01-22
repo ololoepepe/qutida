@@ -80,7 +80,14 @@ QVariant CategoryModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     TreeItem *item = static_cast<TreeItem*>( index.internalPointer() );
+
+    if (!item)
+        return QVariant();
+
     TreeItem *parent = item->parent();
+
+    if (!parent)
+        return QVariant();
 
     if (rootItem == parent)
     {
@@ -135,10 +142,8 @@ QVariant CategoryModel::data(const QModelIndex &index, int role) const
             return str + " (" + QString::number(count) + ")";
         }
     }
-    else
-    {
-        return QVariant();
-    }
+
+    return QVariant();
 }
 
 QVariant CategoryModel::headerData(int section, Qt::Orientation orientation,
@@ -300,6 +305,7 @@ void CategoryModel::checkState(ImageboardThread::ExtendedState state, bool add)
         QModelIndex subIndex = index(Tr::CM::SubError,
                                      Tr::CM::SubError, stateIndex);
         emit dataChanged(subIndex, subIndex);
+        emit errorCountChanged(countError);
     }
     else
     {

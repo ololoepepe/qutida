@@ -75,6 +75,7 @@ public:
 public slots:
     void callAddThreadDialog(const QStringList &urlList);
     void setVisibility(bool visible);
+    void writeSettings();
 
 signals:
     void requestAddThread(const ImageboardThread::Parameters &param,
@@ -158,7 +159,6 @@ private:
 
     void retranslate(bool initial = false);
     void readSettings();
-    void writeSettings();
     int getCurrentIndex();
     QList<int> getSelectedIndexes();
     void trySetProxy(const ParametersDialog::ProxySettings &proxySettings);

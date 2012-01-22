@@ -79,6 +79,10 @@ namespace Tr
         QString dialogThreadParametersCaption();
         QString dialogBackupCaption();
         QString dialogAuthenticationCaption();
+        //tray message titles
+        QString trayErrorOccuredTitle();
+        //tray message texts
+        QString trayErrorOccuredText(int count);
     }
 
     namespace AT

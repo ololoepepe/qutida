@@ -293,8 +293,6 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
       trayIcon->setContextMenu(contextMenuTray);
     trayIcon->show();
     threadsEventListener = new ThreadsEventListener(this);
-    connect( threadsEventListener, SIGNAL( requestAdd() ),
-             this, SLOT( addRequested() ) );
     connect( threadsEventListener, SIGNAL( requestRemove() ),
              this, SLOT( removeRequested() ) );
     connect( threadsEventListener, SIGNAL( requestStart() ),
@@ -368,6 +366,37 @@ void MainWindow::setVisibility(bool visible)
 
     if (this->isVisible() != visible)
         showHideRequested();
+}
+
+void MainWindow::writeSettings()
+{
+    QSettings settings;
+    settings.remove(GROUP_MAIN_WINDOW);
+    settings.beginGroup(GROUP_MAIN_WINDOW);
+      settings.setValue( KEY_GEOMETRY, this->geometry() );
+      settings.setValue( KEY_VSPLITTER, vSplitter->saveState() );
+      settings.setValue( KEY_HSPLITTER_TOP, hSplitterTop->saveState() );
+      settings.beginGroup(SUB_GROUP_HEADER);
+        settings.setValue( KEY_SORT_ORDER,
+                           ( Qt::AscendingOrder ==
+                             headerThreads->sortIndicatorOrder() ) );
+        settings.setValue( KEY_SORT_SECTION,
+                           headerThreads->sortIndicatorSection() );
+        settings.beginWriteArray(ARRAY_SECTIONS);
+
+          for (int i = 0; i < actColumnList.count(); ++i)
+          {
+              settings.setArrayIndex(i);
+              settings.setValue( KEY_WIDTH, treeViewThreads->columnWidth(i) );
+              settings.setValue( KEY_ENABLED,
+                                 actColumnList.at(i)->isChecked() );
+              settings.setValue( KEY_POSITION, headerThreads->visualIndex(i) );
+          }
+
+        settings.endArray();
+      settings.endGroup();
+    settings.endGroup();
+    emit requestWriteSettings();
 }
 
 //
@@ -500,37 +529,6 @@ void MainWindow::readSettings()
     ParametersDialog::ProxySettings proxySettings =
             ParametersDialog::readProxySettings(settings);
     trySetProxy(proxySettings);
-}
-
-void MainWindow::writeSettings()
-{
-    QSettings settings;
-    settings.remove(GROUP_MAIN_WINDOW);
-    settings.beginGroup(GROUP_MAIN_WINDOW);
-      settings.setValue( KEY_GEOMETRY, this->geometry() );
-      settings.setValue( KEY_VSPLITTER, vSplitter->saveState() );
-      settings.setValue( KEY_HSPLITTER_TOP, hSplitterTop->saveState() );
-      settings.beginGroup(SUB_GROUP_HEADER);
-        settings.setValue( KEY_SORT_ORDER,
-                           ( Qt::AscendingOrder ==
-                             headerThreads->sortIndicatorOrder() ) );
-        settings.setValue( KEY_SORT_SECTION,
-                           headerThreads->sortIndicatorSection() );
-        settings.beginWriteArray(ARRAY_SECTIONS);
-
-          for (int i = 0; i < actColumnList.count(); ++i)
-          {
-              settings.setArrayIndex(i);
-              settings.setValue( KEY_WIDTH, treeViewThreads->columnWidth(i) );
-              settings.setValue( KEY_ENABLED,
-                                 actColumnList.at(i)->isChecked() );
-              settings.setValue( KEY_POSITION, headerThreads->visualIndex(i) );
-          }
-
-        settings.endArray();
-      settings.endGroup();
-    settings.endGroup();
-    emit requestWriteSettings();
 }
 
 int MainWindow::getCurrentIndex()
