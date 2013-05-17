@@ -86,6 +86,7 @@ signals:
     void requestStopThread(int index);
     void requestOpenDir(int index);
     void requestOpenUrl(int index);
+    void requestOpenLocal(int index);
     void requestSetObservedThread(int index, InfoWidget *widget);
     void requestModifyParameters(const QList<int> &indexes,
                                  const ImageboardThread::Modifiable &modParam);
@@ -116,6 +117,7 @@ private:
       QMenu *menuThread;
         QAction *actOpenDir;
         QAction *actOpenUrl;
+        QAction *actOpenLocal;
         //separator
         QAction *actStop;
         QAction *actStart;
@@ -172,6 +174,7 @@ private slots:
     void parametersRequested();
     void openDirRequested();
     void openUrlRequested();
+    void openLocalRequested();
     void stopRequested();
     void startRequested();
     void threadParametersRequested();

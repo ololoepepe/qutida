@@ -29,9 +29,11 @@
 #include <QUrl>
 #include <QDir>
 
+#include <QDebug>
+
 const QString ParceTask::PARCE_PATTERN_BEG = "(href=\"(http://)?\\S+\\.(";
 const QString ParceTask::PARCE_PATTERN_END = ")\")+";
-const QString ParceTask::PARCE_PATTERN_AUX = "(http://\\S+/\\S+\\.\\w+(?=(\"|')))+";
+const QString ParceTask::PARCE_PATTERN_AUX = "((http://)?\\S+/\\S+\\.\\w+(?=(\"|')))+";
 const QString ParceTask::REMOVE_PATTERN = "href=|\"";
 
 //
@@ -71,20 +73,24 @@ void ParceTask::run()
     QRegExp parceMask;
 
     if ( parameters.extentions.contains("*") )
-        parceMask.setPattern(PARCE_PATTERN_BEG + "\\S+" + PARCE_PATTERN_END);
+        parceMask.setPattern("(href=\"(https?://)?\\S+/\\d+\\.(\\S+)\")+");
     else
-        parceMask.setPattern(PARCE_PATTERN_BEG +
-                             Common::strFromList(parameters.extentions, "|") +
-                             PARCE_PATTERN_END);
+        parceMask.setPattern("(href=\"(https?://)?\\S+/\\d+\\.(" + Common::strFromList(parameters.extentions,
+                                                                                  "|") + ")\")+");
 
-    QRegExp removeMask(REMOVE_PATTERN);
+    QRegExp removeMask("(href=|\"|src=)");
     int pos = 0;
 
     while ( ( pos = parceMask.indexIn(content, pos) ) != -1 )
     {
-        urlList << parceMask.cap(1).remove(removeMask);
+        urlList << parceMask.cap(1).remove(removeMask).replace("//", "/");
+        QString &s = urlList.last();
+        if (!s.contains("://"))
+            s.replace(":/", "://");
         pos += parceMask.matchedLength();
     }
+
+    urlList.removeDuplicates();
 
     QStringList nameList;
 
@@ -141,11 +147,9 @@ void ParceTask::run()
             --i;
         }
     }
-
     if (!parameters.replace)
     {
         int i = urlList.count() - 1;
-
         while (i >= 0)
         {
             if ( QFileInfo( Common::getFileName(urlList.at(i),
@@ -172,12 +176,12 @@ void ParceTask::run()
     if (parameters.savePage)
     {
         QStringList auxUrlList;
-        QRegExp auxParceMask(PARCE_PATTERN_AUX);
+        QRegExp auxParceMask("((href|src)=\"(https?://)?\\S+\\.(\\S+)\")+");
         int pos = 0;
 
         while ( ( pos = auxParceMask.indexIn(content, pos) ) != -1 )
         {
-            auxUrlList << auxParceMask.cap(1);
+            auxUrlList << auxParceMask.cap(1).remove(removeMask);;
             pos += auxParceMask.matchedLength();
         }
 
@@ -185,10 +189,18 @@ void ParceTask::run()
 
         for (int i = 0; i < auxUrlList.count(); ++i)
         {
+            if (auxUrlList.at(i).contains(".html") || auxUrlList.at(i).contains(".htm"))
+                continue;
             QString d = Common::getHost( auxUrlList.at(i) );
 
-            if (d == domain || QString() == d)
+            if (!urlList.contains(auxUrlList.at(i)) && (d == domain || QString() == d))
             {
+                if ( QUrl( auxUrlList.at(i) ).scheme().isEmpty() )
+                {
+                    auxUrlList.replace( i, auxUrlList.value(i).prepend(scheme +
+                                                                       QString("://") +
+                                                                       domain) );
+                }
                 result.auxUrls << auxUrlList.at(i);
             }
         }

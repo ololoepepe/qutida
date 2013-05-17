@@ -26,6 +26,8 @@
 #include <QTextCodec>
 #include <QDir>
 
+#include <QDebug>
+
 const QString SavePageTask::AUX_FILES_DIR = "auxiliary";
 
 SavePageTask::SavePageTask(const Parameters &param) :
@@ -70,22 +72,26 @@ void SavePageTask::run()
         }
     }
 
-    QTextCodec *codec =
-            QTextCodec::codecForHtml( parameters.download->data() );
+    QTextCodec *codec = QTextCodec::codecForHtml(parameters.download->data(), QTextCodec::codecForName("UTF-8"));
     QString content = codec->toUnicode( parameters.download->data() );
 
     for (int i = 0; i < parameters.urls.count(); ++i)
     {
+        if (QUrl(parameters.urls.at(i)).path().isEmpty() || QUrl(parameters.urls.at(i)).path().endsWith("/"))
+            continue;
         if ( parameters.normalUrls.contains( parameters.urls.at(i) ) )
         {
             content.replace( parameters.urls.at(i),
                             Common::getFileName( parameters.urls.at(i) ) );
+            content.replace(QUrl(parameters.urls.at(i)).path(), Common::getFileName( parameters.urls.at(i) ));
         }
         else
         {
             content.replace( parameters.urls.at(i),
                             Common::getFileName(parameters.urls.at(i),
                                                 AUX_FILES_DIR) );
+            content.replace(QUrl(parameters.urls.at(i)).path(),
+                            Common::getFileName(parameters.urls.at(i), AUX_FILES_DIR));
         }
     }
 
@@ -96,7 +102,7 @@ void SavePageTask::run()
         return;
     }
 
-    if ( -1 == file.write( content.toAscii() ) )
+    if (-1 == file.write(content.toUtf8()))
     {
         file.close();
         result.err = FileError;

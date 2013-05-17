@@ -57,6 +57,7 @@ public slots:
     void requestStopThread(int index);
     void requestOpenDir(int index);
     void requestOpenUrl(int index);
+    void requestOpenLocal(int index);
     void requestSetObservedThread(int index, InfoWidget *widget);
     void requestModifyParameters(const QList<int> &indexes,
                                  const ImageboardThread::Modifiable &modParam);

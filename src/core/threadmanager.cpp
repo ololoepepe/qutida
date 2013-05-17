@@ -222,6 +222,16 @@ void ThreadManager::requestOpenUrl(int index)
     QDesktopServices::openUrl( QUrl(thread->url(), QUrl::TolerantMode ) );
 }
 
+void ThreadManager::requestOpenLocal(int index)
+{
+    if (index >= threadList.count() || index < 0)
+        return;
+    ImageboardThread *thread = mThreadModel->threadForRow(index);
+    if (!thread)
+        return;
+    QDesktopServices::openUrl(QUrl::fromLocalFile(thread->dir() + "/" + Common::getFileName(thread->url())));
+}
+
 void ThreadManager::requestSetObservedThread(int index, InfoWidget *widget)
 {
     if (!widget)

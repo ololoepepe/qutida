@@ -179,6 +179,12 @@ MainWindow::MainWindow(ThreadModel *threadModel, CategoryModel *categoryModel,
                  this, SLOT( openUrlRequested() ) );
         menuThread->addAction(actOpenUrl);
         //
+        actOpenLocal = new QAction(QIcon(":/res/ico/earth.png"),
+                                   tr("Open saved page", "") + " <Ctrl+L>", this);
+        connect( actOpenLocal, SIGNAL( triggered() ),
+                 this, SLOT( openLocalRequested() ) );
+        menuThread->addAction(actOpenLocal);
+        //
         menuThread->addSeparator();
         //
         actStop = new QAction(QIcon(":/res/ico/stop.png"),
@@ -453,6 +459,7 @@ void MainWindow::retranslate(bool initial)
     actParameters->setText( Tr::MW::actParametersText() );
     actOpenDir->setText( Tr::MW::actOpenDirText() );
     actOpenUrl->setText( Tr::MW::actOpenUrlText() );
+    actOpenLocal->setText(tr("Open saved page", "") + " <Ctrl+L>");
     actStop->setText( Tr::MW::actStopText() );
     actStart->setText( Tr::MW::actStartText() );
     actThreadParameters->setText( Tr::MW::actThreadParametersText() );
@@ -736,6 +743,17 @@ void MainWindow::openUrlRequested()
 
     if (index >= 0)
         emit requestOpenUrl(index);
+}
+
+void MainWindow::openLocalRequested()
+{
+    if ( !infoWidget->observed() )
+        return;
+
+    int index = getCurrentIndex();
+
+    if (index >= 0)
+        emit requestOpenLocal(index);
 }
 
 void MainWindow::stopRequested()

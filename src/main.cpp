@@ -170,6 +170,8 @@ int main(int argc, char *argv[])
                       &threadManager, SLOT( requestOpenDir(int) ) );
     QObject::connect( mainWindow, SIGNAL( requestOpenUrl(int) ),
                       &threadManager, SLOT( requestOpenUrl(int) ) );
+    QObject::connect( mainWindow, SIGNAL( requestOpenLocal(int) ),
+                      &threadManager, SLOT( requestOpenLocal(int) ) );
     QObject::connect( mainWindow,
                       SIGNAL(requestSetObservedThread(int, InfoWidget*) ),
                       &threadManager,

@@ -32,6 +32,8 @@
 #include <QDir>
 #include <QDateTime>
 
+#include <QDebug>
+
 const int ImageboardThread::TIMER_INTERVAL = 60 * 1000; //1 minute
 
 const QString ImageboardThread::DEF_EXTENTIONS_PLAIN = "jpg|jpeg|png|gif";
@@ -452,6 +454,15 @@ void ImageboardThread::parceFinished(ParceTask::Result result)
                     if ( !result.existingUrls.contains(url) &&
                             !result.newUrls.contains(url) )
                     {
+                        if (!url.startsWith("http"))
+                        {
+                            QString scheme = QUrl(result.download->url()).scheme();
+                            QString domain = Common::getHost(result.download->url());
+                            url.remove("href=\"");
+                            url.remove("src=\"");
+                            url.remove("\"");
+                            url.prepend(scheme + "://" + domain);
+                        }
                         addDownload(url, threadParameters.attemptFile, true);
                         ++filesAuxTotal;
                     }
