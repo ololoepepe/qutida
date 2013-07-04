@@ -92,12 +92,15 @@ void ParceTask::run()
 
     urlList.removeDuplicates();
 
-    for (int i = 0; i < urlList.size(); ++i)
+    if (parameters.download->url().contains("4chan.org"))
     {
-        if (urlList.at(i).left(2) == "//")
-            urlList[i].prepend("http:");
-        else if (urlList.at(i).left(1) == "/")
-            urlList[i].prepend("http:/");
+        for (int i = 0; i < urlList.size(); ++i)
+        {
+            if (urlList.at(i).left(2) == "//")
+                urlList[i].prepend("http:");
+            else if (urlList.at(i).left(1) == "/")
+                urlList[i].prepend("http:/");
+        }
     }
 
     QStringList nameList;
@@ -195,12 +198,15 @@ void ParceTask::run()
 
         auxUrlList.removeDuplicates();
 
-        for (int i = 0; i < auxUrlList.size(); ++i)
+        if (parameters.download->url().contains("4chan.org"))
         {
-            if (auxUrlList.at(i).left(2) == "//")
-                auxUrlList[i].prepend("http:");
-            else if (auxUrlList.at(i).left(1) == "/")
-                auxUrlList[i].prepend("http:/");
+            for (int i = 0; i < auxUrlList.size(); ++i)
+            {
+                if (auxUrlList.at(i).left(2) == "//")
+                    auxUrlList[i].prepend("http:");
+                else if (auxUrlList.at(i).left(1) == "/")
+                    auxUrlList[i].prepend("http:/");
+            }
         }
 
         for (int i = 0; i < auxUrlList.count(); ++i)

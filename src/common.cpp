@@ -28,6 +28,8 @@
 #include <QFileInfo>
 #include <QDir>
 
+#include <QDebug>
+
 namespace Common
 {
     void deleteObject(QObject *object, int msec)

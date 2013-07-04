@@ -85,8 +85,10 @@ void SavePageTask::run()
             QString path = QUrl(url).path();
             QString fn = Common::getFileName(url);
             content.replace(url, fn);
-            content.replace(url.remove(0, 5), fn);
-            content.replace(url.remove(0, 1), fn);
+            url.remove(0, 5);
+            content.replace(url, fn);
+            url.remove(0, 1);
+            content.replace(url, fn);
             content.replace(path, fn);
         }
         else
@@ -95,8 +97,10 @@ void SavePageTask::run()
             QString path = QUrl(url).path();
             QString fn = Common::getFileName(url, AUX_FILES_DIR);
             content.replace(url, fn);
-            content.replace(url.remove(0, 5), fn);
-            content.replace(url.remove(0, 1), fn);
+            url.remove(0, 5);
+            content.replace(url, fn);
+            url.remove(0, 1);
+            content.replace(url, fn);
             content.replace(path, fn);
         }
     }
