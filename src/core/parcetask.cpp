@@ -92,6 +92,14 @@ void ParceTask::run()
 
     urlList.removeDuplicates();
 
+    for (int i = 0; i < urlList.size(); ++i)
+    {
+        if (urlList.at(i).left(2) == "//")
+            urlList[i].prepend("http:");
+        else if (urlList.at(i).left(1) == "/")
+            urlList[i].prepend("http:/");
+    }
+
     QStringList nameList;
 
     for (int i = 0; i < urlList.count(); ++i)
@@ -187,20 +195,25 @@ void ParceTask::run()
 
         auxUrlList.removeDuplicates();
 
+        for (int i = 0; i < auxUrlList.size(); ++i)
+        {
+            if (auxUrlList.at(i).left(2) == "//")
+                auxUrlList[i].prepend("http:");
+            else if (auxUrlList.at(i).left(1) == "/")
+                auxUrlList[i].prepend("http:/");
+        }
+
         for (int i = 0; i < auxUrlList.count(); ++i)
         {
-            if (auxUrlList.at(i).contains(".html") || auxUrlList.at(i).contains(".htm"))
+            if (auxUrlList.at(i).contains(".html") || auxUrlList.at(i).contains(".htm")
+                    || auxUrlList.at(i).endsWith("/"))
                 continue;
             QString d = Common::getHost( auxUrlList.at(i) );
 
             if (!urlList.contains(auxUrlList.at(i)) && (d == domain || QString() == d))
             {
                 if ( QUrl( auxUrlList.at(i) ).scheme().isEmpty() )
-                {
-                    auxUrlList.replace( i, auxUrlList.value(i).prepend(scheme +
-                                                                       QString("://") +
-                                                                       domain) );
-                }
+                    auxUrlList.replace(i, auxUrlList.value(i).prepend(scheme + QString("://") + domain));
                 result.auxUrls << auxUrlList.at(i);
             }
         }

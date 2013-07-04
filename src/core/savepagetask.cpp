@@ -81,17 +81,23 @@ void SavePageTask::run()
             continue;
         if ( parameters.normalUrls.contains( parameters.urls.at(i) ) )
         {
-            content.replace( parameters.urls.at(i),
-                            Common::getFileName( parameters.urls.at(i) ) );
-            content.replace(QUrl(parameters.urls.at(i)).path(), Common::getFileName( parameters.urls.at(i) ));
+            QString url = parameters.urls.at(i);
+            QString path = QUrl(url).path();
+            QString fn = Common::getFileName(url);
+            content.replace(url, fn);
+            content.replace(url.remove(0, 5), fn);
+            content.replace(url.remove(0, 1), fn);
+            content.replace(path, fn);
         }
         else
         {
-            content.replace( parameters.urls.at(i),
-                            Common::getFileName(parameters.urls.at(i),
-                                                AUX_FILES_DIR) );
-            content.replace(QUrl(parameters.urls.at(i)).path(),
-                            Common::getFileName(parameters.urls.at(i), AUX_FILES_DIR));
+            QString url = parameters.urls.at(i);
+            QString path = QUrl(url).path();
+            QString fn = Common::getFileName(url, AUX_FILES_DIR);
+            content.replace(url, fn);
+            content.replace(url.remove(0, 5), fn);
+            content.replace(url.remove(0, 1), fn);
+            content.replace(path, fn);
         }
     }
 

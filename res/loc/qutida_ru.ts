@@ -5,6 +5,7 @@
     <name>MainWindow</name>
     <message>
         <location filename="../../src/gui/mainwindow.cpp" line="183"/>
+        <location filename="../../src/gui/mainwindow.cpp" line="462"/>
         <source>Open saved page</source>
         <translation>Открыть сохранённую страницу</translation>
     </message>

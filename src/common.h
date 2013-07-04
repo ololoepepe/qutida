@@ -26,10 +26,10 @@
 namespace Common
 {
     const QString APP_NAME = "qutida";
-    const QString APP_VERSION = "0.1.14";
+    const QString APP_VERSION = "0.1.15";
     const QString ORG_NAME = "Andrey Bogdanov";
     const QString ORG_DOMAIN = "https://github.com/the-dark-angel";
-    const QString CR_YEARS = "2011";
+    const QString CR_YEARS = "2011-2013";
 
     void deleteObject(QObject *object, int msec = 0);
     QString getThread(const QString &url);
